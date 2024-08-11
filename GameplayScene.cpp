@@ -76,14 +76,6 @@ void GameplayScene::draw_debug_panel() {
   string camera_info_str =
       "Current Frame: " + to_string(get_current_frame()) + "\n" +
       "Control mode: " + to_string(get_control_mode()) + "\n" +
-      "Player Position: " + to_string(get_sprites()[player_id]->get_x()) +
-      ", " + to_string(get_sprites()[player_id]->get_y()) + "\n" +
-      "Player Velocity: " + to_string(get_sprites()[player_id]->get_vx()) +
-      ", " + to_string(get_sprites()[player_id]->get_vy()) + "\n" +
-      "Player Acceleration: " + to_string(get_sprites()[player_id]->get_ax()) +
-      ", " + to_string(get_sprites()[player_id]->get_ay()) + "\n" +
-      "Player HP: " + to_string(get_sprites()[player_id]->get_hp()) + "/" +
-      to_string(get_sprites()[player_id]->get_maxhp()) + "\n" +
       "Camera target: " + to_string(get_camera2d().target.x) + ", " +
       to_string(get_camera2d().target.y) + "\n" + "GameplayScene" +
       "Sprites: " + to_string(get_sprites().size()) + "\n" +
@@ -114,7 +106,8 @@ void GameplayScene::cleanup() {
 
 void GameplayScene::draw() {
   BeginMode2D(get_camera2d());
-  Color clear_color = (Color){0x10, 0x10, 0x10, 0xFF};
+  // Color clear_color = (Color){0x10, 0x10, 0x10, 0xFF};
+  Color clear_color = BLACK;
   ClearBackground(clear_color);
 
   for (auto &s : get_sprites()) {
