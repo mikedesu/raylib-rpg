@@ -27,6 +27,8 @@ public:
 
   entity_id spawn_player(float x, float y);
 
+  void set_scale(const float f);
+
 private:
   bool show_test_popup = true;
 

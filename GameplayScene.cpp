@@ -6,7 +6,7 @@ GameplayScene::GameplayScene() {
   mPrint("GameplayScene constructor");
   set_control_mode(CONTROL_MODE_PLAYER);
   set_texture_filepath("game_textures.txt");
-  set_global_scale(4.0f);
+  set_global_scale(1.0f);
   // set_global_scale(4.0f);
   set_scene_transition(SCENE_TRANSITION_IN);
   set_scene_type(SCENE_TYPE_GAMEPLAY);
@@ -47,6 +47,54 @@ void GameplayScene::handle_input() {
   if (IsKeyPressed(KEY_F)) {
     ToggleFullscreen();
   }
+
+  if (IsKeyDown(KEY_RIGHT_SHIFT) && IsKeyPressed(KEY_Z)) {
+    mPrint("right shift + z");
+    set_scale(get_global_scale() - 1);
+  }
+
+  else if (IsKeyDown(KEY_LEFT_SHIFT) && IsKeyPressed(KEY_Z)) {
+    mPrint("left shift + z");
+    set_scale(get_global_scale() - 1);
+  }
+
+  else if (IsKeyPressed(KEY_Z)) {
+    mPrint("z");
+    set_scale(get_global_scale() + 1);
+  }
+
+  if (IsKeyPressed(KEY_C)) {
+    if (get_control_mode() == CONTROL_MODE_PLAYER) {
+      set_control_mode(CONTROL_MODE_CAMERA);
+    } else {
+      set_control_mode(CONTROL_MODE_PLAYER);
+    }
+  }
+
+  if (get_control_mode() == CONTROL_MODE_CAMERA) {
+    if (IsKeyDown(KEY_UP)) {
+      get_camera2d().target.y -= 10;
+    }
+    if (IsKeyDown(KEY_DOWN)) {
+      get_camera2d().target.y += 10;
+    }
+    if (IsKeyDown(KEY_LEFT)) {
+      get_camera2d().target.x -= 10;
+    }
+    if (IsKeyDown(KEY_RIGHT)) {
+      get_camera2d().target.x += 10;
+    }
+  }
+}
+
+void GameplayScene::set_scale(const float f) {
+  // assert(s > 0.0f);
+  if (f > 0) {
+    set_global_scale(f);
+    for (auto &s : get_sprites()) {
+      s.second->set_scale(f);
+    }
+  }
 }
 
 bool GameplayScene::init() {
@@ -64,7 +112,11 @@ bool GameplayScene::init() {
     mPrint("Spawning player...");
     // spawning a player is a function of spawn_entity
     // we can write code to put into a function that spawns the player
-    spawn_player(100, 100);
+
+    const int offset_x = 0;
+    const int offset_y = 0;
+
+    spawn_player(offset_x, offset_y);
 
     mPrint("Loading sound effects...");
 
@@ -88,7 +140,8 @@ void GameplayScene::draw_debug_panel() {
       "Camera target: " + to_string(get_camera2d().target.x) + ", " +
       to_string(get_camera2d().target.y) + "\n" + "GameplayScene" +
       "Sprites: " + to_string(get_sprites().size()) + "\n" +
-      "IsPaused: " + to_string(get_paused()) + "\n";
+      "IsPaused: " + to_string(get_paused()) + "\n" +
+      "Global Scale: " + to_string(get_global_scale()) + "\n";
   DrawRectangle(0, 0, 500, 200, Fade(BLACK, 0.5f));
   DrawTextEx(get_global_font(), camera_info_str.c_str(), (Vector2){10, 10}, 16,
              0.5f, WHITE);
@@ -118,6 +171,29 @@ void GameplayScene::draw() {
   // Color clear_color = (Color){0x10, 0x10, 0x10, 0xFF};
   Color clear_color = BLACK;
   ClearBackground(clear_color);
+
+  // draw a black and white checkerboard pattern
+
+  const int unit = 20;
+  const int scaled_unit = unit * get_global_scale();
+
+  const int grid[3][3] = {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};
+  const int gridsize = 3;
+
+  const int p_row = 1;
+  const int p_col = 0;
+
+  for (int i = 0; i < gridsize; i++) {
+    for (int j = 0; j < gridsize; j++) {
+      if (grid[i][j] == 0) {
+        DrawRectangle(i * scaled_unit, j * scaled_unit, scaled_unit,
+                      scaled_unit, BLACK);
+      } else {
+        DrawRectangle(i * scaled_unit, j * scaled_unit, scaled_unit,
+                      scaled_unit, WHITE);
+      }
+    }
+  }
 
   for (auto &s : get_sprites()) {
     s.second->draw();

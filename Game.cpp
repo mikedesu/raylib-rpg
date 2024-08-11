@@ -11,7 +11,8 @@ static scene_id next_scene_id = 0;
 
 Game::Game() {
   global_scale = 1.0f;
-  screen_rect = (Rectangle){0, 0, 1280, -720};
+  screen_rect = (Rectangle){0, 0, 1920, -1080};
+  // screen_rect = (Rectangle){0, 0, 1280, -720};
   camera2d = {0};
   current_frame = 0;
   set_camera_default_values();

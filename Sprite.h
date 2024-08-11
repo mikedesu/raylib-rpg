@@ -104,7 +104,7 @@ private:
   unsigned int hp;
   unsigned int maxhp;
 
-  float scale;
+  float scale = 1.0f;
   float rotation_angle = 0.0f;
   float rotation_speed = 1.0f;
 
