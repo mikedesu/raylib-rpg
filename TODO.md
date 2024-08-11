@@ -1,3 +1,5 @@
 # TODO
 
-- [ ] experiment with structuring game code into a single file or individual .h files for faster compilation
+- [ ] smooth animations during movement
+    - [ ] will require a "world-step" function that allows us to register events every turn and then process them
+- [ ] a nice "fire" sprite

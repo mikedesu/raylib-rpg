@@ -1,5 +1,5 @@
 CC=g++
-OBJ_FILES=Game.o Sprite.o Scene.o TitleScene.o GameplayScene.o GameoverScene.o PopupManager.o DungeonManager.o
+OBJ_FILES=Game.o Sprite.o Scene.o TitleScene.o GameplayScene.o GameoverScene.o PopupManager.o DungeonManager.o Tile.o
 OBJ_FILES_WITH_MAIN=main.o $(OBJ_FILES)
 
 FLAGS=-Wall
@@ -34,6 +34,9 @@ PopupManager.o: PopupManager.cpp
 	$(CC) $^ $(FLAGS) -c -o $@
 
 DungeonManager.o: DungeonManager.cpp
+	$(CC) $^ $(FLAGS) -c -o $@
+
+Tile.o: Tile.cpp
 	$(CC) $^ $(FLAGS) -c -o $@
 
 main.o: main.cpp

@@ -1,12 +1,14 @@
 #include "GameplayScene.h"
 // #include "Sprite.h"
+#include "Tile.h"
 #include "mPrint.h"
 
 GameplayScene::GameplayScene() {
   mPrint("GameplayScene constructor");
   set_control_mode(CONTROL_MODE_PLAYER);
   set_texture_filepath("game_textures.txt");
-  set_global_scale(1.0f);
+  // set_global_scale(1.0f);
+  set_global_scale(2.0f);
   // set_global_scale(4.0f);
   set_scene_transition(SCENE_TRANSITION_IN);
   set_scene_type(SCENE_TYPE_GAMEPLAY);
@@ -120,6 +122,43 @@ void GameplayScene::handle_input() {
       // player_dungeon_col++;
       dungeon_manager.incr_player_col();
     }
+
+    // diagonals and numpad keypad entry
+    if (IsKeyPressed(KEY_KP_7)) {
+      dungeon_manager.decr_player_row();
+      dungeon_manager.decr_player_col();
+    }
+
+    if (IsKeyPressed(KEY_KP_9)) {
+      dungeon_manager.decr_player_row();
+      dungeon_manager.incr_player_col();
+    }
+
+    if (IsKeyPressed(KEY_KP_1)) {
+      dungeon_manager.incr_player_row();
+      dungeon_manager.decr_player_col();
+    }
+
+    if (IsKeyPressed(KEY_KP_3)) {
+      dungeon_manager.incr_player_row();
+      dungeon_manager.incr_player_col();
+    }
+
+    if (IsKeyPressed(KEY_KP_8)) {
+      dungeon_manager.decr_player_row();
+    }
+
+    if (IsKeyPressed(KEY_KP_2)) {
+      dungeon_manager.incr_player_row();
+    }
+
+    if (IsKeyPressed(KEY_KP_4)) {
+      dungeon_manager.decr_player_col();
+    }
+
+    if (IsKeyPressed(KEY_KP_6)) {
+      dungeon_manager.incr_player_col();
+    }
   }
 }
 
@@ -161,6 +200,10 @@ bool GameplayScene::init() {
     //  }
     //}
 
+    mPrint("Setting camera offset...");
+    get_camera2d().target.x = -450;
+    get_camera2d().target.y = -220;
+
     mPrint("Loading sound effects...");
 
     set_has_been_initialized(true);
@@ -191,8 +234,26 @@ void GameplayScene::draw_debug_panel() {
 }
 
 void GameplayScene::draw_hud() {
-  /*
-   */
+  // draw a black box on the right side of the screen
+  const int w = 500;
+  const int h = GetScreenHeight();
+  const float x = GetScreenWidth() - w;
+  const int y = 0;
+  const int fontsize = 24;
+
+  DrawRectangle(x, y, w, h, BLACK);
+  // draw some text
+  const string s =
+      "Player Position: " + to_string(dungeon_manager.get_player_col()) + ", " +
+      to_string(dungeon_manager.get_player_row()) + "\n" +
+      "Camera: " + to_string(get_camera2d().target.x) + ", " +
+      to_string(get_camera2d().target.y) + "\n";
+
+  // DrawTextEx(get_global_font(), s.c_str(), (Vector2){x + 10, y + 10},
+  // fontsize, 1.0f, WHITE);
+  DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
+
+  // DrawText("Press D to toggle debug panel", 10, 10, 20, WHITE);
 }
 
 void GameplayScene::cleanup() {
@@ -230,12 +291,16 @@ void GameplayScene::draw() {
 
     for (int j = 0; j < dungeon_manager.get_gridsize(); j++) {
       // if (grid[i][j] == 0) {
-      if (dungeon_manager.get_cell(i, j) == 0) {
+      if (dungeon_manager.get_cell(i, j).get_type() == TILE_VOID) {
         DrawRectangle(i * scaled_unit, j * scaled_unit, scaled_unit,
                       scaled_unit, BLACK);
-      } else {
+      } else if (dungeon_manager.get_cell(i, j).get_type() ==
+                 TILE_FLOOR_BASIC) {
         DrawRectangle(i * scaled_unit, j * scaled_unit, scaled_unit,
                       scaled_unit, WHITE);
+      } else if (dungeon_manager.get_cell(i, j).get_type() == TILE_WALL_BASIC) {
+        DrawRectangle(i * scaled_unit, j * scaled_unit, scaled_unit,
+                      scaled_unit, GRAY);
       }
     }
   }
@@ -279,11 +344,14 @@ void GameplayScene::draw() {
 }
 
 inline void GameplayScene::handle_draw_debug_panel() {
+
+  if (get_hud_on()) {
+    draw_hud();
+  }
+
   if (get_debug_panel_on()) {
     DrawFPS(GetScreenWidth() - 80, 10);
     draw_debug_panel();
-  } else if (get_hud_on()) {
-    draw_hud();
   }
 }
 
