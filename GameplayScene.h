@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DungeonManager.h"
 #include "Scene.h"
 
 class GameplayScene : public Scene {
@@ -33,9 +34,10 @@ private:
   bool show_test_popup = true;
 
   entity_id player_id = -1;
-  int player_dungeon_row = 1;
-  int player_dungeon_col = 0;
+  // int player_dungeon_row = 1;
+  // int player_dungeon_col = 0;
+  // const int gridsize = 32;
+  // int grid[32][32] = {0};
 
-  const int gridsize = 32;
-  int grid[32][32] = {0};
+  DungeonManager dungeon_manager;
 };

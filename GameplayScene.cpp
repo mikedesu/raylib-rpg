@@ -46,9 +46,9 @@ void GameplayScene::update() {
 
   // update player x,y
   get_sprites()[player_id]->set_x(
-      player_dungeon_col * tilesize * get_global_scale() + x_off);
+      dungeon_manager.get_player_col() * tilesize * get_global_scale() + x_off);
   get_sprites()[player_id]->set_y(
-      player_dungeon_row * tilesize * get_global_scale() + y_off);
+      dungeon_manager.get_player_row() * tilesize * get_global_scale() + y_off);
 }
 
 void GameplayScene::handle_input() {
@@ -62,19 +62,24 @@ void GameplayScene::handle_input() {
     ToggleFullscreen();
   }
 
+  const float zoom_incr = 1;
+
   if (IsKeyDown(KEY_RIGHT_SHIFT) && IsKeyPressed(KEY_Z)) {
     mPrint("right shift + z");
-    set_scale(get_global_scale() - 1);
+    // set_scale(get_global_scale() - 1);
+    set_scale(get_global_scale() - zoom_incr);
   }
 
   else if (IsKeyDown(KEY_LEFT_SHIFT) && IsKeyPressed(KEY_Z)) {
     mPrint("left shift + z");
-    set_scale(get_global_scale() - 1);
+    // set_scale(get_global_scale() - 1);
+    set_scale(get_global_scale() - zoom_incr);
   }
 
   else if (IsKeyPressed(KEY_Z)) {
     mPrint("z");
-    set_scale(get_global_scale() + 1);
+    // set_scale(get_global_scale() + 1);
+    set_scale(get_global_scale() + zoom_incr);
   }
 
   if (IsKeyPressed(KEY_C)) {
@@ -100,16 +105,20 @@ void GameplayScene::handle_input() {
     }
   } else if (get_control_mode() == CONTROL_MODE_PLAYER) {
     if (IsKeyPressed(KEY_UP)) {
-      player_dungeon_row--;
+      // player_dungeon_row--;
+      dungeon_manager.decr_player_row();
     }
     if (IsKeyPressed(KEY_DOWN)) {
-      player_dungeon_row++;
+      // player_dungeon_row++;
+      dungeon_manager.incr_player_row();
     }
     if (IsKeyPressed(KEY_LEFT)) {
-      player_dungeon_col--;
+      // player_dungeon_col--;
+      dungeon_manager.decr_player_col();
     }
     if (IsKeyPressed(KEY_RIGHT)) {
-      player_dungeon_col++;
+      // player_dungeon_col++;
+      dungeon_manager.incr_player_col();
     }
   }
 }
@@ -146,11 +155,11 @@ bool GameplayScene::init() {
     spawn_player(offset_x, offset_y);
 
     // init the grid
-    for (int j = 0; j < gridsize; j++) {
-      for (int i = j % 2; i < gridsize; i += 2) {
-        grid[i][j] = 1;
-      }
-    }
+    // for (int j = 0; j < gridsize; j++) {
+    //  for (int i = j % 2; i < gridsize; i += 2) {
+    //    grid[i][j] = 1;
+    //  }
+    //}
 
     mPrint("Loading sound effects...");
 
@@ -217,9 +226,11 @@ void GameplayScene::draw() {
   // const int p_row = 1;
   // const int p_col = 0;
 
-  for (int i = 0; i < gridsize; i++) {
-    for (int j = 0; j < gridsize; j++) {
-      if (grid[i][j] == 0) {
+  for (int i = 0; i < dungeon_manager.get_gridsize(); i++) {
+
+    for (int j = 0; j < dungeon_manager.get_gridsize(); j++) {
+      // if (grid[i][j] == 0) {
+      if (dungeon_manager.get_cell(i, j) == 0) {
         DrawRectangle(i * scaled_unit, j * scaled_unit, scaled_unit,
                       scaled_unit, BLACK);
       } else {
