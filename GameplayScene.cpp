@@ -62,6 +62,9 @@ bool GameplayScene::init() {
       return false;
     }
     mPrint("Spawning player...");
+    // spawning a player is a function of spawn_entity
+    // we can write code to put into a function that spawns the player
+    spawn_player(100, 100);
 
     mPrint("Loading sound effects...");
 
@@ -70,6 +73,12 @@ bool GameplayScene::init() {
     mPrint("GameplayScene initialized");
   }
   return true;
+}
+
+entity_id GameplayScene::spawn_player(float x, float y) {
+  entity_id id = spawn_entity("player", x, y, SPRITETYPE_PLAYER, true);
+  player_id = id;
+  return id;
 }
 
 void GameplayScene::draw_debug_panel() {
