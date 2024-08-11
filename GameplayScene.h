@@ -33,4 +33,9 @@ private:
   bool show_test_popup = true;
 
   entity_id player_id = -1;
+  int player_dungeon_row = 1;
+  int player_dungeon_col = 0;
+
+  const int gridsize = 32;
+  int grid[32][32] = {0};
 };

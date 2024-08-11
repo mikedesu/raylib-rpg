@@ -34,7 +34,21 @@ void GameplayScene::handle_player_collision() {
 
 void GameplayScene::update() {
   /*
+   * we will need to update the relative onscreen positions of the sprites
+   * depending on
+   * 1. position in the dungeon
+   * 2. global scale
    */
+
+  const int x_off = 0 * get_global_scale();
+  const int y_off = -10 * get_global_scale();
+  const int tilesize = 20;
+
+  // update player x,y
+  get_sprites()[player_id]->set_x(
+      player_dungeon_col * tilesize * get_global_scale() + x_off);
+  get_sprites()[player_id]->set_y(
+      player_dungeon_row * tilesize * get_global_scale() + y_off);
 }
 
 void GameplayScene::handle_input() {
@@ -84,6 +98,19 @@ void GameplayScene::handle_input() {
     if (IsKeyDown(KEY_RIGHT)) {
       get_camera2d().target.x += 10;
     }
+  } else if (get_control_mode() == CONTROL_MODE_PLAYER) {
+    if (IsKeyPressed(KEY_UP)) {
+      player_dungeon_row--;
+    }
+    if (IsKeyPressed(KEY_DOWN)) {
+      player_dungeon_row++;
+    }
+    if (IsKeyPressed(KEY_LEFT)) {
+      player_dungeon_col--;
+    }
+    if (IsKeyPressed(KEY_RIGHT)) {
+      player_dungeon_col++;
+    }
   }
 }
 
@@ -117,6 +144,13 @@ bool GameplayScene::init() {
     const int offset_y = 0;
 
     spawn_player(offset_x, offset_y);
+
+    // init the grid
+    for (int j = 0; j < gridsize; j++) {
+      for (int i = j % 2; i < gridsize; i += 2) {
+        grid[i][j] = 1;
+      }
+    }
 
     mPrint("Loading sound effects...");
 
@@ -177,11 +211,11 @@ void GameplayScene::draw() {
   const int unit = 20;
   const int scaled_unit = unit * get_global_scale();
 
-  const int grid[3][3] = {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};
-  const int gridsize = 3;
+  // const int grid[3][3] = {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};
+  // const int gridsize = 3;
 
-  const int p_row = 1;
-  const int p_col = 0;
+  // const int p_row = 1;
+  // const int p_col = 0;
 
   for (int i = 0; i < gridsize; i++) {
     for (int j = 0; j < gridsize; j++) {

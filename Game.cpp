@@ -250,8 +250,8 @@ void Game::run() {
     while (!WindowShouldClose()) {
       handle_input();
 
-      draw();
       update();
+      draw();
 
       cleanup();
     }
