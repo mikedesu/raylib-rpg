@@ -1,0 +1,10 @@
+tests.cpp
+*.o
+*_textures.txt
+compile_commands.json
+audio
+img
+fonts
+game
+test
+unit_tests.c
