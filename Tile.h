@@ -1,6 +1,7 @@
 #pragma once
 
 typedef enum {
+  TILE_NONE,
   TILE_VOID,
   TILE_FLOOR_BASIC,
   TILE_WALL_BASIC,

@@ -27,3 +27,16 @@ void DungeonFloor::set_grid_all(const tile_type value) {
     }
   }
 }
+
+const int DungeonFloor::get_gridsize() const { return gridsize; }
+const tile_type DungeonFloor::get_tile_type(const int col,
+                                            const int row) const {
+
+  if (row < 0 || row >= gridsize || col < 0 || col >= gridsize) {
+    return TILE_NONE;
+  }
+
+  return grid[col][row].get_type();
+}
+void DungeonFloor::set_tile_type(const int col, const int row,
+                                 const tile_type value) {}

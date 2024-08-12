@@ -176,24 +176,15 @@ bool GameplayScene::init() {
 
     spawn_player(offset_x, offset_y);
 
-    // for (int i = 0; i < dungeon_manager.get_gridsize(); i++) {
-    //   for (int j = 0; j < dungeon_manager.get_gridsize(); j++) {
-    //     if (dungeon_manager.get_cell(i, j).get_type() == TILE_FLOOR_BASIC) {
-    //       spawn_tile_stone(i, j, i * 20, j * 20);
-    //     }
-    //  else if (dungeon_manager.get_cell(i, j).get_type() ==
-    //             TILE_WALL_BASIC) {
-    //    spawn_tile_void(i * 20, j * 20);
-    //  }
-    //  }
-    //}
-
-    // init the grid
-    // for (int j = 0; j < gridsize; j++) {
-    //  for (int i = j % 2; i < gridsize; i += 2) {
-    //    grid[i][j] = 1;
-    //  }
-    //}
+    for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
+      for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
+        if (dungeon_floor.get_tile_type(i, j) == TILE_FLOOR_BASIC) {
+          spawn_tile_stone(i, j, i * 20, j * 20);
+        } else if (dungeon_floor.get_tile_type(i, j) == TILE_WALL_BASIC) {
+          spawn_tile_void(i * 20, j * 20);
+        }
+      }
+    }
 
     mPrint("Setting camera offset...");
     get_camera2d().target.x = -450;

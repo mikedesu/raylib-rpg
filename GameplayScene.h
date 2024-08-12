@@ -1,6 +1,7 @@
 #pragma once
 
 // #include "DungeonManager.h"
+#include "DungeonFloor.h"
 #include "Scene.h"
 
 class GameplayScene : public Scene {
@@ -44,4 +45,5 @@ private:
   // int grid[32][32] = {0};
 
   // DungeonManager dungeon_manager;
+  DungeonFloor dungeon_floor;
 };
