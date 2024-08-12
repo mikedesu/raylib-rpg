@@ -12,11 +12,11 @@ DungeonManager::DungeonManager() {
   set_grid_all(TILE_FLOOR_BASIC);
 
   // basic wall testing
-  set_grid(1, 0, TILE_WALL_BASIC);
-  set_grid(1, 1, TILE_WALL_BASIC);
-  set_grid(1, 2, TILE_WALL_BASIC);
-  set_grid(1, 3, TILE_WALL_BASIC);
-  set_grid(1, 4, TILE_WALL_BASIC);
+  // set_grid(1, 0, TILE_WALL_BASIC);
+  // set_grid(1, 1, TILE_WALL_BASIC);
+  // set_grid(1, 2, TILE_WALL_BASIC);
+  // set_grid(1, 3, TILE_WALL_BASIC);
+  // set_grid(1, 4, TILE_WALL_BASIC);
 }
 
 DungeonManager::~DungeonManager() {}

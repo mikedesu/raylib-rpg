@@ -26,7 +26,7 @@ private:
   int player_row = 1;
   int player_col = 0;
 
-  const int gridsize = 16;
+  const int gridsize = 8;
   // int grid[32][32] = {0};
-  Tile grid[16][16];
+  Tile grid[8][8];
 };

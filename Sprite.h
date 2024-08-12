@@ -7,6 +7,7 @@ typedef enum {
   SPRITETYPE_NONE,
   SPRITETYPE_TITLE,
   SPRITETYPE_PLAYER,
+  SPRITETYPE_TILE,
   SPRITETYPE_ENEMY,
   // SPRITETYPE_KNIFE,
   //  SPRITETYPE_PIPEBASE,
@@ -90,6 +91,12 @@ public:
   unsigned int get_alpha() const;
   void set_alpha(const unsigned int alpha);
 
+  void set_dungeon_position(const Vector2 pos);
+  const Vector2 get_dungeon_position() const;
+
+  void incr_dungeon_position_x(const float x);
+  void incr_dungeon_position_y(const float y);
+
 private:
   Texture2D texture;
 
@@ -111,6 +118,8 @@ private:
   Vector2 origin;
   Vector2 velocity;
   Vector2 acceleration;
+
+  Vector2 dungeon_position;
 
   bool is_marked_for_deletion;
   bool is_animating;

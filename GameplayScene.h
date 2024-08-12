@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DungeonManager.h"
+// #include "DungeonManager.h"
 #include "Scene.h"
 
 class GameplayScene : public Scene {
@@ -11,6 +11,8 @@ public:
   void update();
   bool init();
   void handle_input();
+  void handle_camera_input();
+  void handle_player_input();
 
   void draw_debug_panel();
   void draw_hud();
@@ -29,6 +31,8 @@ public:
   entity_id spawn_player(float x, float y);
 
   void set_scale(const float f);
+  entity_id spawn_tile_stone(float i, float j, float x, float y);
+  entity_id spawn_tile_void(float x, float y);
 
 private:
   bool show_test_popup = true;
@@ -39,5 +43,5 @@ private:
   // const int gridsize = 32;
   // int grid[32][32] = {0};
 
-  DungeonManager dungeon_manager;
+  // DungeonManager dungeon_manager;
 };

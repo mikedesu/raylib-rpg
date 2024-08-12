@@ -7,9 +7,9 @@ GameplayScene::GameplayScene() {
   mPrint("GameplayScene constructor");
   set_control_mode(CONTROL_MODE_PLAYER);
   set_texture_filepath("game_textures.txt");
-  // set_global_scale(1.0f);
-  set_global_scale(2.0f);
-  // set_global_scale(4.0f);
+  set_global_scale(1.0f);
+  // set_global_scale(2.0f);
+  //  set_global_scale(4.0f);
   set_scene_transition(SCENE_TRANSITION_IN);
   set_scene_type(SCENE_TYPE_GAMEPLAY);
   // load_music("/home/darkmage/Music/darkmage/lets-fkn-go.mp3");
@@ -19,20 +19,11 @@ GameplayScene::~GameplayScene() { mPrint("GameplayScene destructor"); }
 
 void GameplayScene::gameover() { set_scene_transition(SCENE_TRANSITION_OUT); }
 
-void GameplayScene::update_player_movement() {
-  /*
-   */
-}
+void GameplayScene::update_player_movement() {}
 
-void GameplayScene::update_enemy_movement() {
-  /*
-   */
-}
+void GameplayScene::update_enemy_movement() {}
 
-void GameplayScene::handle_player_collision() {
-  /*
-   */
-}
+void GameplayScene::handle_player_collision() {}
 
 void GameplayScene::update() {
   /*
@@ -41,47 +32,102 @@ void GameplayScene::update() {
    * 1. position in the dungeon
    * 2. global scale
    */
+  for (auto &s : get_sprites()) {
+    s.second->update();
+  }
+}
 
-  const int x_off = 0 * get_global_scale();
-  const int y_off = -10 * get_global_scale();
-  const int tilesize = 20;
+void GameplayScene::handle_camera_input() {
+  if (IsKeyDown(KEY_UP)) {
+    get_camera2d().target.y -= 10;
+  }
+  if (IsKeyDown(KEY_DOWN)) {
+    get_camera2d().target.y += 10;
+  }
+  if (IsKeyDown(KEY_LEFT)) {
+    get_camera2d().target.x -= 10;
+  }
+  if (IsKeyDown(KEY_RIGHT)) {
+    get_camera2d().target.x += 10;
+  }
 
-  // update player x,y
-  get_sprites()[player_id]->set_x(
-      dungeon_manager.get_player_col() * tilesize * get_global_scale() + x_off);
-  get_sprites()[player_id]->set_y(
-      dungeon_manager.get_player_row() * tilesize * get_global_scale() + y_off);
+  const float zoom_incr = 1;
+  if (IsKeyDown(KEY_RIGHT_SHIFT) && IsKeyPressed(KEY_Z)) {
+    // mPrint("right shift + z");
+    set_scale(get_global_scale() - zoom_incr);
+  } else if (IsKeyDown(KEY_LEFT_SHIFT) && IsKeyPressed(KEY_Z)) {
+    // mPrint("left shift + z");
+    set_scale(get_global_scale() - zoom_incr);
+  } else if (IsKeyPressed(KEY_Z)) {
+    // mPrint("z");
+    set_scale(get_global_scale() + zoom_incr);
+  }
+}
+
+void GameplayScene::handle_player_input() {
+
+  if (IsKeyPressed(KEY_UP)) {
+    // player_dungeon_row--;
+    get_sprites()[player_id]->incr_dungeon_position_y(-1);
+  }
+  if (IsKeyPressed(KEY_DOWN)) {
+    // player_dungeon_row++;
+    get_sprites()[player_id]->incr_dungeon_position_y(1);
+  }
+  if (IsKeyPressed(KEY_LEFT)) {
+    // player_dungeon_col--;
+    get_sprites()[player_id]->incr_dungeon_position_x(-1);
+  }
+  if (IsKeyPressed(KEY_RIGHT)) {
+    // player_dungeon_col++;
+    get_sprites()[player_id]->incr_dungeon_position_x(1);
+  }
+
+  // diagonals and numpad keypad entry
+  if (IsKeyPressed(KEY_KP_7)) {
+    get_sprites()[player_id]->incr_dungeon_position_x(-1);
+    get_sprites()[player_id]->incr_dungeon_position_y(-1);
+  }
+
+  if (IsKeyPressed(KEY_KP_9)) {
+    get_sprites()[player_id]->incr_dungeon_position_x(1);
+    get_sprites()[player_id]->incr_dungeon_position_y(-1);
+  }
+
+  if (IsKeyPressed(KEY_KP_1)) {
+    get_sprites()[player_id]->incr_dungeon_position_x(-1);
+    get_sprites()[player_id]->incr_dungeon_position_y(1);
+  }
+
+  if (IsKeyPressed(KEY_KP_3)) {
+    get_sprites()[player_id]->incr_dungeon_position_x(1);
+    get_sprites()[player_id]->incr_dungeon_position_y(1);
+  }
+
+  if (IsKeyPressed(KEY_KP_8)) {
+    get_sprites()[player_id]->incr_dungeon_position_y(-1);
+  }
+
+  if (IsKeyPressed(KEY_KP_2)) {
+    get_sprites()[player_id]->incr_dungeon_position_y(1);
+  }
+
+  if (IsKeyPressed(KEY_KP_4)) {
+    get_sprites()[player_id]->incr_dungeon_position_x(-1);
+  }
+
+  if (IsKeyPressed(KEY_KP_6)) {
+    get_sprites()[player_id]->incr_dungeon_position_x(1);
+  }
 }
 
 void GameplayScene::handle_input() {
-  /*
-   */
   if (IsKeyPressed(KEY_D)) {
     flip_debug_panel();
   }
 
   if (IsKeyPressed(KEY_F)) {
     ToggleFullscreen();
-  }
-
-  const float zoom_incr = 1;
-
-  if (IsKeyDown(KEY_RIGHT_SHIFT) && IsKeyPressed(KEY_Z)) {
-    mPrint("right shift + z");
-    // set_scale(get_global_scale() - 1);
-    set_scale(get_global_scale() - zoom_incr);
-  }
-
-  else if (IsKeyDown(KEY_LEFT_SHIFT) && IsKeyPressed(KEY_Z)) {
-    mPrint("left shift + z");
-    // set_scale(get_global_scale() - 1);
-    set_scale(get_global_scale() - zoom_incr);
-  }
-
-  else if (IsKeyPressed(KEY_Z)) {
-    mPrint("z");
-    // set_scale(get_global_scale() + 1);
-    set_scale(get_global_scale() + zoom_incr);
   }
 
   if (IsKeyPressed(KEY_C)) {
@@ -93,72 +139,9 @@ void GameplayScene::handle_input() {
   }
 
   if (get_control_mode() == CONTROL_MODE_CAMERA) {
-    if (IsKeyDown(KEY_UP)) {
-      get_camera2d().target.y -= 10;
-    }
-    if (IsKeyDown(KEY_DOWN)) {
-      get_camera2d().target.y += 10;
-    }
-    if (IsKeyDown(KEY_LEFT)) {
-      get_camera2d().target.x -= 10;
-    }
-    if (IsKeyDown(KEY_RIGHT)) {
-      get_camera2d().target.x += 10;
-    }
+    handle_camera_input();
   } else if (get_control_mode() == CONTROL_MODE_PLAYER) {
-    if (IsKeyPressed(KEY_UP)) {
-      // player_dungeon_row--;
-      dungeon_manager.decr_player_row();
-    }
-    if (IsKeyPressed(KEY_DOWN)) {
-      // player_dungeon_row++;
-      dungeon_manager.incr_player_row();
-    }
-    if (IsKeyPressed(KEY_LEFT)) {
-      // player_dungeon_col--;
-      dungeon_manager.decr_player_col();
-    }
-    if (IsKeyPressed(KEY_RIGHT)) {
-      // player_dungeon_col++;
-      dungeon_manager.incr_player_col();
-    }
-
-    // diagonals and numpad keypad entry
-    if (IsKeyPressed(KEY_KP_7)) {
-      dungeon_manager.decr_player_row();
-      dungeon_manager.decr_player_col();
-    }
-
-    if (IsKeyPressed(KEY_KP_9)) {
-      dungeon_manager.decr_player_row();
-      dungeon_manager.incr_player_col();
-    }
-
-    if (IsKeyPressed(KEY_KP_1)) {
-      dungeon_manager.incr_player_row();
-      dungeon_manager.decr_player_col();
-    }
-
-    if (IsKeyPressed(KEY_KP_3)) {
-      dungeon_manager.incr_player_row();
-      dungeon_manager.incr_player_col();
-    }
-
-    if (IsKeyPressed(KEY_KP_8)) {
-      dungeon_manager.decr_player_row();
-    }
-
-    if (IsKeyPressed(KEY_KP_2)) {
-      dungeon_manager.incr_player_row();
-    }
-
-    if (IsKeyPressed(KEY_KP_4)) {
-      dungeon_manager.decr_player_col();
-    }
-
-    if (IsKeyPressed(KEY_KP_6)) {
-      dungeon_manager.incr_player_col();
-    }
+    handle_player_input();
   }
 }
 
@@ -193,6 +176,18 @@ bool GameplayScene::init() {
 
     spawn_player(offset_x, offset_y);
 
+    // for (int i = 0; i < dungeon_manager.get_gridsize(); i++) {
+    //   for (int j = 0; j < dungeon_manager.get_gridsize(); j++) {
+    //     if (dungeon_manager.get_cell(i, j).get_type() == TILE_FLOOR_BASIC) {
+    //       spawn_tile_stone(i, j, i * 20, j * 20);
+    //     }
+    //  else if (dungeon_manager.get_cell(i, j).get_type() ==
+    //             TILE_WALL_BASIC) {
+    //    spawn_tile_void(i * 20, j * 20);
+    //  }
+    //  }
+    //}
+
     // init the grid
     // for (int j = 0; j < gridsize; j++) {
     //  for (int i = j % 2; i < gridsize; i += 2) {
@@ -219,6 +214,22 @@ entity_id GameplayScene::spawn_player(float x, float y) {
   return id;
 }
 
+entity_id GameplayScene::spawn_tile_stone(float i, float j, float x, float y) {
+  entity_id id = spawn_entity("tile-stone", x, y, SPRITETYPE_TILE, false);
+
+  // set the dungeon position of the sprite
+  get_sprites()[id]->set_dungeon_position((Vector2){i, j});
+
+  // player_id = id;
+  return id;
+}
+
+entity_id GameplayScene::spawn_tile_void(float x, float y) {
+  entity_id id = spawn_entity("tile-void", x, y, SPRITETYPE_TILE, false);
+  player_id = id;
+  return id;
+}
+
 void GameplayScene::draw_debug_panel() {
   string camera_info_str =
       "Current Frame: " + to_string(get_current_frame()) + "\n" +
@@ -239,19 +250,20 @@ void GameplayScene::draw_hud() {
   const int h = GetScreenHeight();
   const float x = GetScreenWidth() - w;
   const int y = 0;
-  const int fontsize = 24;
+  const int fontsize = 16;
 
   DrawRectangle(x, y, w, h, BLACK);
   // draw some text
   const string s =
-      "Player Position: " + to_string(dungeon_manager.get_player_col()) + ", " +
-      to_string(dungeon_manager.get_player_row()) + "\n" +
+      "Player Position: " +
+      to_string(get_sprites()[player_id]->get_dungeon_position().x) + ", " +
+      to_string(get_sprites()[player_id]->get_dungeon_position().y) + "\n" +
       "Camera: " + to_string(get_camera2d().target.x) + ", " +
       to_string(get_camera2d().target.y) + "\n";
 
-  // DrawTextEx(get_global_font(), s.c_str(), (Vector2){x + 10, y + 10},
-  // fontsize, 1.0f, WHITE);
-  DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
+  DrawTextEx(get_global_font(), s.c_str(), (Vector2){x + 10, y + 10}, fontsize,
+             0.5f, WHITE);
+  // DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
 
   // DrawText("Press D to toggle debug panel", 10, 10, 20, WHITE);
 }
@@ -281,43 +293,28 @@ void GameplayScene::draw() {
   const int unit = 20;
   const int scaled_unit = unit * get_global_scale();
 
-  // const int grid[3][3] = {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};
-  // const int gridsize = 3;
-
-  // const int p_row = 1;
-  // const int p_col = 0;
-
-  for (int i = 0; i < dungeon_manager.get_gridsize(); i++) {
-
-    for (int j = 0; j < dungeon_manager.get_gridsize(); j++) {
-      // if (grid[i][j] == 0) {
-      if (dungeon_manager.get_cell(i, j).get_type() == TILE_VOID) {
-        DrawRectangle(i * scaled_unit, j * scaled_unit, scaled_unit,
-                      scaled_unit, BLACK);
-      } else if (dungeon_manager.get_cell(i, j).get_type() ==
-                 TILE_FLOOR_BASIC) {
-        DrawRectangle(i * scaled_unit, j * scaled_unit, scaled_unit,
-                      scaled_unit, WHITE);
-      } else if (dungeon_manager.get_cell(i, j).get_type() == TILE_WALL_BASIC) {
-        DrawRectangle(i * scaled_unit, j * scaled_unit, scaled_unit,
-                      scaled_unit, GRAY);
-      }
-    }
-  }
-
+  // draw all tiles first
   for (auto &s : get_sprites()) {
-    s.second->draw();
-    if (get_debug_panel_on()) {
-      s.second->draw_hitbox();
-
-      // draw a line from the sprite to the player
-      // if (s.second->get_type() == SPRITETYPE_ENEMY) {
-      //  DrawLine(s.second->get_x(), s.second->get_y(),
-      //           get_sprites()[player_id]->get_x(),
-      //           get_sprites()[player_id]->get_y(), RED);
-      //}
+    if (s.second->get_type() == SPRITETYPE_TILE) {
+      s.second->draw();
     }
   }
+
+  // draw all other sprites
+  for (auto &s : get_sprites()) {
+    if (s.second->get_type() != SPRITETYPE_TILE) {
+      s.second->draw();
+    }
+  }
+
+  // draw a line from the sprite to the player
+  // if (s.second->get_type() == SPRITETYPE_ENEMY) {
+  //  DrawLine(s.second->get_x(), s.second->get_y(),
+  //           get_sprites()[player_id]->get_x(),
+  //           get_sprites()[player_id]->get_y(), RED);
+  //}
+  //  }
+  //}
 
   EndMode2D();
 
@@ -325,13 +322,8 @@ void GameplayScene::draw() {
 
   if (show_test_popup) {
     if (get_popup_manager() != nullptr) {
-
       const float x = GetScreenWidth() / 2.0f - 100.0f;
       const float y = GetScreenHeight() / 2.0f - 100.0f;
-      //  get player x
-      // const float x = get_sprite(player_id)->get_x();
-      // get player y
-      // const float y = get_sprite(player_id)->get_y();
       Vector2 s = GetWorldToScreen2D(
           (Vector2){x - 50, y - 50},
           get_camera2d()); // Get the screen space position for
@@ -371,8 +363,6 @@ void GameplayScene::close() {
   get_bg_entity_ids().clear();
   mPrint("Unloading font...");
   UnloadFont(get_global_font());
-  // mPrint("Clearing stars...");
-  // get_stars().clear();
 
   // if (music != NULL) {
   //  stop music

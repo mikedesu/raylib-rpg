@@ -129,10 +129,6 @@ void Sprite::incr_frame() {
   flipped_src.x = src.x;
 }
 
-const bool Sprite::get_is_marked_for_deletion() const {
-  return is_marked_for_deletion;
-}
-
 void Sprite::update() {
   // update the velocity
   // if (movement == movement_type::MOVEMENT_TYPE_NORMAL) {
@@ -142,6 +138,26 @@ void Sprite::update() {
   // velocity.x += acceleration.x;
   // velocity.y += acceleration.y;
   // origin = (Vector2){0, 0};
+
+  if (type == sprite_type::SPRITETYPE_PLAYER) {
+    const int x_off = 0;
+    const int y_off = -10 * scale;
+    const int tilesize = 20;
+    set_x(dungeon_position.x * tilesize * scale + x_off);
+    set_y(dungeon_position.y * tilesize * scale + y_off);
+  } else {
+    const int x_off = 0;
+    const int y_off = 0;
+    const int tilesize = 20;
+    set_x(dungeon_position.x * tilesize * scale + x_off);
+    set_y(dungeon_position.y * tilesize * scale + y_off);
+  }
+
+  // set_x(dungeon_manager.get_player_col() * tilesize * get_global_scale() +
+  //       x_off);
+  // set_y(dungeon_manager.get_player_row() * tilesize * get_global_scale() +
+  //       y_off);
+
   if (is_spinning) {
     rotation_angle += rotation_speed;
   }
@@ -177,11 +193,22 @@ void Sprite::incr_vx(const float vx) { velocity.x += vx; }
 void Sprite::incr_vy(const float vy) { velocity.y += vy; }
 void Sprite::incr_ax(const float ax) { acceleration.x += ax; }
 void Sprite::incr_ay(const float ay) { acceleration.y += ay; }
-const float Sprite::get_ax() const { return acceleration.x; }
-const float Sprite::get_ay() const { return acceleration.y; }
-const float Sprite::get_scale() const { return scale; }
+void Sprite::flip() { set_is_flipped(!get_is_flipped()); }
+void Sprite::set_hp(const int hp) { this->hp = hp; }
+void Sprite::set_maxhp(const int maxhp) { this->maxhp = maxhp; }
+void Sprite::set_rotation_angle(const float angle) { rotation_angle = angle; }
+void Sprite::set_rotation_speed(const float speed) { rotation_speed = speed; }
+void Sprite::set_movement_type(const movement_type m) { movement = m; }
+void Sprite::set_is_spinning(const bool is) { is_spinning = is; }
+void Sprite::set_is_animating(const bool is) { is_animating = is; }
+void Sprite::set_is_flipped(const bool f) { is_flipped = f; }
+unsigned int Sprite::get_alpha() const { return alpha; }
+void Sprite::set_alpha(const unsigned int a) { alpha = a; }
+void Sprite::set_dungeon_position(const Vector2 pos) { dungeon_position = pos; }
+
 const float Sprite::get_vx() const { return velocity.x; }
 const float Sprite::get_vy() const { return velocity.y; }
+const float Sprite::get_scale() const { return scale; }
 const bool Sprite::get_is_flipped() const { return is_flipped; }
 const sprite_type Sprite::get_type() const { return type; }
 const Vector2 Sprite::get_velocity() const { return velocity; }
@@ -194,22 +221,19 @@ const int Sprite::get_height() const { return src.height * scale; }
 const int Sprite::get_anim_frames() const { return anim_frames; }
 const int Sprite::get_current_frame() const { return current_frame; }
 const bool Sprite::get_is_animating() const { return is_animating; }
-void Sprite::flip() { set_is_flipped(!get_is_flipped()); }
-void Sprite::set_hp(const int hp) { this->hp = hp; }
-void Sprite::set_maxhp(const int maxhp) { this->maxhp = maxhp; }
+const float Sprite::get_ax() const { return acceleration.x; }
+const float Sprite::get_ay() const { return acceleration.y; }
 const int Sprite::get_hp() const { return hp; }
 const int Sprite::get_maxhp() const { return maxhp; }
-void Sprite::set_rotation_angle(const float angle) { rotation_angle = angle; }
 const float Sprite::get_rotation_angle() const { return rotation_angle; }
 const bool Sprite::get_is_spinning() const { return is_spinning; }
 const Rectangle Sprite::get_hitbox() const { return hitbox; }
-void Sprite::set_rotation_speed(const float speed) { rotation_speed = speed; }
 const float Sprite::get_rotation_speed() const { return rotation_speed; }
-void Sprite::set_movement_type(const movement_type m) { movement = m; }
 const movement_type Sprite::get_movement_type() const { return movement; }
-void Sprite::set_is_spinning(const bool is) { is_spinning = is; }
-void Sprite::set_is_animating(const bool is) { is_animating = is; }
-void Sprite::set_is_flipped(const bool f) { is_flipped = f; }
+const Vector2 Sprite::get_dungeon_position() const { return dungeon_position; }
+const bool Sprite::get_is_marked_for_deletion() const {
+  return is_marked_for_deletion;
+}
 
-unsigned int Sprite::get_alpha() const { return alpha; }
-void Sprite::set_alpha(const unsigned int a) { alpha = a; }
+void Sprite::incr_dungeon_position_x(const float x) { dungeon_position.x += x; }
+void Sprite::incr_dungeon_position_y(const float y) { dungeon_position.y += y; }
