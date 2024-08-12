@@ -1,6 +1,13 @@
 #include "DungeonFloor.h"
 
-DungeonFloor::DungeonFloor() { set_grid_all(TILE_FLOOR_BASIC); }
+DungeonFloor::DungeonFloor() {
+  set_grid_all(TILE_FLOOR_BASIC);
+
+  set_grid(0, 1, TILE_VOID);
+  set_grid(1, 1, TILE_VOID);
+  set_grid(2, 1, TILE_VOID);
+  set_grid(3, 1, TILE_VOID);
+}
 
 DungeonFloor::~DungeonFloor() {}
 

@@ -2,6 +2,7 @@
 // #include "Sprite.h"
 #include "Tile.h"
 #include "mPrint.h"
+#include "raymath.h"
 
 GameplayScene::GameplayScene() {
   mPrint("GameplayScene constructor");
@@ -64,60 +65,74 @@ void GameplayScene::handle_camera_input() {
   }
 }
 
-void GameplayScene::handle_player_input() {
+void GameplayScene::handle_dungeon_move(entity_id id, Vector2 direction) {
+  // we have to check the dungeon position of the sprite
+  // if the target tile is a location we cant move to, like none, void, or wall,
+  // then we don't move
 
+  // get the current dungeon position of the sprite
+  Vector2 current_position = get_sprites()[id]->get_dungeon_position();
+  Vector2 target_position = Vector2Add(current_position, direction);
+
+  // if the locations are equal, no move is executed
+  // this way be interpeted as a "wait" action in the future
+  if (Vector2Equals(current_position, target_position)) {
+    return;
+  }
+
+  // check if the target dungeon position is valid
+  if (dungeon_floor.get_tile_type(target_position.x, target_position.y) ==
+      TILE_FLOOR_BASIC) {
+    // move the sprite to the target position
+    get_sprites()[id]->set_dungeon_position(target_position);
+  }
+}
+
+void GameplayScene::handle_player_input() {
   if (IsKeyPressed(KEY_UP)) {
-    // player_dungeon_row--;
-    get_sprites()[player_id]->incr_dungeon_position_y(-1);
+    handle_dungeon_move(player_id, (Vector2){0, -1});
   }
   if (IsKeyPressed(KEY_DOWN)) {
-    // player_dungeon_row++;
-    get_sprites()[player_id]->incr_dungeon_position_y(1);
+    handle_dungeon_move(player_id, (Vector2){0, 1});
   }
   if (IsKeyPressed(KEY_LEFT)) {
-    // player_dungeon_col--;
-    get_sprites()[player_id]->incr_dungeon_position_x(-1);
+    handle_dungeon_move(player_id, (Vector2){-1, 0});
   }
   if (IsKeyPressed(KEY_RIGHT)) {
-    // player_dungeon_col++;
-    get_sprites()[player_id]->incr_dungeon_position_x(1);
+    handle_dungeon_move(player_id, (Vector2){1, 0});
   }
 
   // diagonals and numpad keypad entry
   if (IsKeyPressed(KEY_KP_7)) {
-    get_sprites()[player_id]->incr_dungeon_position_x(-1);
-    get_sprites()[player_id]->incr_dungeon_position_y(-1);
+    handle_dungeon_move(player_id, (Vector2){-1, -1});
   }
 
   if (IsKeyPressed(KEY_KP_9)) {
-    get_sprites()[player_id]->incr_dungeon_position_x(1);
-    get_sprites()[player_id]->incr_dungeon_position_y(-1);
+    handle_dungeon_move(player_id, (Vector2){1, -1});
   }
 
   if (IsKeyPressed(KEY_KP_1)) {
-    get_sprites()[player_id]->incr_dungeon_position_x(-1);
-    get_sprites()[player_id]->incr_dungeon_position_y(1);
+    handle_dungeon_move(player_id, (Vector2){-1, 1});
   }
 
   if (IsKeyPressed(KEY_KP_3)) {
-    get_sprites()[player_id]->incr_dungeon_position_x(1);
-    get_sprites()[player_id]->incr_dungeon_position_y(1);
+    handle_dungeon_move(player_id, (Vector2){1, 1});
   }
 
   if (IsKeyPressed(KEY_KP_8)) {
-    get_sprites()[player_id]->incr_dungeon_position_y(-1);
+    handle_dungeon_move(player_id, (Vector2){0, -1});
   }
 
   if (IsKeyPressed(KEY_KP_2)) {
-    get_sprites()[player_id]->incr_dungeon_position_y(1);
+    handle_dungeon_move(player_id, (Vector2){0, 1});
   }
 
   if (IsKeyPressed(KEY_KP_4)) {
-    get_sprites()[player_id]->incr_dungeon_position_x(-1);
+    handle_dungeon_move(player_id, (Vector2){-1, 0});
   }
 
   if (IsKeyPressed(KEY_KP_6)) {
-    get_sprites()[player_id]->incr_dungeon_position_x(1);
+    handle_dungeon_move(player_id, (Vector2){1, 0});
   }
 }
 
@@ -250,13 +265,11 @@ void GameplayScene::draw_hud() {
       to_string(get_sprites()[player_id]->get_dungeon_position().x) + ", " +
       to_string(get_sprites()[player_id]->get_dungeon_position().y) + "\n" +
       "Camera: " + to_string(get_camera2d().target.x) + ", " +
-      to_string(get_camera2d().target.y) + "\n";
+      to_string(get_camera2d().target.y) + "\n" +
+      "Turn: " + to_string(turn_count) + "\n";
 
   DrawTextEx(get_global_font(), s.c_str(), (Vector2){x + 10, y + 10}, fontsize,
              0.5f, WHITE);
-  // DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
-
-  // DrawText("Press D to toggle debug panel", 10, 10, 20, WHITE);
 }
 
 void GameplayScene::cleanup() {
@@ -278,19 +291,14 @@ void GameplayScene::draw() {
   // Color clear_color = (Color){0x10, 0x10, 0x10, 0xFF};
   Color clear_color = BLACK;
   ClearBackground(clear_color);
-
-  // draw a black and white checkerboard pattern
-
   const int unit = 20;
   const int scaled_unit = unit * get_global_scale();
-
   // draw all tiles first
   for (auto &s : get_sprites()) {
     if (s.second->get_type() == SPRITETYPE_TILE) {
       s.second->draw();
     }
   }
-
   // draw all other sprites
   for (auto &s : get_sprites()) {
     if (s.second->get_type() != SPRITETYPE_TILE) {
@@ -298,19 +306,28 @@ void GameplayScene::draw() {
     }
   }
 
-  // draw a line from the sprite to the player
-  // if (s.second->get_type() == SPRITETYPE_ENEMY) {
-  //  DrawLine(s.second->get_x(), s.second->get_y(),
-  //           get_sprites()[player_id]->get_x(),
-  //           get_sprites()[player_id]->get_y(), RED);
-  //}
-  //  }
-  //}
-
   EndMode2D();
 
   handle_draw_debug_panel();
 
+  handle_popup_manager();
+
+  // if (show_test_popup) {
+  //   if (get_popup_manager() != nullptr) {
+  //     const float x = GetScreenWidth() / 2.0f - 100.0f;
+  //     const float y = GetScreenHeight() / 2.0f - 100.0f;
+  //     Vector2 s = GetWorldToScreen2D(
+  //         (Vector2){x - 50, y - 50},
+  //         get_camera2d()); // Get the screen space position for
+  //                          // a 2d camera world space position
+  //     get_popup_manager()->draw(s.x, s.y);
+  //   }
+  // }
+
+  incr_current_frame();
+}
+
+inline void GameplayScene::handle_popup_manager() {
   if (show_test_popup) {
     if (get_popup_manager() != nullptr) {
       const float x = GetScreenWidth() / 2.0f - 100.0f;
@@ -322,8 +339,6 @@ void GameplayScene::draw() {
       get_popup_manager()->draw(s.x, s.y);
     }
   }
-
-  incr_current_frame();
 }
 
 inline void GameplayScene::handle_draw_debug_panel() {
