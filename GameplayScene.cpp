@@ -301,68 +301,70 @@ void GameplayScene::draw() {
 
   for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
     for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
-      if (dungeon_floor.get_tile_type(i, j) == TILE_FLOOR_BASIC) {
-        // get the texture
-        // get the position
-        // draw the texture
-        const int x = i * 20 * get_global_scale();
-        const int y = j * 20 * get_global_scale();
-        texture_info &t = get_textures()["tile-stone"];
+      // if (dungeon_floor.get_tile_type(i, j) == TILE_FLOOR_BASIC) {
+      //   draw_tile("tile-stone", i, j);
+      // } else if (dungeon_floor.get_tile_type(i, j) == TILE_WALL_BASIC) {
+      //   draw_tile("tile-void", i, j);
+      // }
 
-        Rectangle src = {0.0f, 0.0f, (float)t.texture.width,
-                         (float)t.texture.height};
-        Rectangle dest = {(float)x, (float)y,
-                          (float)t.texture.width * get_global_scale(),
-                          (float)t.texture.height * get_global_scale()};
-        Vector2 origin = {0, 0};
-        Color color = WHITE;
-        DrawTexturePro(t.texture, src, dest, origin, 0.0f, color);
-
-      } else if (dungeon_floor.get_tile_type(i, j) == TILE_WALL_BASIC) {
-
-        const int x = i * 20 * get_global_scale();
-        const int y = j * 20 * get_global_scale();
-        texture_info &t = get_textures()["tile-void"];
-
-        Rectangle src = {0.0f, 0.0f, (float)t.texture.width,
-                         (float)t.texture.height};
-        Rectangle dest = {(float)x, (float)y,
-                          (float)t.texture.width * get_global_scale(),
-                          (float)t.texture.height * get_global_scale()};
-        Vector2 origin = {0, 0};
-        Color color = WHITE;
-
-        DrawTexturePro(t.texture, src, dest, origin, 0.0f, color);
-      }
+      const tile_type t = dungeon_floor.get_tile_type(i, j);
+      const string s = tile_key_for_type(t);
+      draw_tile(s, i, j);
     }
   }
 
   // draw all other sprites
   for (auto &s : get_sprites()) {
-    // if (s.second->get_type() != SPRITETYPE_TILE) {
     s.second->draw();
-    //}
   }
 
   EndMode2D();
-
   handle_draw_debug_panel();
-
   handle_popup_manager();
-
-  // if (show_test_popup) {
-  //   if (get_popup_manager() != nullptr) {
-  //     const float x = GetScreenWidth() / 2.0f - 100.0f;
-  //     const float y = GetScreenHeight() / 2.0f - 100.0f;
-  //     Vector2 s = GetWorldToScreen2D(
-  //         (Vector2){x - 50, y - 50},
-  //         get_camera2d()); // Get the screen space position for
-  //                          // a 2d camera world space position
-  //     get_popup_manager()->draw(s.x, s.y);
-  //   }
-  // }
-
   incr_current_frame();
+}
+
+const string GameplayScene::tile_key_for_type(const tile_type t) {
+  string tile_key = "tile-";
+  switch (t) {
+  case TILE_FLOOR_BASIC:
+    tile_key += "stone";
+    break;
+
+  case TILE_FLOOR_STONE:
+    tile_key += "stone";
+    break;
+
+  case TILE_FLOOR_WOOD:
+    tile_key += "wood";
+    break;
+
+  case TILE_FLOOR_DIRT:
+    tile_key += "dirt";
+    break;
+
+  case TILE_WALL_BASIC:
+    tile_key += "void";
+    break;
+  default:
+    tile_key += "void";
+    break;
+  }
+  return tile_key;
+}
+
+inline void GameplayScene::draw_tile(const string tile_key, const int i,
+                                     const int j) {
+  const int x = i * 20 * get_global_scale();
+  const int y = j * 20 * get_global_scale();
+  texture_info &t = get_textures()[tile_key];
+  Rectangle src = {0.0f, 0.0f, (float)t.texture.width, (float)t.texture.height};
+  Rectangle dest = {(float)x, (float)y,
+                    (float)t.texture.width * get_global_scale(),
+                    (float)t.texture.height * get_global_scale()};
+  Vector2 origin = {0, 0};
+  Color color = WHITE;
+  DrawTexturePro(t.texture, src, dest, origin, 0.0f, color);
 }
 
 inline void GameplayScene::handle_popup_manager() {

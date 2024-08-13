@@ -101,14 +101,50 @@ bool Scene::load_textures() {
 
 bool Scene::load_texture(const char *asset_name, const char *asset_path,
                          const int num_frames, const int is_player) {
-  mPrint("Attempting to load texture: " + string(asset_name));
+
+  string asset_name_str = string(asset_name);
+
+  mPrint("Attempting to load texture: " + asset_name_str);
+
+  // if the asset name begins with "tile-", then it is assumed to be a tile
+  // we want to experiment with applying custom dithering to the loaded texture
+  // before storing it in the textures map for later use
+  //
+  // we might even consider converting what we store in the textures map
+  // currently its string->texture_info
+  // but we could make it string->vector<texture_info>
+  // which would allow for us to store a number of different texture_info
+  // objects for each asset name this would require a little refactoring for
+  // spawning entities and drawing the tiles but it shouldn't be too bad
+
   Texture2D t = LoadTexture(asset_path);
   texture_info ti;
+
+  if (t.id == 0) {
+    mPrint("Error loading texture: " + string(asset_path));
+    return false;
+  }
+
+  if (asset_name_str.find("tile-") != string::npos) {
+    //  apply custom dithering
+    Image img = LoadImageFromTexture(t);
+    ImageDither(&img, 4, 4, 4, 4);
+
+    Texture2D tt = LoadTextureFromImage(img);
+    UnloadImage(img);
+    t = tt;
+    //  t = LoadTextureFromImage(img);
+    //  UnloadImage(img);
+    //}
+  }
+
   ti.texture = t;
   ti.num_frames = num_frames;
   ti.is_player = is_player;
   ti.asset_path = asset_path;
+
   textures[asset_name] = ti;
+
   return true;
 }
 

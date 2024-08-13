@@ -18,6 +18,8 @@ public:
   void draw_debug_panel();
   void draw_hud();
   void draw();
+  inline void draw_tile(const string tile_key, const int i, const int j);
+  const string tile_key_for_type(const tile_type t);
 
   void close();
 

@@ -4,7 +4,7 @@ DungeonFloor::DungeonFloor() {
   set_grid_all(TILE_FLOOR_BASIC);
 
   for (int i = 0; i < gridsize; i++) {
-    set_grid(i, 0, TILE_VOID);
+    set_grid(i, 0, TILE_FLOOR_WOOD);
   }
 }
 
