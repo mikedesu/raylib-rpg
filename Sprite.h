@@ -7,14 +7,14 @@ typedef enum {
   SPRITETYPE_NONE,
   SPRITETYPE_TITLE,
   SPRITETYPE_PLAYER,
-  SPRITETYPE_TILE,
-  SPRITETYPE_ENEMY,
-  // SPRITETYPE_KNIFE,
-  //  SPRITETYPE_PIPEBASE,
-  //  SPRITETYPE_RED_BRICK,
-  //  SPRITETYPE_BULLET,
-  SPRITETYPE_SOULSHARD,
-  SPRITETYPE_POWERUP_HEART,
+  // SPRITETYPE_ENEMY,
+  // SPRITETYPE_SOULSHARD,
+  // SPRITETYPE_POWERUP_HEART,
+  // SPRITETYPE_TILE,
+  //  SPRITETYPE_KNIFE,
+  //   SPRITETYPE_PIPEBASE,
+  //   SPRITETYPE_RED_BRICK,
+  //   SPRITETYPE_BULLET,
   SPRITETYPE_COUNT
 } sprite_type;
 
@@ -58,6 +58,7 @@ public:
   const float get_rotation_angle() const;
   const float get_rotation_speed() const;
   const movement_type get_movement_type() const;
+  const Vector2 get_dungeon_position() const;
 
   void incr_frame();
   void incr_ax(const float ax);
@@ -88,11 +89,10 @@ public:
   void set_rotation_speed(const float speed);
   void set_movement_type(const movement_type m);
 
-  unsigned int get_alpha() const;
+  const unsigned int get_alpha() const;
   void set_alpha(const unsigned int alpha);
 
   void set_dungeon_position(const Vector2 pos);
-  const Vector2 get_dungeon_position() const;
 
   void incr_dungeon_position_x(const float x);
   void incr_dungeon_position_y(const float y);

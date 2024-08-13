@@ -191,15 +191,15 @@ bool GameplayScene::init() {
 
     spawn_player(offset_x, offset_y);
 
-    for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
-      for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
-        if (dungeon_floor.get_tile_type(i, j) == TILE_FLOOR_BASIC) {
-          spawn_tile_stone(i, j, i * 20, j * 20);
-        } else if (dungeon_floor.get_tile_type(i, j) == TILE_WALL_BASIC) {
-          spawn_tile_void(i * 20, j * 20);
-        }
-      }
-    }
+    // for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
+    //   for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
+    //     if (dungeon_floor.get_tile_type(i, j) == TILE_FLOOR_BASIC) {
+    //       spawn_tile_stone(i, j, i * 20, j * 20);
+    //     } else if (dungeon_floor.get_tile_type(i, j) == TILE_WALL_BASIC) {
+    //       spawn_tile_void(i * 20, j * 20);
+    //     }
+    //   }
+    // }
 
     mPrint("Setting camera offset...");
     get_camera2d().target.x = -450;
@@ -294,16 +294,50 @@ void GameplayScene::draw() {
   // const int unit = 20;
   //  const int scaled_unit = unit * get_global_scale();
   //   draw all tiles first
-  for (auto &s : get_sprites()) {
-    if (s.second->get_type() == SPRITETYPE_TILE) {
-      s.second->draw();
+
+  for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
+    for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
+      if (dungeon_floor.get_tile_type(i, j) == TILE_FLOOR_BASIC) {
+        // get the texture
+        // get the position
+        // draw the texture
+        const int x = i * 20 * get_global_scale();
+        const int y = j * 20 * get_global_scale();
+        texture_info &t = get_textures()["tile-stone"];
+
+        Rectangle src = {0.0f, 0.0f, (float)t.texture.width,
+                         (float)t.texture.height};
+        Rectangle dest = {(float)x, (float)y,
+                          (float)t.texture.width * get_global_scale(),
+                          (float)t.texture.height * get_global_scale()};
+        Vector2 origin = {0, 0};
+        Color color = WHITE;
+        DrawTexturePro(t.texture, src, dest, origin, 0.0f, color);
+
+      } else if (dungeon_floor.get_tile_type(i, j) == TILE_WALL_BASIC) {
+
+        const int x = i * 20 * get_global_scale();
+        const int y = j * 20 * get_global_scale();
+        texture_info &t = get_textures()["tile-void"];
+
+        Rectangle src = {0.0f, 0.0f, (float)t.texture.width,
+                         (float)t.texture.height};
+        Rectangle dest = {(float)x, (float)y,
+                          (float)t.texture.width * get_global_scale(),
+                          (float)t.texture.height * get_global_scale()};
+        Vector2 origin = {0, 0};
+        Color color = WHITE;
+
+        DrawTexturePro(t.texture, src, dest, origin, 0.0f, color);
+      }
     }
   }
+
   // draw all other sprites
   for (auto &s : get_sprites()) {
-    if (s.second->get_type() != SPRITETYPE_TILE) {
-      s.second->draw();
-    }
+    // if (s.second->get_type() != SPRITETYPE_TILE) {
+    s.second->draw();
+    //}
   }
 
   EndMode2D();

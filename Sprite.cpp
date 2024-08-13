@@ -130,15 +130,6 @@ void Sprite::incr_frame() {
 }
 
 void Sprite::update() {
-  // update the velocity
-  // if (movement == movement_type::MOVEMENT_TYPE_NORMAL) {
-  // dest.x += velocity.x;
-  // dest.y += velocity.y;
-  //}
-  // velocity.x += acceleration.x;
-  // velocity.y += acceleration.y;
-  // origin = (Vector2){0, 0};
-
   if (type == sprite_type::SPRITETYPE_PLAYER) {
     const int x_off = 0;
     const int y_off = -10 * scale;
@@ -152,11 +143,6 @@ void Sprite::update() {
     set_x(dungeon_position.x * tilesize * scale + x_off);
     set_y(dungeon_position.y * tilesize * scale + y_off);
   }
-
-  // set_x(dungeon_manager.get_player_col() * tilesize * get_global_scale() +
-  //       x_off);
-  // set_y(dungeon_manager.get_player_row() * tilesize * get_global_scale() +
-  //       y_off);
 
   if (is_spinning) {
     rotation_angle += rotation_speed;
@@ -202,10 +188,10 @@ void Sprite::set_movement_type(const movement_type m) { movement = m; }
 void Sprite::set_is_spinning(const bool is) { is_spinning = is; }
 void Sprite::set_is_animating(const bool is) { is_animating = is; }
 void Sprite::set_is_flipped(const bool f) { is_flipped = f; }
-unsigned int Sprite::get_alpha() const { return alpha; }
 void Sprite::set_alpha(const unsigned int a) { alpha = a; }
 void Sprite::set_dungeon_position(const Vector2 pos) { dungeon_position = pos; }
 
+const unsigned int Sprite::get_alpha() const { return alpha; }
 const float Sprite::get_vx() const { return velocity.x; }
 const float Sprite::get_vy() const { return velocity.y; }
 const float Sprite::get_scale() const { return scale; }
