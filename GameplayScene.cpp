@@ -291,9 +291,9 @@ void GameplayScene::draw() {
   // Color clear_color = (Color){0x10, 0x10, 0x10, 0xFF};
   Color clear_color = BLACK;
   ClearBackground(clear_color);
-  const int unit = 20;
-  const int scaled_unit = unit * get_global_scale();
-  // draw all tiles first
+  // const int unit = 20;
+  //  const int scaled_unit = unit * get_global_scale();
+  //   draw all tiles first
   for (auto &s : get_sprites()) {
     if (s.second->get_type() == SPRITETYPE_TILE) {
       s.second->draw();
