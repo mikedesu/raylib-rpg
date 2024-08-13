@@ -281,7 +281,7 @@ void GameplayScene::draw_hud() {
       to_string(get_sprites()[player_id]->get_dungeon_position().y) + "\n" +
       "Camera: " + to_string(get_camera2d().target.x) + ", " +
       to_string(get_camera2d().target.y) + "\n" +
-      "Turn: " + to_string(turn_count) + "\n";
+      "Turn: " + to_string(turn_count) + "\n" + "Message Log: " + "\n\n";
 
   DrawTextEx(get_global_font(), s.c_str(), (Vector2){x + 10, y + 10}, fontsize,
              0.5f, WHITE);
