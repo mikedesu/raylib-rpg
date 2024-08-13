@@ -3,10 +3,9 @@
 DungeonFloor::DungeonFloor() {
   set_grid_all(TILE_FLOOR_BASIC);
 
-  set_grid(0, 1, TILE_VOID);
-  set_grid(1, 1, TILE_VOID);
-  set_grid(2, 1, TILE_VOID);
-  set_grid(3, 1, TILE_VOID);
+  for (int i = 0; i < gridsize; i++) {
+    set_grid(i, 0, TILE_VOID);
+  }
 }
 
 DungeonFloor::~DungeonFloor() {}
@@ -45,5 +44,8 @@ const tile_type DungeonFloor::get_tile_type(const int col,
 
   return grid[col][row].get_type();
 }
-void DungeonFloor::set_tile_type(const int col, const int row,
-                                 const tile_type value) {}
+
+// void DungeonFloor::set_tile_type(const int col, const int row,
+//                                  const tile_type value) {
+//
+// }

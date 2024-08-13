@@ -8,3 +8,4 @@
 - [ ] doors
 - [ ] trap tiles
 - [ ] the tiles have to be displayed in such a way as that, if a tile type were to change, its associated display also changes
+- [ ] message log / event log

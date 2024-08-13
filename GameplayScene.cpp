@@ -134,6 +134,11 @@ void GameplayScene::handle_player_input() {
   if (IsKeyPressed(KEY_KP_6)) {
     handle_dungeon_move(player_id, (Vector2){1, 0});
   }
+
+  if (IsKeyPressed(KEY_R)) {
+    // change tile at 0, 0 to floor
+    dungeon_floor.set_grid(0, 0, TILE_FLOOR_BASIC);
+  }
 }
 
 void GameplayScene::handle_input() {
@@ -220,21 +225,20 @@ entity_id GameplayScene::spawn_player(float x, float y) {
   return id;
 }
 
-entity_id GameplayScene::spawn_tile_stone(float i, float j, float x, float y) {
-  entity_id id = spawn_entity("tile-stone", x, y, SPRITETYPE_TILE, false);
+// entity_id GameplayScene::spawn_tile_stone(float i, float j, float x, float y)
+// {
+//   entity_id id = spawn_entity("tile-stone", x, y, SPRITETYPE_TILE, false);
+//   // set the dungeon position of the sprite
+//   get_sprites()[id]->set_dungeon_position((Vector2){i, j});
+//   // player_id = id;
+//   return id;
+// }
 
-  // set the dungeon position of the sprite
-  get_sprites()[id]->set_dungeon_position((Vector2){i, j});
-
-  // player_id = id;
-  return id;
-}
-
-entity_id GameplayScene::spawn_tile_void(float x, float y) {
-  entity_id id = spawn_entity("tile-void", x, y, SPRITETYPE_TILE, false);
-  player_id = id;
-  return id;
-}
+// entity_id GameplayScene::spawn_tile_void(float x, float y) {
+//   entity_id id = spawn_entity("tile-void", x, y, SPRITETYPE_TILE, false);
+//   player_id = id;
+//   return id;
+// }
 
 void GameplayScene::draw_debug_panel() {
   string camera_info_str =

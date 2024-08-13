@@ -34,8 +34,8 @@ public:
   entity_id spawn_player(float x, float y);
 
   void set_scale(const float f);
-  entity_id spawn_tile_stone(float i, float j, float x, float y);
-  entity_id spawn_tile_void(float x, float y);
+  // entity_id spawn_tile_stone(float i, float j, float x, float y);
+  // entity_id spawn_tile_void(float x, float y);
 
 private:
   bool show_test_popup = true;
