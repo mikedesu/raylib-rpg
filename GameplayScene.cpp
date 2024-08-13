@@ -71,21 +71,32 @@ void GameplayScene::handle_dungeon_move(entity_id id, Vector2 direction) {
   // then we don't move
 
   // get the current dungeon position of the sprite
-  Vector2 current_position = get_sprites()[id]->get_dungeon_position();
-  Vector2 target_position = Vector2Add(current_position, direction);
+  Vector2 cur_pos = get_sprites()[id]->get_dungeon_position();
+  Vector2 t_pos = Vector2Add(cur_pos, direction);
 
   // if the locations are equal, no move is executed
   // this way be interpeted as a "wait" action in the future
-  if (Vector2Equals(current_position, target_position)) {
+  if (Vector2Equals(cur_pos, t_pos)) {
     return;
   }
 
-  // check if the target dungeon position is valid
-  if (dungeon_floor.get_tile_type(target_position.x, target_position.y) ==
-      TILE_FLOOR_BASIC) {
-    // move the sprite to the target position
-    get_sprites()[id]->set_dungeon_position(target_position);
+  tile_type t = dungeon_floor.get_tile_type(t_pos.x, t_pos.y);
+
+  switch (t) {
+  case TILE_FLOOR_BASIC:
+  case TILE_FLOOR_STONE:
+  case TILE_FLOOR_WOOD:
+  case TILE_FLOOR_DIRT:
+    get_sprites()[id]->set_dungeon_position(t_pos);
+    break;
+  default:
+    break;
   }
+
+  // check if the target dungeon position is valid
+  // if (t == TILE_FLOOR_BASIC) {
+  // move the sprite to the target position
+  //}
 }
 
 void GameplayScene::handle_player_input() {

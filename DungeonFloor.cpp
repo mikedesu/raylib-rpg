@@ -5,7 +5,11 @@ DungeonFloor::DungeonFloor() {
 
   for (int i = 0; i < gridsize; i++) {
     set_grid(i, 0, TILE_FLOOR_WOOD);
+    set_grid(i, 1, TILE_FLOOR_DIRT);
   }
+
+  // for (int i = 0; i < gridsize; i++) {
+  // }
 }
 
 DungeonFloor::~DungeonFloor() {}
