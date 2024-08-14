@@ -48,29 +48,10 @@ bool Game::init() {
     // init popupmanager
     mPrint("Initializing popup manager...");
     popup_manager = make_shared<PopupManager>();
-    // popup_manager->render("Hello, world!");
-    // popup_manager->render("Hello, world!");
 
     mPrint("Loading scene...");
 
-    shared_ptr<Scene> title_scene = make_shared<TitleScene>();
-    title_scene->set_id(next_scene_id++);
-    title_scene->set_popup_manager(popup_manager);
-    // title_scene->set_alpha(1.0f);
-    scenes[title_scene->get_id()] = title_scene;
-    scene_keys["title"] = title_scene->get_id();
-
-    shared_ptr<Scene> gameplay_scene = make_shared<GameplayScene>();
-    gameplay_scene->set_id(next_scene_id++);
-    gameplay_scene->set_popup_manager(popup_manager);
-    scenes[gameplay_scene->get_id()] = gameplay_scene;
-    scene_keys["gameplay"] = gameplay_scene->get_id();
-
-    shared_ptr<Scene> gameover_scene = make_shared<GameoverScene>();
-    gameover_scene->set_id(next_scene_id++);
-    gameover_scene->set_popup_manager(popup_manager);
-    scenes[gameover_scene->get_id()] = gameover_scene;
-    scene_keys["gameover"] = gameover_scene->get_id();
+    spawn_scenes();
 
     for (auto &scene : scenes) {
       mPrint("Initializing scenes...");
@@ -86,9 +67,9 @@ bool Game::init() {
       return false;
     }
 
-    // current_scene_id = scene_keys["title"];
-    current_scene_id = scene_keys["gameplay"];
-    //  current_scene_id = scene_keys["gameover"];
+    current_scene_id = scene_keys["title"];
+    // current_scene_id = scene_keys["gameplay"];
+    //   current_scene_id = scene_keys["gameover"];
 
     mPrint("Loading render texture...");
     target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
@@ -106,6 +87,26 @@ bool Game::init() {
     has_been_initialized = true;
   }
   return true;
+}
+
+void Game::spawn_scenes() {
+  shared_ptr<Scene> title_scene = make_shared<TitleScene>();
+  title_scene->set_id(next_scene_id++);
+  title_scene->set_popup_manager(popup_manager);
+  scenes[title_scene->get_id()] = title_scene;
+  scene_keys["title"] = title_scene->get_id();
+
+  shared_ptr<Scene> gameplay_scene = make_shared<GameplayScene>();
+  gameplay_scene->set_id(next_scene_id++);
+  gameplay_scene->set_popup_manager(popup_manager);
+  scenes[gameplay_scene->get_id()] = gameplay_scene;
+  scene_keys["gameplay"] = gameplay_scene->get_id();
+
+  shared_ptr<Scene> gameover_scene = make_shared<GameoverScene>();
+  gameover_scene->set_id(next_scene_id++);
+  gameover_scene->set_popup_manager(popup_manager);
+  scenes[gameover_scene->get_id()] = gameover_scene;
+  scene_keys["gameover"] = gameover_scene->get_id();
 }
 
 void Game::set_camera_default_values() {

@@ -122,16 +122,18 @@ private:
   unordered_map<string, texture_info> textures;
   unordered_map<entity_id, shared_ptr<Sprite>> sprites;
   unordered_map<entity_id, shared_ptr<Sprite>> bgsprites;
-  // unordered_map<entity_id, bool> gravity;
 
   vector<entity_id> entity_ids;
   vector<entity_id> bg_entity_ids;
 
   Font global_font;
+
   Camera2D camera2d = {0};
+
   Mix_Music *music = NULL;
 
   float global_scale = 1.0f;
+  float alpha = 1.0f;
 
   bool has_been_initialized = false;
   bool debug_panel_on = true;
@@ -148,9 +150,9 @@ private:
   // unordered_map<entity_id, Vector2> stars;
 
   scene_transition transition = SCENE_TRANSITION_NONE;
-  float alpha = 1.0f;
 
   scene_id id;
+
   scene_type scenetype;
 
   shared_ptr<PopupManager> popup_manager;

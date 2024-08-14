@@ -10,7 +10,7 @@ TitleScene::TitleScene() {
   mPrint("TitleScene constructor");
   set_control_mode(CONTROL_MODE_PLAYER);
   set_texture_filepath("title_textures.txt");
-  set_global_scale(32.0f);
+  // set_global_scale(32.0f);
   set_scene_transition(SCENE_TRANSITION_IN);
   set_scene_type(SCENE_TYPE_TITLE);
 

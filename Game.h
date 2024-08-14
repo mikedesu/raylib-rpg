@@ -1,14 +1,13 @@
 #pragma once
 
-#include "control_mode.h"
-#include "entity_id.h"
-#include "texture_info.h"
-
 #include "GameoverScene.h"
 #include "GameplayScene.h"
 #include "PopupManager.h"
 #include "Sprite.h"
 #include "TitleScene.h"
+#include "control_mode.h"
+#include "entity_id.h"
+#include "texture_info.h"
 
 #include <functional>
 #include <memory>
@@ -34,6 +33,8 @@ public:
   void handle_input();
   void handle_camera_input();
   void handle_player_input();
+  void handle_transition_in();
+  void handle_transition_out();
   void draw_debug_panel();
   void load_fonts();
   void set_global_scale(float s);
@@ -44,9 +45,8 @@ public:
   void set_camera_default_values();
   void set_has_been_initialized(bool b);
   void close();
-  void handle_transition_in();
-  void handle_transition_out();
   void cleanup();
+  void spawn_scenes();
 
   bool get_has_been_initialized();
   bool init();
@@ -65,17 +65,25 @@ private:
   shared_ptr<PopupManager> popup_manager;
 
   entity_id player_id;
+
   scene_id current_scene_id;
 
   bool has_been_initialized;
   bool debug_panel_on;
+
   float global_scale;
+
   unsigned int current_frame;
+
   control_mode controlmode;
+
   string window_title;
 
   Font global_font;
+
   Camera2D camera2d;
+
   RenderTexture target;
+
   Rectangle screen_rect;
 };
