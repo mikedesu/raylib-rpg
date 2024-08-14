@@ -1,6 +1,7 @@
 #include "TitleScene.h"
 
 #include "mPrint.h"
+#include <raylib.h>
 // #include <cassert>
 // #include <cstring>
 
@@ -50,16 +51,16 @@ bool TitleScene::init() {
       return false;
     }
 
-    const int w = get_textures()["title"].texture.width;
-    // const int h = get_textures()["title"].texture.height;
-    //  const int off_w = 0;
-    //  const int off_h = h / 2;
+    // const int w = get_textures()["title"].texture.width;
+    //  const int h = get_textures()["title"].texture.height;
+    //   const int off_w = 0;
+    //   const int off_h = h / 2;
 
-    const int x = w / 8.0f * get_global_scale();
-    const int y = GetScreenHeight() / 4;
-    // entity_id title_id = spawn_entity("title", x, y, SPRITETYPE_PLAYER,
-    // false);
-    spawn_entity("title", x, y, SPRITETYPE_PLAYER, false);
+    // const int x = w / 8.0f * get_global_scale();
+    // const int y = GetScreenHeight() / 4;
+    //  entity_id title_id = spawn_entity("title", x, y, SPRITETYPE_PLAYER,
+    //  false);
+    // spawn_entity("title", x, y, SPRITETYPE_PLAYER, false);
 
     // if (IsMusicReady(get_music())) {
     //   mPrint("### MUSIC IS READY ###");
@@ -84,23 +85,42 @@ void TitleScene::draw() {
   Color clear_color = BLACK;
   ClearBackground(clear_color);
 
-  for (auto &s : get_sprites()) {
-    s.second->draw();
-    if (get_debug_panel_on()) {
-      s.second->draw_hitbox();
-    }
+  texture_info &title_info = get_textures()["title"];
+  const float w_src = title_info.texture.width;
+  const float h_src = title_info.texture.height;
+  // const float w_dst = GetScreenWidth() / 8.0f;
+  // const float h_dst = GetScreenHeight() / 8.0f;
+  float w_dst = w_src;
+  float h_dst = h_src;
+  while (w_dst < GetScreenWidth() && h_dst < GetScreenHeight()) {
+    w_dst *= 2;
+    h_dst *= 2;
   }
+  w_dst /= 2;
+  h_dst /= 2;
+  const float x = GetScreenWidth() / 2.0f - w_dst / 2.0f;
+  const float y = GetScreenHeight() / 2.0f - h_dst;
 
-  const float x =
-      GetScreenWidth() / 2.0f - get_textures()["title"].texture.width / 2.0f;
+  DrawTexturePro(title_info.texture, (Rectangle){0, 0, w_src, h_src},
+                 (Rectangle){x, y, w_dst, h_dst}, (Vector2){0, 0}, 0, WHITE);
 
-  const float y0 = GetScreenHeight() / 4.0f - 32.0f;
-  // const float y1 = GetScreenHeight() * 3.0f / 4.0f;
+  // for (auto &s : get_sprites()) {
+  //   s.second->draw();
+  //   if (get_debug_panel_on()) {
+  //     s.second->draw_hitbox();
+  //   }
+  // }
+
+  // const float x =
+  //     GetScreenWidth() / 2.0f - get_textures()["title"].texture.width / 2.0f;
+
+  // const float y0 = GetScreenHeight() / 4.0f - 32.0f;
+  //  const float y1 = GetScreenHeight() * 3.0f / 4.0f;
 
   // DrawTextEx(global_font, "@evildojo666 presents", (Vector2){x, y0}, 32,
   // 0.5f,
   //            WHITE);
-  DrawText("@evildojo666 presents", x, y0, 32, WHITE);
+  // DrawText("@evildojo666 presents", x, y0, 32, WHITE);
 
   // DrawTextEx(global_font, "by darkmage", (Vector2){x, y1}, 32, 0.5f,
   // WHITE);
