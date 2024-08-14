@@ -3,6 +3,7 @@
 // #include "DungeonManager.h"
 #include "DungeonFloor.h"
 #include "Scene.h"
+#include <vector>
 
 class GameplayScene : public Scene {
 public:
@@ -47,4 +48,6 @@ private:
   unsigned int turn_count = 0;
 
   DungeonFloor dungeon_floor;
+
+  vector<string> message_log;
 };

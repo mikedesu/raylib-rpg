@@ -82,14 +82,25 @@ void GameplayScene::handle_dungeon_move(entity_id id, Vector2 direction) {
 
   tile_type t = dungeon_floor.get_tile_type(t_pos.x, t_pos.y);
 
+  mPrint("Tile type: " + to_string(t));
+
+  // message_log.push_back(to_string(id) + " moving to " + to_string(t_pos.x) +
+  //                       ", " + to_string(t_pos.y));
+
   switch (t) {
   case TILE_FLOOR_BASIC:
   case TILE_FLOOR_STONE:
   case TILE_FLOOR_WOOD:
   case TILE_FLOOR_DIRT:
     get_sprites()[id]->set_dungeon_position(t_pos);
+    message_log.push_back(to_string(id) + " moved to " +
+                          to_string((int)t_pos.x) + ", " +
+                          to_string((int)t_pos.y));
     break;
   default:
+    message_log.push_back(to_string(id) + " cannot move to " +
+                          to_string((int)t_pos.x) + ", " +
+                          to_string((int)t_pos.y));
     break;
   }
 
@@ -271,19 +282,28 @@ void GameplayScene::draw_hud() {
   const int h = GetScreenHeight();
   const float x = GetScreenWidth() - w;
   const int y = 0;
-  const int fontsize = 16;
+  const int fontsize = 32;
 
   DrawRectangle(x, y, w, h, BLACK);
   // draw some text
   const string s =
       "Player Position: " +
-      to_string(get_sprites()[player_id]->get_dungeon_position().x) + ", " +
-      to_string(get_sprites()[player_id]->get_dungeon_position().y) + "\n" +
-      "Camera: " + to_string(get_camera2d().target.x) + ", " +
-      to_string(get_camera2d().target.y) + "\n" +
-      "Turn: " + to_string(turn_count) + "\n" + "Message Log: " + "\n\n";
+      to_string((int)get_sprites()[player_id]->get_dungeon_position().x) +
+      ", " +
+      to_string((int)get_sprites()[player_id]->get_dungeon_position().y) +
+      "\n" + "Camera: " + to_string((int)get_camera2d().target.x) + ", " +
+      to_string((int)get_camera2d().target.y) + "\n" +
+      "Turn: " + to_string(turn_count) + "\n" + "Message Log: \n";
 
-  DrawTextEx(get_global_font(), s.c_str(), (Vector2){x + 10, y + 10}, fontsize,
+  string messages = "";
+  // iterate backwards thru message_log and construct a big string
+  for (int i = (int)message_log.size() - 1; i >= 0; i--) {
+    messages += message_log[i] + "\n";
+  }
+
+  const string s2 = s + messages;
+
+  DrawTextEx(get_global_font(), s2.c_str(), (Vector2){x + 10, y + 10}, fontsize,
              0.5f, WHITE);
 }
 
