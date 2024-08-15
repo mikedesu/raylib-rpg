@@ -6,7 +6,7 @@ FLAGS=-Wall
 
 LIBS=-lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -lSDL2 -lSDL2_mixer
 
-all: game test
+all: game 
 
 
 game: $(OBJ_FILES_WITH_MAIN)

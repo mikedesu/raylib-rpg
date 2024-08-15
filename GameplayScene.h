@@ -32,9 +32,14 @@ public:
   void update_player_movement();
   void update_enemy_movement();
   void handle_player_collision();
-  void handle_dungeon_move(entity_id id, Vector2 direction);
 
-  entity_id spawn_player(float x, float y);
+  void handle_dungeon_move_pos(const entity_id id, const Vector2 c_pos,
+                               const Vector2 t_pos);
+
+  void handle_dungeon_move_dir(const entity_id id, const Vector2 direction);
+
+  const entity_id spawn_player(float x, float y);
+  const entity_id spawn_goblin(float x, float y);
 
   void set_scale(const float f);
   // entity_id spawn_tile_stone(float i, float j, float x, float y);

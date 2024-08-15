@@ -189,7 +189,13 @@ void Sprite::set_is_spinning(const bool is) { is_spinning = is; }
 void Sprite::set_is_animating(const bool is) { is_animating = is; }
 void Sprite::set_is_flipped(const bool f) { is_flipped = f; }
 void Sprite::set_alpha(const unsigned int a) { alpha = a; }
-void Sprite::set_dungeon_position(const Vector2 pos) { dungeon_position = pos; }
+void Sprite::set_dungeon_position(const Vector2 pos) {
+  // we want to forbid x,y values below 0
+  if (pos.x < 0 || pos.y < 0) {
+    return;
+  }
+  dungeon_position = pos;
+}
 
 const unsigned int Sprite::get_alpha() const { return alpha; }
 const float Sprite::get_vx() const { return velocity.x; }

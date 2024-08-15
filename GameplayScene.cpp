@@ -66,24 +66,16 @@ void GameplayScene::handle_camera_input() {
   }
 }
 
-void GameplayScene::handle_dungeon_move(entity_id id, Vector2 direction) {
-  // we have to check the dungeon position of the sprite
-  // if the target tile is a location we cant move to, like none, void, or wall,
-  // then we don't move
-
-  // get the current dungeon position of the sprite
-  Vector2 cur_pos = get_sprites()[id]->get_dungeon_position();
-  Vector2 t_pos = Vector2Add(cur_pos, direction);
-
-  // if the locations are equal, no move is executed
-  // this way be interpeted as a "wait" action in the future
-  if (Vector2Equals(cur_pos, t_pos)) {
+void GameplayScene::handle_dungeon_move_pos(const entity_id id,
+                                            const Vector2 c_pos,
+                                            const Vector2 t_pos) {
+  if (Vector2Equals(c_pos, t_pos)) {
     return;
   }
 
   tile_type t = dungeon_floor.get_tile_type(t_pos.x, t_pos.y);
 
-  mPrint("Tile type: " + to_string(t));
+  // mPrint("Tile type: " + to_string(t));
 
   // message_log.push_back(to_string(id) + " moving to " + to_string(t_pos.x) +
   //                       ", " + to_string(t_pos.y));
@@ -105,6 +97,21 @@ void GameplayScene::handle_dungeon_move(entity_id id, Vector2 direction) {
     //                       to_string((int)t_pos.y));
     break;
   }
+}
+
+void GameplayScene::handle_dungeon_move_dir(const entity_id id,
+                                            const Vector2 direction) {
+  // we have to check the dungeon position of the sprite
+  // if the target tile is a location we cant move to, like none, void, or wall,
+  // then we don't move
+
+  // get the current dungeon position of the sprite
+  Vector2 cur_pos = get_sprites()[id]->get_dungeon_position();
+  Vector2 t_pos = Vector2Add(cur_pos, direction);
+
+  // if the locations are equal, no move is executed
+  // this way be interpeted as a "wait" action in the future
+  handle_dungeon_move_pos(id, cur_pos, t_pos);
 
   // check if the target dungeon position is valid
   // if (t == TILE_FLOOR_BASIC) {
@@ -114,49 +121,49 @@ void GameplayScene::handle_dungeon_move(entity_id id, Vector2 direction) {
 
 void GameplayScene::handle_player_input() {
   if (IsKeyPressed(KEY_UP)) {
-    handle_dungeon_move(player_id, (Vector2){0, -1});
+    handle_dungeon_move_dir(player_id, (Vector2){0, -1});
   }
   if (IsKeyPressed(KEY_DOWN)) {
-    handle_dungeon_move(player_id, (Vector2){0, 1});
+    handle_dungeon_move_dir(player_id, (Vector2){0, 1});
   }
   if (IsKeyPressed(KEY_LEFT)) {
-    handle_dungeon_move(player_id, (Vector2){-1, 0});
+    handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
   }
   if (IsKeyPressed(KEY_RIGHT)) {
-    handle_dungeon_move(player_id, (Vector2){1, 0});
+    handle_dungeon_move_dir(player_id, (Vector2){1, 0});
   }
 
   // diagonals and numpad keypad entry
   if (IsKeyPressed(KEY_KP_7)) {
-    handle_dungeon_move(player_id, (Vector2){-1, -1});
+    handle_dungeon_move_dir(player_id, (Vector2){-1, -1});
   }
 
   if (IsKeyPressed(KEY_KP_9)) {
-    handle_dungeon_move(player_id, (Vector2){1, -1});
+    handle_dungeon_move_dir(player_id, (Vector2){1, -1});
   }
 
   if (IsKeyPressed(KEY_KP_1)) {
-    handle_dungeon_move(player_id, (Vector2){-1, 1});
+    handle_dungeon_move_dir(player_id, (Vector2){-1, 1});
   }
 
   if (IsKeyPressed(KEY_KP_3)) {
-    handle_dungeon_move(player_id, (Vector2){1, 1});
+    handle_dungeon_move_dir(player_id, (Vector2){1, 1});
   }
 
   if (IsKeyPressed(KEY_KP_8)) {
-    handle_dungeon_move(player_id, (Vector2){0, -1});
+    handle_dungeon_move_dir(player_id, (Vector2){0, -1});
   }
 
   if (IsKeyPressed(KEY_KP_2)) {
-    handle_dungeon_move(player_id, (Vector2){0, 1});
+    handle_dungeon_move_dir(player_id, (Vector2){0, 1});
   }
 
   if (IsKeyPressed(KEY_KP_4)) {
-    handle_dungeon_move(player_id, (Vector2){-1, 0});
+    handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
   }
 
   if (IsKeyPressed(KEY_KP_6)) {
-    handle_dungeon_move(player_id, (Vector2){1, 0});
+    handle_dungeon_move_dir(player_id, (Vector2){1, 0});
   }
 
   if (IsKeyPressed(KEY_R)) {
@@ -220,6 +227,9 @@ bool GameplayScene::init() {
 
     spawn_player(offset_x, offset_y);
 
+    // set the player's dungeon position
+    get_sprites()[player_id]->set_dungeon_position((Vector2){1, 1});
+
     // for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
     //   for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
     //     if (dungeon_floor.get_tile_type(i, j) == TILE_FLOOR_BASIC) {
@@ -243,9 +253,14 @@ bool GameplayScene::init() {
   return true;
 }
 
-entity_id GameplayScene::spawn_player(float x, float y) {
+const entity_id GameplayScene::spawn_player(float x, float y) {
   entity_id id = spawn_entity("player", x, y, SPRITETYPE_PLAYER, true);
   player_id = id;
+  return id;
+}
+
+const entity_id GameplayScene::spawn_goblin(float x, float y) {
+  entity_id id = spawn_entity("goblin", x, y, SPRITETYPE_ENEMY, true);
   return id;
 }
 
