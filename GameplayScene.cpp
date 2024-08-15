@@ -8,8 +8,9 @@ GameplayScene::GameplayScene() {
   mPrint("GameplayScene constructor");
   set_control_mode(CONTROL_MODE_PLAYER);
   set_texture_filepath("game_textures.txt");
-  set_global_scale(1.0f);
-  // set_global_scale(2.0f);
+  // set_global_scale(1.0f);
+  //  set_global_scale(2.0f);
+  set_global_scale(3.0f);
   //  set_global_scale(4.0f);
   set_scene_transition(SCENE_TRANSITION_IN);
   set_scene_type(SCENE_TYPE_GAMEPLAY);
@@ -98,9 +99,10 @@ void GameplayScene::handle_dungeon_move(entity_id id, Vector2 direction) {
                           to_string((int)t_pos.y));
     break;
   default:
-    message_log.push_back(to_string(id) + " cannot move to " +
-                          to_string((int)t_pos.x) + ", " +
-                          to_string((int)t_pos.y));
+    message_log.push_back("Bumped into wall or other");
+    // message_log.push_back(to_string(id) + " cannot move to " +
+    //                       to_string((int)t_pos.x) + ", " +
+    //                       to_string((int)t_pos.y));
     break;
   }
 
