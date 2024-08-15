@@ -15,13 +15,15 @@ public:
 
   void set_tile_type(const int col, const int row, const tile_type value);
   void set_tile_type_all(const tile_type value);
+  void set_entity_position(const entity_id id, const Vector2 position);
 
   const int get_gridsize() const;
   const tile_type get_tile_type(const int col, const int row) const;
-  // void set_tile_type(const int col, const int row, const tile_type value);
-
-  void set_entity_position(const entity_id id, const Vector2 position);
   const Vector2 get_entity_position(const entity_id id);
+  const bool move_entity_to_tile(entity_id id, const Vector2 position);
+
+  Tile &get_tile_ref(const int col, const int row);
+  Tile &get_tile_ref(const Vector2 position);
 
 private:
   const int gridsize = 8;

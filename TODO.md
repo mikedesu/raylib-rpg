@@ -19,5 +19,10 @@
 - [x] re-do how we manage entities in the dungeon
     - [x] currently, we are storing the dungeon x,y on each sprite
     - [x] we want to be able to look at each tile and determine what is on it easily
-
+- [ ] word-wrapping for the message log
+    - [ ] flexible HUD that can be resized
+- [ ] flexible dungeon generation
+- [ ] a way to save and load the game
+- [ ] a way to pause the game
+- [x] a way to quit the game
 

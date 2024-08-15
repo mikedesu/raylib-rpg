@@ -38,7 +38,7 @@ public:
   void remove_entity(entity_id id);
   const vector<entity_id> &get_entities() const;
 
-  void move_entity_to_tile(entity_id id, Tile &tile);
+  // const bool move_entity_to_tile(entity_id id, Tile &tile);
 
 private:
   tile_type type = TILE_VOID;

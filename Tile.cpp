@@ -16,8 +16,3 @@ void Tile::remove_entity(entity_id id) {
   }
 }
 const vector<entity_id> &Tile::get_entities() const { return entities; }
-
-void Tile::move_entity_to_tile(entity_id id, Tile &tile) {
-  remove_entity(id);
-  tile.add_entity(id);
-}

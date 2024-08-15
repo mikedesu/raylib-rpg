@@ -3,6 +3,10 @@
 #include "Tile.h"
 #include "mPrint.h"
 #include "raymath.h"
+#include <string>
+
+using std::string;
+using std::to_string;
 
 GameplayScene::GameplayScene() {
   mPrint("GameplayScene constructor");
@@ -35,8 +39,13 @@ void GameplayScene::update() {
    * 2. global scale
    */
   for (auto &s : get_sprites()) {
-    const Vector2 dungeon_pos = dungeon_floor.get_entity_position(s.first);
+    Vector2 dungeon_pos = dungeon_floor.get_entity_position(s.first);
     s.second->update(dungeon_pos);
+  }
+
+  if (player_did_move) {
+    turn_count++;
+    player_did_move = false;
   }
 }
 
@@ -81,21 +90,36 @@ void GameplayScene::handle_dungeon_move_pos(const entity_id id,
   // message_log.push_back(to_string(id) + " moving to " + to_string(t_pos.x) +
   //                       ", " + to_string(t_pos.y));
 
+  // Tile &tile_dst = dungeon_floor.get_tile_ref(t_pos.x, t_pos.y);
+
   switch (t) {
   case TILE_FLOOR_BASIC:
   case TILE_FLOOR_STONE:
   case TILE_FLOOR_WOOD:
   case TILE_FLOOR_DIRT:
     // get_sprites()[id]->set_dungeon_position(t_pos);
+    // dungeon_floor.set_entity_position(id, t_pos);
+    {
+      bool r = dungeon_floor.move_entity_to_tile(id, t_pos);
+      if (r) {
+        const string s = "Moved to " + to_string((int)t_pos.x) + ", " +
+                         to_string((int)t_pos.y);
+        message_log.push_back(s);
+        get_popup_manager()->render("Moved");
+      } else {
+        message_log.push_back("Cannot move to " + to_string((int)t_pos.x) +
+                              ", " + to_string((int)t_pos.y));
+        get_popup_manager()->render("Cannot move");
+      }
+    }
 
-    dungeon_floor.set_entity_position(id, t_pos);
-
-    message_log.push_back(to_string(id) + " moved to " +
-                          to_string((int)t_pos.x) + ", " +
-                          to_string((int)t_pos.y));
+    // message_log.push_back(to_string(id) + " moved to " +
+    //                       to_string((int)t_pos.x) + ", " +
+    //                       to_string((int)t_pos.y));
     break;
   default:
     message_log.push_back("Bumped into wall or other");
+    get_popup_manager()->render("Cannot move");
     // message_log.push_back(to_string(id) + " cannot move to " +
     //                       to_string((int)t_pos.x) + ", " +
     //                       to_string((int)t_pos.y));
@@ -128,54 +152,84 @@ void GameplayScene::handle_dungeon_move_dir(const entity_id id,
 void GameplayScene::handle_player_input() {
   if (IsKeyPressed(KEY_UP)) {
     handle_dungeon_move_dir(player_id, (Vector2){0, -1});
+    player_did_move = true;
   }
   if (IsKeyPressed(KEY_DOWN)) {
     handle_dungeon_move_dir(player_id, (Vector2){0, 1});
+    player_did_move = true;
   }
   if (IsKeyPressed(KEY_LEFT)) {
     handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
+    player_did_move = true;
   }
   if (IsKeyPressed(KEY_RIGHT)) {
     handle_dungeon_move_dir(player_id, (Vector2){1, 0});
+    player_did_move = true;
   }
 
   // diagonals and numpad keypad entry
   if (IsKeyPressed(KEY_KP_7)) {
     handle_dungeon_move_dir(player_id, (Vector2){-1, -1});
+    player_did_move = true;
   }
 
   if (IsKeyPressed(KEY_KP_9)) {
     handle_dungeon_move_dir(player_id, (Vector2){1, -1});
+    player_did_move = true;
   }
 
   if (IsKeyPressed(KEY_KP_1)) {
     handle_dungeon_move_dir(player_id, (Vector2){-1, 1});
+    player_did_move = true;
   }
 
   if (IsKeyPressed(KEY_KP_3)) {
     handle_dungeon_move_dir(player_id, (Vector2){1, 1});
+    player_did_move = true;
   }
 
   if (IsKeyPressed(KEY_KP_8)) {
     handle_dungeon_move_dir(player_id, (Vector2){0, -1});
+    player_did_move = true;
   }
 
   if (IsKeyPressed(KEY_KP_2)) {
     handle_dungeon_move_dir(player_id, (Vector2){0, 1});
+    player_did_move = true;
   }
 
   if (IsKeyPressed(KEY_KP_4)) {
     handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
+    player_did_move = true;
   }
 
   if (IsKeyPressed(KEY_KP_6)) {
     handle_dungeon_move_dir(player_id, (Vector2){1, 0});
+    player_did_move = true;
   }
 
   if (IsKeyPressed(KEY_R)) {
     // change tile at 0, 0 to floor
-    dungeon_floor.set_tile_type(0, 0, TILE_FLOOR_BASIC);
+    // dungeon_floor.set_tile_type(0, 0, TILE_FLOOR_BASIC);
+
+    // spawn a torch at a random location
+    spawn_torch(
+        (Vector2){(float)GetRandomValue(0, dungeon_floor.get_gridsize() - 1),
+                  (float)GetRandomValue(0, dungeon_floor.get_gridsize() - 1)});
   }
+
+  if (IsKeyPressed(KEY_P)) {
+    // popup message
+    show_test_popup = !show_test_popup;
+
+    // if (show_test_popup) {
+    //   get_popup_manager()->render("Test Popup");
+    // }
+  }
+
+  // if (IsKeyPressed(KEY_T)) {
+  //
+  //  }
 }
 
 void GameplayScene::handle_input() {
@@ -264,14 +318,18 @@ bool GameplayScene::init() {
 const entity_id GameplayScene::spawn_player(const Vector2 pos) {
   entity_id id = spawn_entity("player", 0, 0, SPRITETYPE_PLAYER, true);
   player_id = id;
-  // set the dungeon position
   dungeon_floor.set_entity_position(id, pos);
   return id;
 }
 
 const entity_id GameplayScene::spawn_goblin(const Vector2 pos) {
   entity_id id = spawn_entity("goblin", 0, 0, SPRITETYPE_ENEMY, true);
-  // get_sprites()[id]->set_dungeon_position(pos);
+  dungeon_floor.set_entity_position(id, pos);
+  return id;
+}
+
+const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
+  entity_id id = spawn_entity("torch", 0, 0, SPRITETYPE_ITEM, true);
   dungeon_floor.set_entity_position(id, pos);
   return id;
 }
@@ -305,36 +363,60 @@ void GameplayScene::draw_debug_panel() {
              0.5f, WHITE);
 }
 
-void GameplayScene::draw_hud() {
+inline void GameplayScene::draw_controls() {
+  const int fontsize = 24;
+  const int x = 10;
+  const int y = 10;
+  const string s = "Controls: \n"
+                   "Arrow keys: move player\n"
+                   "Numpad keys: move player\n"
+                   "R: spawn torch\n"
+                   "D: toggle debug panel\n"
+                   "C: toggle control mode\n"
+                   "Zz: zoom in/out\n"
+                   "T: test popup\n"
+                   "P: toggle pause\n"
+                   "Q: quit\n";
+  DrawText(s.c_str(), x, y, fontsize, WHITE);
+}
+
+inline void GameplayScene::draw_hud() {
   // draw a black box on the right side of the screen
   const int w = 500;
   const int h = GetScreenHeight();
   const float x = GetScreenWidth() - w;
   const int y = 0;
-  const int fontsize = 32;
+  const int fontsize = 24;
+  const int max_messages = 30;
 
   DrawRectangle(x, y, w, h, BLACK);
   // draw some text
   const string s =
-      //"Player Position: " +
-      // to_string((int)get_sprites()[player_id]->get_dungeon_position().x) +
-      //", " +
-      // to_string((int)get_sprites()[player_id]->get_dungeon_position().y) +
+      "Player Position: " +
+      to_string((int)dungeon_floor.get_entity_position(player_id).x) + ", " +
+      to_string((int)dungeon_floor.get_entity_position(player_id).y) + "\n" +
       "Camera: " + to_string((int)get_camera2d().target.x) + ", " +
       to_string((int)get_camera2d().target.y) + "\n" +
-      "Turn: " + to_string(turn_count) + "\n";
+      "Turn: " + to_string(turn_count) + "\n\n";
   // "Message Log: \n";
 
   string messages = "";
   // iterate backwards thru message_log and construct a big string
-  for (int i = (int)message_log.size() - 1; i >= 0; i--) {
+  // only show the last 10 messages
+  int count = 0;
+  for (int i = (int)message_log.size() - 1; i >= 0 && count < max_messages;
+       i--) {
     messages += message_log[i] + "\n";
+    count++;
   }
 
   const string s2 = s + messages;
 
-  DrawTextEx(get_global_font(), s2.c_str(), (Vector2){x + 10, y + 10}, fontsize,
-             0.5f, WHITE);
+  // DrawTextEx(get_global_font(), s2.c_str(), (Vector2){x + 10, y + 10},
+  // fontsize,
+  //            0.5f, WHITE);
+
+  DrawText(s2.c_str(), x + 10, y + 10, fontsize, WHITE);
 }
 
 void GameplayScene::cleanup() {
@@ -351,7 +433,7 @@ void GameplayScene::cleanup() {
   }
 }
 
-void GameplayScene::draw() {
+inline void GameplayScene::draw() {
   BeginMode2D(get_camera2d());
   // Color clear_color = (Color){0x10, 0x10, 0x10, 0xFF};
   Color clear_color = BLACK;
@@ -381,6 +463,8 @@ void GameplayScene::draw() {
 
   EndMode2D();
   handle_draw_debug_panel();
+  draw_controls();
+
   handle_popup_manager();
   incr_current_frame();
 }
@@ -431,12 +515,18 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
 inline void GameplayScene::handle_popup_manager() {
   if (show_test_popup) {
     if (get_popup_manager() != nullptr) {
-      const float x = GetScreenWidth() / 2.0f - 100.0f;
-      const float y = GetScreenHeight() / 2.0f - 100.0f;
-      Vector2 s = GetWorldToScreen2D(
-          (Vector2){x - 50, y - 50},
-          get_camera2d()); // Get the screen space position for
-                           // a 2d camera world space position
+
+      // const float x = GetScreenWidth() / 2.0f - 100.0f - 50.0f;
+      // const float y = GetScreenHeight() / 2.0f - 100.0f - 50.0f;
+
+      const Rectangle dest = get_sprite(player_id)->get_dest();
+      const int off_x = -20;
+      const int off_y = -40;
+      const Vector2 dest_vector = (Vector2){dest.x + off_x, dest.y + off_y};
+
+      Vector2 s = GetWorldToScreen2D(dest_vector, get_camera2d());
+      // Get the screen space position for
+      // a 2d camera world space position
       get_popup_manager()->draw(s.x, s.y);
     }
   }

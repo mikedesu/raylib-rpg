@@ -64,13 +64,14 @@ void DungeonFloor::set_entity_position(const entity_id id,
     grid[(int)position.x][(int)position.y].add_entity(id);
   } else {
     // save the old position
-    Vector2 old_position = entity_positions[id];
+    // Vector2 old_position = entity_positions[id];
     // if the entity is in the map, update its position
-    entity_positions[id] = position;
+    // entity_positions[id] = position;
     // move the entity from the old tile to the new tile
-    Tile &old_tile = grid[(int)old_position.x][(int)old_position.y];
-    Tile &new_tile = grid[(int)position.x][(int)position.y];
-    old_tile.move_entity_to_tile(id, new_tile);
+    // Tile &old_tile = grid[(int)old_position.x][(int)old_position.y];
+    // Tile &new_tile = grid[(int)position.x][(int)position.y];
+    move_entity_to_tile(id, position);
+
     // grid[(int)old_position.x][(int)old_position.y].move_entity_to_tile(id,
     //                                                                   grid[(int)position.x][(int)position.y]);
   }
@@ -78,4 +79,38 @@ void DungeonFloor::set_entity_position(const entity_id id,
 
 const Vector2 DungeonFloor::get_entity_position(const entity_id id) {
   return entity_positions[id];
+}
+
+const bool DungeonFloor::move_entity_to_tile(entity_id id,
+                                             const Vector2 t_pos) {
+  // can only move under certain conditions:
+  // the entity is in this tile
+  // the entity is not already in the destination tile
+  // the destination tile does not contain enemies
+  // etc
+
+  // get the source tile
+  Vector2 position = get_entity_position(id);
+  Tile &tile_src = grid[(int)position.x][(int)position.y];
+  Tile &tile_dst = grid[(int)t_pos.x][(int)t_pos.y];
+
+  // check if the destination tile contains enemies or other entities
+  if (tile_dst.get_entities().size() > 0) {
+    return false;
+  }
+
+  tile_src.remove_entity(id);
+  tile_dst.add_entity(id);
+
+  // update the entity's position
+  entity_positions[id] = t_pos;
+  return true;
+}
+
+Tile &DungeonFloor::get_tile_ref(const int col, const int row) {
+  return grid[col][row];
+}
+
+Tile &DungeonFloor::get_tile_ref(const Vector2 position) {
+  return grid[(int)position.x][(int)position.y];
 }

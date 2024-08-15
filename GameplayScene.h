@@ -17,8 +17,9 @@ public:
   void handle_camera_input();
 
   void draw_debug_panel();
-  void draw_hud();
-  void draw();
+  inline void draw_hud();
+  inline void draw_controls();
+  inline void draw();
   inline void draw_tile(const string tile_key, const int i, const int j);
   const string tile_key_for_type(const tile_type t);
 
@@ -40,6 +41,7 @@ public:
 
   const entity_id spawn_player(const Vector2 pos);
   const entity_id spawn_goblin(const Vector2 pos);
+  const entity_id spawn_torch(const Vector2 pos);
 
   void set_scale(const float f);
   // entity_id spawn_tile_stone(float i, float j, float x, float y);
@@ -55,4 +57,6 @@ private:
   DungeonFloor dungeon_floor;
 
   vector<string> message_log;
+
+  bool player_did_move = false;
 };
