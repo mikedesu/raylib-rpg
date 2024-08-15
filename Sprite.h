@@ -52,13 +52,13 @@ public:
   const sprite_type get_type() const;
   const float get_ax() const;
   const float get_ay() const;
-  const int get_hp() const;
-  const int get_maxhp() const;
+  // const int get_hp() const;
+  // const int get_maxhp() const;
   const bool get_is_spinning() const;
   const float get_rotation_angle() const;
   const float get_rotation_speed() const;
-  const movement_type get_movement_type() const;
-  const Vector2 get_dungeon_position() const;
+  // const movement_type get_movement_type() const;
+  // const Vector2 get_dungeon_position() const;
 
   void incr_frame();
   void incr_ax(const float ax);
@@ -78,12 +78,12 @@ public:
   void set_type(const sprite_type t);
   void set_ax(const float ax);
   void set_ay(const float ay);
-  void set_hp(const int hp);
-  void set_maxhp(const int maxhp);
-  void decr_hp(const int hp);
-  void incr_hp(const int hp);
+  // void set_hp(const int hp);
+  // void set_maxhp(const int maxhp);
+  // void decr_hp(const int hp);
+  // void incr_hp(const int hp);
   void flip();
-  void update();
+  void update(const Vector2 dungeon_position);
   void set_rotation_angle(const float angle);
   void set_is_spinning(const bool is_spinning);
   void set_rotation_speed(const float speed);
@@ -92,10 +92,10 @@ public:
   const unsigned int get_alpha() const;
   void set_alpha(const unsigned int alpha);
 
-  void set_dungeon_position(const Vector2 pos);
+  // void set_dungeon_position(const Vector2 pos);
 
-  void incr_dungeon_position_x(const float x);
-  void incr_dungeon_position_y(const float y);
+  // void incr_dungeon_position_x(const float x);
+  // void incr_dungeon_position_y(const float y);
 
 private:
   Texture2D texture;
@@ -108,8 +108,8 @@ private:
   unsigned int anim_frames;
   unsigned int current_frame;
   unsigned int frame_counter;
-  unsigned int hp;
-  unsigned int maxhp;
+  // unsigned int hp;
+  // unsigned int maxhp;
 
   float scale = 1.0f;
   float rotation_angle = 0.0f;
@@ -119,7 +119,7 @@ private:
   Vector2 velocity;
   Vector2 acceleration;
 
-  Vector2 dungeon_position;
+  // Vector2 dungeon_position;
 
   bool is_marked_for_deletion;
   bool is_animating;

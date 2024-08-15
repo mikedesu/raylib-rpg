@@ -16,3 +16,8 @@
 - [ ] torches / item placement on tiles
 - [ ] dynamic lighting via torches
 - [ ] be able to pick-up items and have them in your inventory
+- [x] re-do how we manage entities in the dungeon
+    - [x] currently, we are storing the dungeon x,y on each sprite
+    - [x] we want to be able to look at each tile and determine what is on it easily
+
+

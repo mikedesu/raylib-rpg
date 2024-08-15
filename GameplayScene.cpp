@@ -35,7 +35,8 @@ void GameplayScene::update() {
    * 2. global scale
    */
   for (auto &s : get_sprites()) {
-    s.second->update();
+    const Vector2 dungeon_pos = dungeon_floor.get_entity_position(s.first);
+    s.second->update(dungeon_pos);
   }
 }
 
@@ -85,7 +86,10 @@ void GameplayScene::handle_dungeon_move_pos(const entity_id id,
   case TILE_FLOOR_STONE:
   case TILE_FLOOR_WOOD:
   case TILE_FLOOR_DIRT:
-    get_sprites()[id]->set_dungeon_position(t_pos);
+    // get_sprites()[id]->set_dungeon_position(t_pos);
+
+    dungeon_floor.set_entity_position(id, t_pos);
+
     message_log.push_back(to_string(id) + " moved to " +
                           to_string((int)t_pos.x) + ", " +
                           to_string((int)t_pos.y));
@@ -106,7 +110,9 @@ void GameplayScene::handle_dungeon_move_dir(const entity_id id,
   // then we don't move
 
   // get the current dungeon position of the sprite
-  Vector2 cur_pos = get_sprites()[id]->get_dungeon_position();
+  // Vector2 cur_pos = get_sprites()[id]->get_dungeon_position();
+  Vector2 cur_pos = dungeon_floor.get_entity_position(id);
+
   Vector2 t_pos = Vector2Add(cur_pos, direction);
 
   // if the locations are equal, no move is executed
@@ -168,7 +174,7 @@ void GameplayScene::handle_player_input() {
 
   if (IsKeyPressed(KEY_R)) {
     // change tile at 0, 0 to floor
-    dungeon_floor.set_grid(0, 0, TILE_FLOOR_BASIC);
+    dungeon_floor.set_tile_type(0, 0, TILE_FLOOR_BASIC);
   }
 }
 
@@ -222,13 +228,13 @@ bool GameplayScene::init() {
     // spawning a player is a function of spawn_entity
     // we can write code to put into a function that spawns the player
 
-    const int offset_x = 0;
-    const int offset_y = 0;
+    // const int offset_x = 0;
+    // const int offset_y = 0;
 
-    spawn_player(offset_x, offset_y);
+    spawn_player((Vector2){1, 1});
 
     // set the player's dungeon position
-    get_sprites()[player_id]->set_dungeon_position((Vector2){1, 1});
+    // get_sprites()[player_id]->set_dungeon_position((Vector2){1, 1});
 
     // for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
     //   for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
@@ -239,6 +245,8 @@ bool GameplayScene::init() {
     //     }
     //   }
     // }
+
+    // spawn_goblin((Vector2){2, 2});
 
     mPrint("Setting camera offset...");
     get_camera2d().target.x = -450;
@@ -253,14 +261,18 @@ bool GameplayScene::init() {
   return true;
 }
 
-const entity_id GameplayScene::spawn_player(float x, float y) {
-  entity_id id = spawn_entity("player", x, y, SPRITETYPE_PLAYER, true);
+const entity_id GameplayScene::spawn_player(const Vector2 pos) {
+  entity_id id = spawn_entity("player", 0, 0, SPRITETYPE_PLAYER, true);
   player_id = id;
+  // set the dungeon position
+  dungeon_floor.set_entity_position(id, pos);
   return id;
 }
 
-const entity_id GameplayScene::spawn_goblin(float x, float y) {
-  entity_id id = spawn_entity("goblin", x, y, SPRITETYPE_ENEMY, true);
+const entity_id GameplayScene::spawn_goblin(const Vector2 pos) {
+  entity_id id = spawn_entity("goblin", 0, 0, SPRITETYPE_ENEMY, true);
+  // get_sprites()[id]->set_dungeon_position(pos);
+  dungeon_floor.set_entity_position(id, pos);
   return id;
 }
 
@@ -304,13 +316,14 @@ void GameplayScene::draw_hud() {
   DrawRectangle(x, y, w, h, BLACK);
   // draw some text
   const string s =
-      "Player Position: " +
-      to_string((int)get_sprites()[player_id]->get_dungeon_position().x) +
-      ", " +
-      to_string((int)get_sprites()[player_id]->get_dungeon_position().y) +
-      "\n" + "Camera: " + to_string((int)get_camera2d().target.x) + ", " +
+      //"Player Position: " +
+      // to_string((int)get_sprites()[player_id]->get_dungeon_position().x) +
+      //", " +
+      // to_string((int)get_sprites()[player_id]->get_dungeon_position().y) +
+      "Camera: " + to_string((int)get_camera2d().target.x) + ", " +
       to_string((int)get_camera2d().target.y) + "\n" +
-      "Turn: " + to_string(turn_count) + "\n" + "Message Log: \n";
+      "Turn: " + to_string(turn_count) + "\n";
+  // "Message Log: \n";
 
   string messages = "";
   // iterate backwards thru message_log and construct a big string

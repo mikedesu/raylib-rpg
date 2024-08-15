@@ -1,7 +1,5 @@
 #include "Sprite.h"
-// #include "raymath.h"
 #include "rlgl.h"
-// #include <cassert>
 #include <cstring>
 
 Sprite::Sprite(const char *filepath, const unsigned int frames, const float x,
@@ -129,7 +127,7 @@ void Sprite::incr_frame() {
   flipped_src.x = src.x;
 }
 
-void Sprite::update() {
+void Sprite::update(const Vector2 dungeon_position) {
   if (type == sprite_type::SPRITETYPE_PLAYER) {
     const int x_off = 0;
     const int y_off = -10 * scale;
@@ -149,22 +147,6 @@ void Sprite::update() {
   }
 }
 
-void Sprite::decr_hp(const int dmg) {
-  if (hp - dmg <= 0) {
-    hp = 0;
-  } else {
-    hp -= dmg;
-  }
-}
-
-void Sprite::incr_hp(const int dmg) {
-  if (hp + dmg >= maxhp) {
-    hp = maxhp;
-  } else {
-    hp += dmg;
-  }
-}
-
 void Sprite::mark_for_deletion() { is_marked_for_deletion = true; }
 void Sprite::set_ax(const float ax) { acceleration.x = ax; }
 void Sprite::set_ay(const float ay) { acceleration.y = ay; }
@@ -180,8 +162,6 @@ void Sprite::incr_vy(const float vy) { velocity.y += vy; }
 void Sprite::incr_ax(const float ax) { acceleration.x += ax; }
 void Sprite::incr_ay(const float ay) { acceleration.y += ay; }
 void Sprite::flip() { set_is_flipped(!get_is_flipped()); }
-void Sprite::set_hp(const int hp) { this->hp = hp; }
-void Sprite::set_maxhp(const int maxhp) { this->maxhp = maxhp; }
 void Sprite::set_rotation_angle(const float angle) { rotation_angle = angle; }
 void Sprite::set_rotation_speed(const float speed) { rotation_speed = speed; }
 void Sprite::set_movement_type(const movement_type m) { movement = m; }
@@ -189,13 +169,6 @@ void Sprite::set_is_spinning(const bool is) { is_spinning = is; }
 void Sprite::set_is_animating(const bool is) { is_animating = is; }
 void Sprite::set_is_flipped(const bool f) { is_flipped = f; }
 void Sprite::set_alpha(const unsigned int a) { alpha = a; }
-void Sprite::set_dungeon_position(const Vector2 pos) {
-  // we want to forbid x,y values below 0
-  if (pos.x < 0 || pos.y < 0) {
-    return;
-  }
-  dungeon_position = pos;
-}
 
 const unsigned int Sprite::get_alpha() const { return alpha; }
 const float Sprite::get_vx() const { return velocity.x; }
@@ -215,17 +188,10 @@ const int Sprite::get_current_frame() const { return current_frame; }
 const bool Sprite::get_is_animating() const { return is_animating; }
 const float Sprite::get_ax() const { return acceleration.x; }
 const float Sprite::get_ay() const { return acceleration.y; }
-const int Sprite::get_hp() const { return hp; }
-const int Sprite::get_maxhp() const { return maxhp; }
 const float Sprite::get_rotation_angle() const { return rotation_angle; }
 const bool Sprite::get_is_spinning() const { return is_spinning; }
 const Rectangle Sprite::get_hitbox() const { return hitbox; }
 const float Sprite::get_rotation_speed() const { return rotation_speed; }
-const movement_type Sprite::get_movement_type() const { return movement; }
-const Vector2 Sprite::get_dungeon_position() const { return dungeon_position; }
 const bool Sprite::get_is_marked_for_deletion() const {
   return is_marked_for_deletion;
 }
-
-void Sprite::incr_dungeon_position_x(const float x) { dungeon_position.x += x; }
-void Sprite::incr_dungeon_position_y(const float y) { dungeon_position.y += y; }

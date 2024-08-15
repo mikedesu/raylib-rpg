@@ -38,8 +38,8 @@ public:
 
   void handle_dungeon_move_dir(const entity_id id, const Vector2 direction);
 
-  const entity_id spawn_player(float x, float y);
-  const entity_id spawn_goblin(float x, float y);
+  const entity_id spawn_player(const Vector2 pos);
+  const entity_id spawn_goblin(const Vector2 pos);
 
   void set_scale(const float f);
   // entity_id spawn_tile_stone(float i, float j, float x, float y);
