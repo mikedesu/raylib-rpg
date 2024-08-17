@@ -1,7 +1,7 @@
 #include "Game.h"
 #include "mPrint.h"
 #include "raylib.h"
-#include "raymath.h"
+// #include "raymath.h"
 #include "rlgl.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -12,7 +12,6 @@ static scene_id next_scene_id = 0;
 Game::Game() {
   global_scale = 1.0f;
   screen_rect = (Rectangle){0, 0, 1920, -1080};
-  // screen_rect = (Rectangle){0, 0, 1280, -720};
   camera2d = {0};
   current_frame = 0;
   set_camera_default_values();
@@ -219,14 +218,6 @@ void Game::draw() {
 
   DrawTextureRec(target.texture, screen_rect, (Vector2){0, 0}, WHITE);
 
-  // if (scenes[current_scene_id]->get_scene_transition() ==
-  //     SCENE_TRANSITION_OUT) {
-  //   handle_transition_out();
-  // } else if (scenes[current_scene_id]->get_scene_transition() ==
-  //            SCENE_TRANSITION_IN) {
-  //   handle_transition_in();
-  // }
-
   switch (scenes[current_scene_id]->get_scene_transition()) {
   case SCENE_TRANSITION_NONE:
     break;
@@ -253,7 +244,6 @@ void Game::run() {
 
       update();
       draw();
-
       cleanup();
     }
     mPrint("Window closed.");

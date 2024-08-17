@@ -49,7 +49,7 @@ public:
   virtual void cleanup();
   virtual void draw_hud();
 
-  inline virtual void draw();
+  virtual void draw();
   virtual void close();
 
   bool load_texture(const char *asset_name, const char *asset_path,

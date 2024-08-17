@@ -90,8 +90,6 @@ void GameplayScene::handle_dungeon_move_pos(const entity_id id,
   // message_log.push_back(to_string(id) + " moving to " + to_string(t_pos.x) +
   //                       ", " + to_string(t_pos.y));
 
-  // Tile &tile_dst = dungeon_floor.get_tile_ref(t_pos.x, t_pos.y);
-
   switch (t) {
   case TILE_FLOOR_BASIC:
   case TILE_FLOOR_STONE:

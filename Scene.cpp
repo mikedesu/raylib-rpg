@@ -51,7 +51,7 @@ void Scene::close() {
   mPrint("Scene closed.");
 }
 
-inline void Scene::draw() {}
+void Scene::draw() {}
 
 void Scene::update() {}
 void Scene::handle_input() {}
