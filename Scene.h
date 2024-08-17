@@ -22,19 +22,15 @@ using std::vector;
 typedef int scene_id;
 
 typedef enum {
-
   SCENE_TRANSITION_NONE,
   SCENE_TRANSITION_IN,
   SCENE_TRANSITION_OUT,
-
 } scene_transition;
 
 typedef enum {
-
   SCENE_TYPE_TITLE,
   SCENE_TYPE_GAMEPLAY,
   SCENE_TYPE_GAMEOVER,
-
 } scene_type;
 
 class Scene {
@@ -48,13 +44,12 @@ public:
   virtual void draw_debug_panel();
   virtual void cleanup();
   virtual void draw_hud();
-
   virtual void draw();
   virtual void close();
 
+  bool load_textures();
   bool load_texture(const char *asset_name, const char *asset_path,
                     const int num_frames, const int is_player);
-  bool load_textures();
 
   float get_global_scale();
 
@@ -63,12 +58,12 @@ public:
   entity_id spawn_entity(const char *texture_key, float x, float y,
                          sprite_type type, bool is_anim);
 
-  // unordered_map<entity_id, Vector2> &get_stars();
   unordered_map<entity_id, shared_ptr<Sprite>> &get_sprites();
-  unordered_map<entity_id, shared_ptr<Sprite>> &get_bgsprites();
+  // unordered_map<entity_id, shared_ptr<Sprite>> &get_bgsprites();
   unordered_map<string, texture_info> &get_textures();
 
   shared_ptr<Sprite> get_sprite(entity_id id);
+  shared_ptr<PopupManager> get_popup_manager();
 
   Camera2D &get_camera2d();
   Font &get_global_font();
@@ -90,7 +85,6 @@ public:
   void flip_debug_panel();
   void load_fonts();
   void set_texture_filepath(const char *filepath);
-  // void add_star();
   void update_stars_vx(const float vx);
   void set_has_been_initialized(bool b);
   void set_scene_transition(scene_transition st);
@@ -99,29 +93,25 @@ public:
   void set_scene_type(scene_type st);
   void pause();
   void unpause();
+  void load_music(const char *path);
+  void set_music_path(const char *path);
+  void incr_current_frame();
+  void set_hud_on(const bool b);
+  void set_popup_manager(shared_ptr<PopupManager> pm);
 
   const bool get_has_been_initialized() const;
   const bool get_paused() const;
   const float get_alpha() const;
   const bool get_debug_panel_on() const;
+  const string get_music_path() const;
+  const bool get_hud_on() const;
 
   Mix_Music *get_music();
-  void load_music(const char *path);
-  void set_music_path(const char *path);
-  const string get_music_path() const;
-
-  const bool get_hud_on() const;
-  void set_hud_on(const bool b);
-
-  void incr_current_frame();
-
-  shared_ptr<PopupManager> get_popup_manager();
-  void set_popup_manager(shared_ptr<PopupManager> pm);
 
 private:
   unordered_map<string, texture_info> textures;
   unordered_map<entity_id, shared_ptr<Sprite>> sprites;
-  unordered_map<entity_id, shared_ptr<Sprite>> bgsprites;
+  // unordered_map<entity_id, shared_ptr<Sprite>> bgsprites;
 
   vector<entity_id> entity_ids;
   vector<entity_id> bg_entity_ids;

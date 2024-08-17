@@ -1,7 +1,6 @@
 #include "Game.h"
 #include "mPrint.h"
 #include "raylib.h"
-// #include "raymath.h"
 #include "rlgl.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
@@ -123,13 +122,11 @@ void Game::set_window_title(const char *title) { window_title = title; }
 void Game::set_screen_width(int w) { screen_rect.width = w; }
 void Game::set_screen_height(int h) { screen_rect.height = -h; }
 void Game::set_debug_panel(bool b) { debug_panel_on = b; }
-
 void Game::handle_input() { scenes[current_scene_id]->handle_input(); }
-
 void Game::update() { scenes[current_scene_id]->update(); }
-
 void Game::set_has_been_initialized(bool b) { has_been_initialized = b; }
 bool Game::get_has_been_initialized() { return has_been_initialized; }
+void Game::cleanup() { scenes[current_scene_id]->cleanup(); }
 
 void Game::set_global_scale(float s) {
   assert(s > 0.0f);
@@ -209,13 +206,9 @@ void Game::handle_transition_in() {
 void Game::draw() {
   BeginDrawing();
   BeginTextureMode(target);
-
   ClearBackground(BLACK);
-
   scenes[current_scene_id]->draw();
-
   EndTextureMode();
-
   DrawTextureRec(target.texture, screen_rect, (Vector2){0, 0}, WHITE);
 
   switch (scenes[current_scene_id]->get_scene_transition()) {
@@ -241,7 +234,6 @@ void Game::run() {
   } else {
     while (!WindowShouldClose()) {
       handle_input();
-
       update();
       draw();
       cleanup();
@@ -254,23 +246,17 @@ void Game::close() {
   mPrint("Closing game...");
   // have to close the scene first otherwise it crashes
   // CloseWindow() must be the LAST raylib call before exiting
-
   scenes[current_scene_id]->close();
-
   // rlglClose();
-
   if (IsRenderTextureReady(target)) {
     mPrint("Unloading render texture...");
     UnloadRenderTexture(target);
   }
-
   // if (IsAudioStreamPlaying(get_music())) {
   //   mPrint("Stopping music...");
   // StopMusicStream(get_music());
   //}
-
   // CloseAudioDevice();
-
   mPrint("Closing SDL2 audio...");
   Mix_CloseAudio();
   mPrint("Quitting SDL2 audio...");
@@ -282,5 +268,3 @@ void Game::close() {
   }
   mPrint("Game closed.");
 }
-
-void Game::cleanup() { scenes[current_scene_id]->cleanup(); }
