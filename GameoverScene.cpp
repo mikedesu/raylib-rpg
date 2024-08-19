@@ -1,10 +1,6 @@
 #include "GameoverScene.h"
 
 #include "mPrint.h"
-// #include <cassert>
-// #include <cstring>
-
-// static entity_id next_entity_id = 0;
 
 GameoverScene::GameoverScene() {
   mPrint("GameoverScene constructor");
@@ -48,14 +44,14 @@ bool GameoverScene::init() {
       mPrint("Error loading textures. Exiting...");
       return false;
     }
-    int w = get_textures()["gameover"].texture.width;
-    int h = get_textures()["gameover"].texture.height;
+    int w = get_textures()["gameover"]->texture.width;
+    int h = get_textures()["gameover"]->texture.height;
     int x = GetScreenWidth() / 2.0 - w * get_global_scale() / 2;
     int y = GetScreenHeight() / 4;
     float scale = 8.0f;
     spawn_entity("gameover", x, y, SPRITETYPE_PLAYER, false);
     y += h * get_global_scale();
-    w = get_textures()["press-space-to-return"].texture.width;
+    w = get_textures()["press-space-to-return"]->texture.width;
     x = GetScreenWidth() / 2.0 - w * scale / 2;
     spawn_entity("press-space-to-return", x, y, SPRITETYPE_PLAYER, false,
                  scale);

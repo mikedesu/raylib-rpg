@@ -85,9 +85,11 @@ void TitleScene::draw() {
   Color clear_color = BLACK;
   ClearBackground(clear_color);
 
-  texture_info &title_info = get_textures()["title"];
-  const float w_src = title_info.texture.width;
-  const float h_src = title_info.texture.height;
+  // texture_info &title_info = get_textures()["title"];
+  shared_ptr<texture_info> title_info = get_texture_info("title");
+
+  const float w_src = title_info->texture.width;
+  const float h_src = title_info->texture.height;
   // const float w_dst = GetScreenWidth() / 8.0f;
   // const float h_dst = GetScreenHeight() / 8.0f;
   float w_dst = w_src;
@@ -101,7 +103,7 @@ void TitleScene::draw() {
   const float x = GetScreenWidth() / 2.0f - w_dst / 2.0f;
   const float y = GetScreenHeight() / 2.0f - h_dst;
 
-  DrawTexturePro(title_info.texture, (Rectangle){0, 0, w_src, h_src},
+  DrawTexturePro(title_info->texture, (Rectangle){0, 0, w_src, h_src},
                  (Rectangle){x, y, w_dst, h_dst}, (Vector2){0, 0}, 0, WHITE);
 
   // for (auto &s : get_sprites()) {

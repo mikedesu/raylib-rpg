@@ -59,10 +59,10 @@ public:
                          sprite_type type, bool is_anim);
 
   unordered_map<entity_id, shared_ptr<Sprite>> &get_sprites();
-  // unordered_map<entity_id, shared_ptr<Sprite>> &get_bgsprites();
-  unordered_map<string, texture_info> &get_textures();
+  unordered_map<string, shared_ptr<texture_info>> &get_textures();
 
   shared_ptr<Sprite> get_sprite(entity_id id);
+  shared_ptr<texture_info> get_texture_info(const string key);
   shared_ptr<PopupManager> get_popup_manager();
 
   Camera2D &get_camera2d();
@@ -109,12 +109,10 @@ public:
   Mix_Music *get_music();
 
 private:
-  unordered_map<string, texture_info> textures;
+  unordered_map<string, shared_ptr<texture_info>> textures;
   unordered_map<entity_id, shared_ptr<Sprite>> sprites;
-  // unordered_map<entity_id, shared_ptr<Sprite>> bgsprites;
 
   vector<entity_id> entity_ids;
-  vector<entity_id> bg_entity_ids;
 
   Font global_font;
 
@@ -136,8 +134,6 @@ private:
 
   string texture_filepath;
   string music_path;
-
-  // unordered_map<entity_id, Vector2> stars;
 
   scene_transition transition = SCENE_TRANSITION_NONE;
 

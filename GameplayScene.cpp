@@ -370,10 +370,9 @@ inline void GameplayScene::draw_controls() {
                    "Numpad keys: move player\n"
                    "R: spawn torch\n"
                    "D: toggle debug panel\n"
-                   "C: toggle control mode\n"
+                   "C: toggle player/cam mode\n"
                    "Zz: zoom in/out\n"
-                   "T: test popup\n"
-                   "P: toggle pause\n"
+                   "P: toggle popup\n"
                    "Q: quit\n";
   DrawText(s.c_str(), x, y, fontsize, WHITE);
 }
@@ -500,14 +499,17 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
                                      const int j) {
   const int x = i * 20 * get_global_scale();
   const int y = j * 20 * get_global_scale();
-  texture_info &t = get_textures()[tile_key];
-  Rectangle src = {0.0f, 0.0f, (float)t.texture.width, (float)t.texture.height};
+  // texture_info &t = get_textures()[tile_key];
+  shared_ptr<texture_info> t = get_texture_info(tile_key);
+
+  Rectangle src = {0.0f, 0.0f, (float)t->texture.width,
+                   (float)t->texture.height};
   Rectangle dest = {(float)x, (float)y,
-                    (float)t.texture.width * get_global_scale(),
-                    (float)t.texture.height * get_global_scale()};
+                    (float)t->texture.width * get_global_scale(),
+                    (float)t->texture.height * get_global_scale()};
   Vector2 origin = {0, 0};
   Color color = WHITE;
-  DrawTexturePro(t.texture, src, dest, origin, 0.0f, color);
+  DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
 }
 
 inline void GameplayScene::handle_popup_manager() {
@@ -546,16 +548,16 @@ void GameplayScene::close() {
   mPrint("Closing gameplay scene...");
   mPrint("Unloading textures...");
   for (auto &t : get_textures()) {
-    UnloadTexture(t.second.texture);
+    UnloadTexture(t.second->texture);
   }
   mPrint("Clearing textures...");
   get_textures().clear();
   mPrint("Clearing sprites...");
   get_sprites().clear();
-  get_bgsprites().clear();
+  // get_bgsprites().clear();
   mPrint("Clearing entity ids...");
   get_entity_ids().clear();
-  get_bg_entity_ids().clear();
+  // get_bg_entity_ids().clear();
   mPrint("Unloading font...");
   UnloadFont(get_global_font());
 

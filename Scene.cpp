@@ -26,16 +26,14 @@ void Scene::close() {
   mPrint("Closing scene...");
   mPrint("Unloading textures...");
   for (auto &t : textures) {
-    UnloadTexture(t.second.texture);
+    UnloadTexture(t.second->texture);
   }
   mPrint("Clearing textures...");
   textures.clear();
   mPrint("Clearing sprites...");
   sprites.clear();
-  bgsprites.clear();
   mPrint("Clearing entity ids...");
   entity_ids.clear();
-  bg_entity_ids.clear();
   mPrint("Unloading font...");
   UnloadFont(global_font);
 
@@ -144,7 +142,8 @@ bool Scene::load_texture(const char *asset_name, const char *asset_path,
   ti.is_player = is_player;
   ti.asset_path = asset_path;
 
-  textures[asset_name] = ti;
+  // textures[asset_name] = ti;
+  textures[asset_name] = make_shared<texture_info>(ti);
 
   return true;
 }
@@ -179,8 +178,8 @@ entity_id Scene::spawn_entity(const char *texture_key, float x, float y,
 
   mPrint("Spawning entity...");
   shared_ptr<Sprite> s =
-      make_shared<Sprite>(textures[texture_key].texture,
-                          textures[texture_key].num_frames, x, y, type);
+      make_shared<Sprite>(textures[texture_key]->texture,
+                          textures[texture_key]->num_frames, x, y, type);
   if (s == nullptr) {
     mPrint("Error creating sprite.");
     return -1;
@@ -201,14 +200,15 @@ unordered_map<entity_id, shared_ptr<Sprite>> &Scene::get_sprites() {
   return sprites;
 }
 
-unordered_map<entity_id, shared_ptr<Sprite>> &Scene::get_bgsprites() {
-  return bgsprites;
-}
+// unordered_map<entity_id, shared_ptr<Sprite>> &Scene::get_bgsprites() {
+//   return bgsprites;
+// }
 
-unordered_map<string, texture_info> &Scene::get_textures() { return textures; }
+unordered_map<string, shared_ptr<texture_info>> &Scene::get_textures() {
+  return textures;
+}
 Camera2D &Scene::get_camera2d() { return camera2d; }
 vector<entity_id> &Scene::get_entity_ids() { return entity_ids; }
-vector<entity_id> &Scene::get_bg_entity_ids() { return bg_entity_ids; }
 
 float Scene::get_global_scale() { return global_scale; }
 scene_transition Scene::get_scene_transition() { return transition; }
@@ -254,4 +254,8 @@ void Scene::load_music(const char *path) {
 
 void Scene::set_popup_manager(shared_ptr<PopupManager> pm) {
   popup_manager = pm;
+}
+
+shared_ptr<texture_info> Scene::get_texture_info(const string key) {
+  return textures[key];
 }
