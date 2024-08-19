@@ -26,6 +26,9 @@ public:
          const float y, sprite_type t);
   Sprite(Texture2D &texture, const unsigned int anim_frames, const float x,
          const float y, sprite_type t);
+  Sprite(Texture2D &texture, const unsigned int anim_frames, const float x,
+         const float y, const int w, const int h, sprite_type t);
+
   ~Sprite();
 
   void draw();
@@ -134,4 +137,5 @@ private:
   unsigned int alpha;
 
   void init_rects();
+  void init_rects(const float w, const float h);
 };

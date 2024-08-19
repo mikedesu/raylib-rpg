@@ -10,4 +10,6 @@ typedef struct {
   int num_frames;
   int is_player;
   string asset_path;
+  int width;
+  int height;
 } texture_info;

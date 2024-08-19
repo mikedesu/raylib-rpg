@@ -73,9 +73,17 @@ bool Scene::load_textures() {
   }
   char line[256];
   while (fgets(line, sizeof(line), file)) {
+    // if the line begins with a hashtag, it is a comment and does not get
+    // processed
+    if (line[0] == '#') {
+      continue;
+    }
+
     char *asset_name = strtok(line, " ");
     char *num_frames = strtok(NULL, " ");
     char *is_player = strtok(NULL, " ");
+    char *width = strtok(NULL, " ");
+    char *height = strtok(NULL, " ");
     char *asset_path = strtok(NULL, " ");
     mPrint("Asset name: " + string(asset_name));
     mPrint("Num frames: " + string(num_frames));
@@ -87,8 +95,8 @@ bool Scene::load_textures() {
       asset_path[strlen(asset_path) - 1] = '\0';
     }
 
-    bool result =
-        load_texture(asset_name, asset_path, atoi(num_frames), atoi(is_player));
+    bool result = load_texture(asset_name, asset_path, atoi(num_frames),
+                               atoi(is_player), atoi(width), atoi(height));
     if (!result) {
       mPrint("Error loading texture: " + string(asset_path));
       return false;
@@ -99,7 +107,8 @@ bool Scene::load_textures() {
 }
 
 bool Scene::load_texture(const char *asset_name, const char *asset_path,
-                         const int num_frames, const int is_player) {
+                         const int num_frames, const int is_player,
+                         const int width, const int height) {
 
   string asset_name_str = string(asset_name);
 
@@ -141,6 +150,8 @@ bool Scene::load_texture(const char *asset_name, const char *asset_path,
   ti.num_frames = num_frames;
   ti.is_player = is_player;
   ti.asset_path = asset_path;
+  ti.width = width;
+  ti.height = height;
 
   // textures[asset_name] = ti;
   textures[asset_name] = make_shared<texture_info>(ti);
@@ -177,9 +188,9 @@ entity_id Scene::spawn_entity(const char *texture_key, float x, float y,
                               sprite_type type, bool is_anim, float scale) {
 
   mPrint("Spawning entity...");
-  shared_ptr<Sprite> s =
-      make_shared<Sprite>(textures[texture_key]->texture,
-                          textures[texture_key]->num_frames, x, y, type);
+  shared_ptr<Sprite> s = make_shared<Sprite>(
+      textures[texture_key]->texture, textures[texture_key]->num_frames, x, y,
+      textures[texture_key]->width, textures[texture_key]->height, type);
   if (s == nullptr) {
     mPrint("Error creating sprite.");
     return -1;

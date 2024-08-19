@@ -49,6 +49,29 @@ Sprite::Sprite(Texture2D &t, const unsigned int frames, const float x,
   acceleration.y = 0;
 }
 
+Sprite::Sprite(Texture2D &t, const unsigned int frames, const float x,
+               const float y, const int w, const int h,
+               sprite_type spritetype) {
+  texture = t;
+  anim_frames = frames;
+  set_scale(1.0f);
+  init_rects(w, h);
+  origin = (Vector2){0, 0};
+  dest.x = x;
+  dest.y = y;
+  current_frame = 0;
+  velocity = (Vector2){0, 0};
+  is_marked_for_deletion = false;
+  is_animating = false;
+  is_flipped = false;
+  type = spritetype;
+  is_spinning = false;
+  velocity.x = 0;
+  velocity.y = 0;
+  acceleration.x = 0;
+  acceleration.y = 0;
+}
+
 void Sprite::init_rects() {
   src = (Rectangle){0, 0, (float)texture.width / anim_frames,
                     (float)texture.height};
@@ -56,6 +79,13 @@ void Sprite::init_rects() {
   dest =
       (Rectangle){dest.x, dest.y, ((float)texture.width / anim_frames) * scale,
                   (float)texture.height * scale};
+  hitbox = (Rectangle){dest.x, dest.y, dest.width, dest.height};
+}
+
+void Sprite::init_rects(const float w, const float h) {
+  src = (Rectangle){0, 0, w, h};
+  flipped_src = (Rectangle){src.x, src.y, w * -1.0f, h};
+  dest = (Rectangle){dest.x, dest.y, w * scale, h * scale};
   hitbox = (Rectangle){dest.x, dest.y, dest.width, dest.height};
 }
 
