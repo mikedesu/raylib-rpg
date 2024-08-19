@@ -61,5 +61,6 @@ private:
   bool player_did_move = false;
 
   Vector2 last_mouse_click_pos;
+  Vector2 last_tile_click_pos;
   bool tile_is_selected = false;
 };

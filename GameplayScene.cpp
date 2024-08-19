@@ -459,7 +459,9 @@ inline void GameplayScene::draw_hud() {
       to_string((int)dungeon_floor.get_entity_position(player_id).y) + "\n" +
       "Camera: " + to_string((int)get_camera2d().target.x) + ", " +
       to_string((int)get_camera2d().target.y) + "\n" +
-      "Turn: " + to_string(turn_count) + "\n\n";
+      "Turn: " + to_string(turn_count) + "\n" +
+      "Last Tile Click: " + to_string((int)last_tile_click_pos.x) + ", " +
+      to_string((int)last_tile_click_pos.y) + "\n\n";
   // "Message Log: \n";
 
   string messages = "";
@@ -583,6 +585,9 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
   if (!tile_is_selected) {
     return;
   } else if (CheckCollisionPointRec(last_mouse_click_pos, dest)) {
+    DrawRectangleLinesEx(dest, 4, GREEN);
+    last_tile_click_pos = (Vector2){(float)i, (float)j};
+  } else if (i == last_tile_click_pos.x && j == last_tile_click_pos.y) {
     DrawRectangleLinesEx(dest, 4, GREEN);
   }
 }
