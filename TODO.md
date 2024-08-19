@@ -25,4 +25,8 @@
 - [ ] a way to save and load the game
 - [ ] a way to pause the game
 - [x] a way to quit the game
+- [ ] a context menu for performing actions
+- [ ] mouse-click select tile
+    - [ ] translate mouse-click on screen into in world x,y
+    - [ ] translate world x,y into dungeon tile x,y
 
