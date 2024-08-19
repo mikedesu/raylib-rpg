@@ -10,6 +10,9 @@ using std::to_string;
 
 GameplayScene::GameplayScene() {
   mPrint("GameplayScene constructor");
+
+  last_mouse_click_pos = (Vector2){0, 0};
+
   set_control_mode(CONTROL_MODE_PLAYER);
   set_texture_filepath("game_textures.txt");
   // set_global_scale(1.0f);
@@ -148,30 +151,85 @@ void GameplayScene::handle_dungeon_move_dir(const entity_id id,
 }
 
 void GameplayScene::handle_player_input() {
+
+  // select a tile on screen
+  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    // get the mouse position
+    Vector2 mouse_pos = GetMousePosition();
+    // translate the mouse position to the world position
+    Vector2 world_pos = GetScreenToWorld2D(mouse_pos, get_camera2d());
+
+    // mPrint("Mouse position: " + to_string(mouse_pos.x) + ", " +
+    //        to_string(mouse_pos.y));
+    // mPrint("World position: " + to_string(world_pos.x) + ", " +
+    //        to_string(world_pos.y));
+
+    last_mouse_click_pos = world_pos;
+    tile_is_selected = true;
+
+    // draw a rectangle at the mouse position
+
+    // get the dungeon position of the player
+    // Vector2 player_pos = dungeon_floor.get_entity_position(player_id);
+    // get the player sprite
+    // shared_ptr<Sprite> player_sprite = get_sprite(player_id);
+    // get the player's onscreen position
+    // Vector2 player_screen_pos = player_sprite->get_screen_position();
+    // get the player's onscreen destination
+    // Rectangle player_dest = player_sprite->get_dest();
+    // get the player's onscreen hitbox
+    // Rectangle player_hitbox = player_sprite->get_hitbox();
+    // get the player's onscreen hitbox
+    // Rectangle player_hitbox_dest = player_sprite->get_hitbox_dest();
+    // get the player's onscreen hitbox
+    // Rectangle player_hitbox_src = player_sprite->get_hitbox_src();
+    // get the player's onscreen hitbox
+    // Rectangle player_hitbox_dest_src = player_sprite->get_hitbox_dest_src();
+
+    // check if the mouse is within the player's hitbox
+    // if (CheckCollisionPointRec(mouse_pos, player_hitbox)) {
+    // if the mouse is within the player's hitbox, then we can move the
+    // player
+    // get the dungeon position of the mouse
+    // Vector2 mouse_dungeon_pos =
+    // dungeon_floor.get_dungeon_position(mouse_pos);
+    // move the player to the mouse position
+    // handle_dungeon_move_pos(player_id, player_pos, mouse_dungeon_pos);
+    //}
+  }
+
   if (IsKeyPressed(KEY_UP)) {
     handle_dungeon_move_dir(player_id, (Vector2){0, -1});
     player_did_move = true;
     // set the player sprite's context
     get_sprite(player_id)->set_context(1);
     get_sprite(player_id)->set_is_flipped(false);
+    // last_mouse_click_pos = (Vector2){-1, -1};
+    tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_DOWN)) {
     handle_dungeon_move_dir(player_id, (Vector2){0, 1});
     player_did_move = true;
     get_sprite(player_id)->set_context(0);
     get_sprite(player_id)->set_is_flipped(false);
+    // last_mouse_click_pos = (Vector2){-1, -1};
+    tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_LEFT)) {
     handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
     player_did_move = true;
     get_sprite(player_id)->set_context(2);
     get_sprite(player_id)->set_is_flipped(true);
+    // last_mouse_click_pos = (Vector2){-1, -1};
+    tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_RIGHT)) {
     handle_dungeon_move_dir(player_id, (Vector2){1, 0});
     player_did_move = true;
     get_sprite(player_id)->set_context(2);
     get_sprite(player_id)->set_is_flipped(false);
+    // last_mouse_click_pos = (Vector2){-1, -1};
+    tile_is_selected = false;
   }
 
   // diagonals and numpad keypad entry
@@ -520,6 +578,13 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
   Vector2 origin = {0, 0};
   Color color = WHITE;
   DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
+
+  // check to see if we need to 'select' the tile
+  if (!tile_is_selected) {
+    return;
+  } else if (CheckCollisionPointRec(last_mouse_click_pos, dest)) {
+    DrawRectangleLinesEx(dest, 4, GREEN);
+  }
 }
 
 inline void GameplayScene::handle_popup_manager() {
