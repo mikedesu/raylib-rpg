@@ -151,79 +151,88 @@ void GameplayScene::handle_player_input() {
   if (IsKeyPressed(KEY_UP)) {
     handle_dungeon_move_dir(player_id, (Vector2){0, -1});
     player_did_move = true;
+    // set the player sprite's context
+    get_sprite(player_id)->set_context(1);
+    get_sprite(player_id)->set_is_flipped(false);
   }
   if (IsKeyPressed(KEY_DOWN)) {
     handle_dungeon_move_dir(player_id, (Vector2){0, 1});
     player_did_move = true;
+    get_sprite(player_id)->set_context(0);
+    get_sprite(player_id)->set_is_flipped(false);
   }
   if (IsKeyPressed(KEY_LEFT)) {
     handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
     player_did_move = true;
+    get_sprite(player_id)->set_context(2);
+    get_sprite(player_id)->set_is_flipped(true);
   }
   if (IsKeyPressed(KEY_RIGHT)) {
     handle_dungeon_move_dir(player_id, (Vector2){1, 0});
     player_did_move = true;
+    get_sprite(player_id)->set_context(2);
+    get_sprite(player_id)->set_is_flipped(false);
   }
 
   // diagonals and numpad keypad entry
-  if (IsKeyPressed(KEY_KP_7)) {
-    handle_dungeon_move_dir(player_id, (Vector2){-1, -1});
-    player_did_move = true;
-  }
+  // if (IsKeyPressed(KEY_KP_7)) {
+  //  handle_dungeon_move_dir(player_id, (Vector2){-1, -1});
+  //  player_did_move = true;
+  //}
 
-  if (IsKeyPressed(KEY_KP_9)) {
-    handle_dungeon_move_dir(player_id, (Vector2){1, -1});
-    player_did_move = true;
-  }
+  // if (IsKeyPressed(KEY_KP_9)) {
+  //   handle_dungeon_move_dir(player_id, (Vector2){1, -1});
+  //   player_did_move = true;
+  // }
 
-  if (IsKeyPressed(KEY_KP_1)) {
-    handle_dungeon_move_dir(player_id, (Vector2){-1, 1});
-    player_did_move = true;
-  }
+  // if (IsKeyPressed(KEY_KP_1)) {
+  //   handle_dungeon_move_dir(player_id, (Vector2){-1, 1});
+  //   player_did_move = true;
+  // }
 
-  if (IsKeyPressed(KEY_KP_3)) {
-    handle_dungeon_move_dir(player_id, (Vector2){1, 1});
-    player_did_move = true;
-  }
+  // if (IsKeyPressed(KEY_KP_3)) {
+  //   handle_dungeon_move_dir(player_id, (Vector2){1, 1});
+  //   player_did_move = true;
+  // }
 
-  if (IsKeyPressed(KEY_KP_8)) {
-    handle_dungeon_move_dir(player_id, (Vector2){0, -1});
-    player_did_move = true;
-  }
+  // if (IsKeyPressed(KEY_KP_8)) {
+  //   handle_dungeon_move_dir(player_id, (Vector2){0, -1});
+  //   player_did_move = true;
+  // }
 
-  if (IsKeyPressed(KEY_KP_2)) {
-    handle_dungeon_move_dir(player_id, (Vector2){0, 1});
-    player_did_move = true;
-  }
+  // if (IsKeyPressed(KEY_KP_2)) {
+  //   handle_dungeon_move_dir(player_id, (Vector2){0, 1});
+  //   player_did_move = true;
+  // }
 
-  if (IsKeyPressed(KEY_KP_4)) {
-    handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
-    player_did_move = true;
-  }
+  // if (IsKeyPressed(KEY_KP_4)) {
+  //   handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
+  //   player_did_move = true;
+  // }
 
-  if (IsKeyPressed(KEY_KP_6)) {
-    handle_dungeon_move_dir(player_id, (Vector2){1, 0});
-    player_did_move = true;
-  }
+  // if (IsKeyPressed(KEY_KP_6)) {
+  //   handle_dungeon_move_dir(player_id, (Vector2){1, 0});
+  //   player_did_move = true;
+  // }
 
-  if (IsKeyPressed(KEY_R)) {
-    // change tile at 0, 0 to floor
-    // dungeon_floor.set_tile_type(0, 0, TILE_FLOOR_BASIC);
+  // if (IsKeyPressed(KEY_R)) {
+  //  change tile at 0, 0 to floor
+  //  dungeon_floor.set_tile_type(0, 0, TILE_FLOOR_BASIC);
+  //  spawn a torch at a random location
+  //  spawn_torch(
+  //      (Vector2){(float)GetRandomValue(0, dungeon_floor.get_gridsize() - 1),
+  //                (float)GetRandomValue(0, dungeon_floor.get_gridsize() -
+  //                1)});
+  //}
 
-    // spawn a torch at a random location
-    spawn_torch(
-        (Vector2){(float)GetRandomValue(0, dungeon_floor.get_gridsize() - 1),
-                  (float)GetRandomValue(0, dungeon_floor.get_gridsize() - 1)});
-  }
+  // if (IsKeyPressed(KEY_P)) {
+  //  popup message
+  //  show_test_popup = !show_test_popup;
 
-  if (IsKeyPressed(KEY_P)) {
-    // popup message
-    show_test_popup = !show_test_popup;
-
-    // if (show_test_popup) {
-    //   get_popup_manager()->render("Test Popup");
-    // }
-  }
+  // if (show_test_popup) {
+  //   get_popup_manager()->render("Test Popup");
+  // }
+  //}
 
   // if (IsKeyPressed(KEY_T)) {
   //
@@ -314,17 +323,18 @@ bool GameplayScene::init() {
 }
 
 const entity_id GameplayScene::spawn_player(const Vector2 pos) {
-  entity_id id = spawn_entity("player", 0, 0, SPRITETYPE_PLAYER, true);
+  entity_id id =
+      spawn_entity("player", 0, 0, SPRITETYPE_PLAYER, true, get_global_scale());
   player_id = id;
   dungeon_floor.set_entity_position(id, pos);
   return id;
 }
 
-const entity_id GameplayScene::spawn_goblin(const Vector2 pos) {
-  entity_id id = spawn_entity("goblin", 0, 0, SPRITETYPE_ENEMY, true);
-  dungeon_floor.set_entity_position(id, pos);
-  return id;
-}
+// const entity_id GameplayScene::spawn_goblin(const Vector2 pos) {
+//   entity_id id = spawn_entity("goblin", 0, 0, SPRITETYPE_ENEMY, true);
+//   dungeon_floor.set_entity_position(id, pos);
+//   return id;
+// }
 
 const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
   entity_id id = spawn_entity("torch", 0, 0, SPRITETYPE_ITEM, true);
@@ -367,12 +377,9 @@ inline void GameplayScene::draw_controls() {
   const int y = 10;
   const string s = "Controls: \n"
                    "Arrow keys: move player\n"
-                   "Numpad keys: move player\n"
-                   "R: spawn torch\n"
                    "D: toggle debug panel\n"
                    "C: toggle player/cam mode\n"
                    "Zz: zoom in/out\n"
-                   "P: toggle popup\n"
                    "Q: quit\n";
   DrawText(s.c_str(), x, y, fontsize, WHITE);
 }
@@ -456,6 +463,9 @@ inline void GameplayScene::draw() {
   // draw all other sprites
   for (auto &s : get_sprites()) {
     s.second->draw();
+    if (get_debug_panel_on()) {
+      s.second->draw_hitbox();
+    }
   }
 
   EndMode2D();

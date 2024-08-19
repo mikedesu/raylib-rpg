@@ -81,13 +81,17 @@ bool Scene::load_textures() {
 
     char *asset_name = strtok(line, " ");
     char *num_frames = strtok(NULL, " ");
+    char *contexts = strtok(NULL, " ");
     char *is_player = strtok(NULL, " ");
     char *width = strtok(NULL, " ");
     char *height = strtok(NULL, " ");
     char *asset_path = strtok(NULL, " ");
     mPrint("Asset name: " + string(asset_name));
     mPrint("Num frames: " + string(num_frames));
+    mPrint("Contexts: " + string(contexts));
     mPrint("Is player: " + string(is_player));
+    mPrint("Width: " + string(width));
+    mPrint("Height: " + string(height));
     mPrint("Asset path: [" + string(asset_path) + "]");
 
     // check to see if asset path has newline at end
@@ -95,8 +99,9 @@ bool Scene::load_textures() {
       asset_path[strlen(asset_path) - 1] = '\0';
     }
 
-    bool result = load_texture(asset_name, asset_path, atoi(num_frames),
-                               atoi(is_player), atoi(width), atoi(height));
+    bool result =
+        load_texture(asset_name, asset_path, atoi(num_frames), atoi(contexts),
+                     atoi(is_player), atoi(width), atoi(height));
     if (!result) {
       mPrint("Error loading texture: " + string(asset_path));
       return false;
@@ -107,8 +112,9 @@ bool Scene::load_textures() {
 }
 
 bool Scene::load_texture(const char *asset_name, const char *asset_path,
-                         const int num_frames, const int is_player,
-                         const int width, const int height) {
+                         const int num_frames, const int contexts,
+                         const int is_player, const int width,
+                         const int height) {
 
   string asset_name_str = string(asset_name);
 
@@ -148,6 +154,7 @@ bool Scene::load_texture(const char *asset_name, const char *asset_path,
 
   ti.texture = t;
   ti.num_frames = num_frames;
+  ti.contexts = contexts;
   ti.is_player = is_player;
   ti.asset_path = asset_path;
   ti.width = width;
@@ -187,10 +194,17 @@ entity_id Scene::spawn_entity(const char *texture_key, float x, float y,
 entity_id Scene::spawn_entity(const char *texture_key, float x, float y,
                               sprite_type type, bool is_anim, float scale) {
 
-  mPrint("Spawning entity...");
+  const int w = textures[texture_key]->width;
+  const int h = textures[texture_key]->height;
+  const int num_frames = textures[texture_key]->num_frames;
+  const int contexts = textures[texture_key]->contexts;
+
+  mPrint("Spawning entity: " + string(texture_key) + " at (" + to_string(x) +
+         ", " + to_string(y) + ") with width: " + to_string(w) +
+         " and height: " + to_string(h));
+
   shared_ptr<Sprite> s = make_shared<Sprite>(
-      textures[texture_key]->texture, textures[texture_key]->num_frames, x, y,
-      textures[texture_key]->width, textures[texture_key]->height, type);
+      textures[texture_key]->texture, num_frames, contexts, x, y, w, h, type);
   if (s == nullptr) {
     mPrint("Error creating sprite.");
     return -1;

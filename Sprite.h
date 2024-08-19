@@ -22,12 +22,13 @@ typedef enum {
 class Sprite {
 
 public:
-  Sprite(const char *filepath, const unsigned int anim_frames, const float x,
-         const float y, sprite_type t);
-  Sprite(Texture2D &texture, const unsigned int anim_frames, const float x,
-         const float y, sprite_type t);
-  Sprite(Texture2D &texture, const unsigned int anim_frames, const float x,
-         const float y, const int w, const int h, sprite_type t);
+  // Sprite(const char *filepath, const unsigned int anim_frames, const float x,
+  //        const float y, sprite_type t);
+  // Sprite(Texture2D &texture, const unsigned int anim_frames, const float x,
+  //        const float y, sprite_type t);
+  Sprite(Texture2D &texture, const unsigned int anim_frames,
+         const unsigned int contexts, const float x, const float y, const int w,
+         const int h, sprite_type t);
 
   ~Sprite();
 
@@ -61,6 +62,10 @@ public:
   const bool get_is_spinning() const;
   const float get_rotation_angle() const;
   const float get_rotation_speed() const;
+
+  const int get_context() const;
+  const int get_contexts() const;
+
   // const movement_type get_movement_type() const;
   // const Vector2 get_dungeon_position() const;
 
@@ -82,6 +87,7 @@ public:
   void set_type(const sprite_type t);
   void set_ax(const float ax);
   void set_ay(const float ay);
+  void set_context(const int n);
   // void set_hp(const int hp);
   // void set_maxhp(const int maxhp);
   // void decr_hp(const int hp);
@@ -108,6 +114,11 @@ private:
   Rectangle flipped_src;
   Rectangle dest;
   Rectangle hitbox = {0, 0, 0, 0};
+
+  int width;
+  int height;
+  int context = 0;
+  int contexts = 0;
 
   unsigned int anim_frames;
   unsigned int current_frame;

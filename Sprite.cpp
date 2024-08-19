@@ -1,7 +1,9 @@
 #include "Sprite.h"
-#include "rlgl.h"
-#include <cstring>
+// #include "rlgl.h"
+// #include <cstring>
+#include "mPrint.h"
 
+/*
 Sprite::Sprite(const char *filepath, const unsigned int frames, const float x,
                const float y, sprite_type t) {
   if (strlen(filepath) > 0) {
@@ -26,7 +28,9 @@ Sprite::Sprite(const char *filepath, const unsigned int frames, const float x,
   acceleration.x = 0;
   acceleration.y = 0;
 }
+*/
 
+/*
 Sprite::Sprite(Texture2D &t, const unsigned int frames, const float x,
                const float y, sprite_type spritetype) {
   texture = t;
@@ -48,12 +52,16 @@ Sprite::Sprite(Texture2D &t, const unsigned int frames, const float x,
   acceleration.x = 0;
   acceleration.y = 0;
 }
+*/
 
-Sprite::Sprite(Texture2D &t, const unsigned int frames, const float x,
-               const float y, const int w, const int h,
+Sprite::Sprite(Texture2D &t, const unsigned int frames, const unsigned int c,
+               const float x, const float y, const int w, const int h,
                sprite_type spritetype) {
   texture = t;
   anim_frames = frames;
+  contexts = c;
+  width = w;
+  height = h;
   set_scale(1.0f);
   init_rects(w, h);
   origin = (Vector2){0, 0};
@@ -83,7 +91,7 @@ void Sprite::init_rects() {
 }
 
 void Sprite::init_rects(const float w, const float h) {
-  src = (Rectangle){0, 0, w, h};
+  src = (Rectangle){0, h * context, w, h};
   flipped_src = (Rectangle){src.x, src.y, w * -1.0f, h};
   dest = (Rectangle){dest.x, dest.y, w * scale, h * scale};
   hitbox = (Rectangle){dest.x, dest.y, dest.width, dest.height};
@@ -93,17 +101,17 @@ Sprite::~Sprite() {}
 
 void Sprite::draw() {
   const Color color = WHITE;
-  rlPushMatrix();
-  rlTranslatef(dest.x + dest.width / 2, dest.y + dest.height / 2, 0);
-  rlRotatef(rotation_angle, 0, 0, 1);
-  // rlTranslatef(0, 0, 0);
-  rlTranslatef(-dest.x - dest.width / 2, -dest.y - dest.height / 2, 0);
+  // rlPushMatrix();
+  // rlTranslatef(dest.x + dest.width / 2, dest.y + dest.height / 2, 0);
+  // rlRotatef(rotation_angle, 0, 0, 1);
+  //  rlTranslatef(0, 0, 0);
+  // rlTranslatef(-dest.x - dest.width / 2, -dest.y - dest.height / 2, 0);
   if (is_flipped) {
     DrawTexturePro(texture, flipped_src, dest, origin, 0.0f, color);
   } else {
     DrawTexturePro(texture, src, dest, origin, 0.0f, color);
   }
-  rlPopMatrix();
+  // rlPopMatrix();
   const int frame_freq = 10;
   if (is_animating && frame_counter % frame_freq == 0) {
     incr_frame();
@@ -112,14 +120,14 @@ void Sprite::draw() {
 }
 
 void Sprite::draw_hitbox() {
-  rlPushMatrix();
-  rlTranslatef(dest.x + dest.width / 2, dest.y + dest.height / 2, 0);
-  rlRotatef(rotation_angle, 0, 0, 1);
-  rlTranslatef(-dest.x - dest.width / 2, -dest.y - dest.height / 2, 0);
-  // draw the dest box
+  // rlPushMatrix();
+  // rlTranslatef(dest.x + dest.width / 2, dest.y + dest.height / 2, 0);
+  // rlRotatef(rotation_angle, 0, 0, 1);
+  // rlTranslatef(-dest.x - dest.width / 2, -dest.y - dest.height / 2, 0);
+  //  draw the dest box
   DrawRectangleLines(dest.x, dest.y, dest.width, dest.height, GREEN);
-  rlPopMatrix();
-  // DrawRectangleLines(dest.x, dest.y, dest.width, dest.height, BLUE);
+  // rlPopMatrix();
+  //  DrawRectangleLines(dest.x, dest.y, dest.width, dest.height, BLUE);
 }
 
 void Sprite::move(const float x, const float y) {
@@ -134,7 +142,7 @@ void Sprite::move_rect(Rectangle &r) {
 
 void Sprite::set_scale(const float s) {
   scale = s;
-  init_rects();
+  init_rects(width, height);
 }
 
 void Sprite::set_current_frame(const unsigned int frame) {
@@ -224,4 +232,19 @@ const Rectangle Sprite::get_hitbox() const { return hitbox; }
 const float Sprite::get_rotation_speed() const { return rotation_speed; }
 const bool Sprite::get_is_marked_for_deletion() const {
   return is_marked_for_deletion;
+}
+
+const int Sprite::get_context() const { return context; }
+const int Sprite::get_contexts() const { return contexts; }
+
+void Sprite::set_context(const int n) {
+  if (n >= contexts) {
+    mPrint("Error: context out of bounds.");
+    context = 0;
+  } else {
+    context = n;
+  }
+
+  // whenever the context is updated, we have to re-initialize our rects
+  init_rects(width, height);
 }

@@ -51,8 +51,8 @@ public:
   // bool load_texture(const char *asset_name, const char *asset_path,
   //                   const int num_frames, const int is_player);
   bool load_texture(const char *asset_name, const char *asset_path,
-                    const int num_frames, const int is_player, const int width,
-                    const int height);
+                    const int num_frames, const int contexts,
+                    const int is_player, const int width, const int height);
 
   float get_global_scale();
 
