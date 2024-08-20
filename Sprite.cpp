@@ -30,30 +30,6 @@ Sprite::Sprite(const char *filepath, const unsigned int frames, const float x,
 }
 */
 
-/*
-Sprite::Sprite(Texture2D &t, const unsigned int frames, const float x,
-               const float y, sprite_type spritetype) {
-  texture = t;
-  anim_frames = frames;
-  set_scale(1.0f);
-  init_rects();
-  origin = (Vector2){0, 0};
-  dest.x = x;
-  dest.y = y;
-  current_frame = 0;
-  velocity = (Vector2){0, 0};
-  is_marked_for_deletion = false;
-  is_animating = false;
-  is_flipped = false;
-  type = spritetype;
-  is_spinning = false;
-  velocity.x = 0;
-  velocity.y = 0;
-  acceleration.x = 0;
-  acceleration.y = 0;
-}
-*/
-
 Sprite::Sprite(Texture2D &t, const unsigned int frames, const unsigned int c,
                const float x, const float y, const int w, const int h,
                sprite_type spritetype) {
@@ -223,6 +199,8 @@ const int Sprite::get_width() const { return src.width * scale; }
 const int Sprite::get_height() const { return src.height * scale; }
 const int Sprite::get_anim_frames() const { return anim_frames; }
 const int Sprite::get_current_frame() const { return current_frame; }
+const int Sprite::get_context() const { return context; }
+const int Sprite::get_contexts() const { return contexts; }
 const bool Sprite::get_is_animating() const { return is_animating; }
 const float Sprite::get_ax() const { return acceleration.x; }
 const float Sprite::get_ay() const { return acceleration.y; }
@@ -234,9 +212,6 @@ const bool Sprite::get_is_marked_for_deletion() const {
   return is_marked_for_deletion;
 }
 
-const int Sprite::get_context() const { return context; }
-const int Sprite::get_contexts() const { return contexts; }
-
 void Sprite::set_context(const int n) {
   if (n >= contexts) {
     mPrint("Error: context out of bounds.");
@@ -244,7 +219,6 @@ void Sprite::set_context(const int n) {
   } else {
     context = n;
   }
-
   // whenever the context is updated, we have to re-initialize our rects
   init_rects(width, height);
 }

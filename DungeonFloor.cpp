@@ -7,9 +7,6 @@ DungeonFloor::DungeonFloor() {
     set_tile_type(i, 0, TILE_FLOOR_WOOD);
     set_tile_type(i, 1, TILE_FLOOR_DIRT);
   }
-
-  // for (int i = 0; i < gridsize; i++) {
-  // }
 }
 
 DungeonFloor::~DungeonFloor() {}

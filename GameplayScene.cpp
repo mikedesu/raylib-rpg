@@ -350,7 +350,7 @@ const string GameplayScene::tile_key_for_type(const tile_type t) {
     tile_key += "dirt";
     break;
   case TILE_WALL_BASIC:
-    tile_key += "void";
+    tile_key += "wall";
     break;
   default:
     tile_key += "void";
@@ -361,14 +361,16 @@ const string GameplayScene::tile_key_for_type(const tile_type t) {
 
 inline void GameplayScene::draw_tile(const string tile_key, const int i,
                                      const int j) {
-  const int x = i * 20 * get_global_scale();
-  const int y = j * 20 * get_global_scale();
   shared_ptr<texture_info> t = get_texture_info(tile_key);
-  Rectangle src = {0.0f, 0.0f, (float)t->texture.width,
-                   (float)t->texture.height};
-  Rectangle dest = {(float)x, (float)y,
-                    (float)t->texture.width * get_global_scale(),
-                    (float)t->texture.height * get_global_scale()};
+  const float w = t->texture.width;
+  const float h = t->texture.height;
+  const float scale = get_global_scale();
+  const float ws = w * scale;
+  const float hs = h * scale;
+  const float x = i * 20 * scale;
+  const float y = j * 20 * scale - (h * scale - 20 * scale);
+  Rectangle src = {0, 0, w, h};
+  Rectangle dest = {x, y, ws, hs};
   Vector2 origin = {0, 0};
   Color color = WHITE;
   DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
