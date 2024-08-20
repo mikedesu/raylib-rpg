@@ -25,6 +25,8 @@ public:
   Tile &get_tile_ref(const int col, const int row);
   Tile &get_tile_ref(const Vector2 position);
 
+  const vector<entity_id> &get_entities(const int col, const int row) const;
+
 private:
   const int gridsize = 8;
   Tile grid[8][8];

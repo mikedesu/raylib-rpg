@@ -9,8 +9,26 @@
 - [ ] trap tiles
 - [x] the tiles have to be displayed in such a way as that, if a tile type were to change, its associated display also changes
 - [x] message log / event log
-- [ ] place enemies on tiles / spawn them
-- [ ] be able to bump into enemies
+- [x] place enemies on tiles / spawn them
+- [x] be able to bump into enemies/entities
+- [ ] make enemy sprite sheets with 3 directions, up, down, right
+    - [ ] goblin
+    - [ ] bat
+    - [ ] slime
+    - [ ] cat
+    - [ ] eyeball
+- [ ] a dynamic camera that follows the player
+- [ ] a dynamic sprite system that allows for a humanoid body and equipping individual weapons/armor
+    - [ ] left arm
+    - [ ] right arm
+    - [ ] head
+    - [ ] torso
+    - [ ] legs
+    - [ ] feet
+    - [ ] left hand
+    - [ ] right hand
+    - [ ] left ring
+    - [ ] right ring
 - [ ] have enemies move randomly
 - [ ] have enemies move towards the player
 - [ ] torches / item placement on tiles
@@ -26,7 +44,9 @@
 - [ ] a way to pause the game
 - [x] a way to quit the game
 - [ ] a context menu for performing actions
-- [ ] mouse-click select tile
-    - [ ] translate mouse-click on screen into in world x,y
-    - [ ] translate world x,y into dungeon tile x,y
-
+- [x] mouse-click select tile
+    - [x] translate mouse-click on screen into in world x,y
+    - [x] translate world x,y into dungeon tile x,y
+    - [ ] make the select tile draw occur after all other drawing 
+    - [ ] make the select tile actually draw a box around any entity that is on the tile
+- [ ] apply optional dithering to textures read in, not just on tiles

@@ -111,3 +111,9 @@ Tile &DungeonFloor::get_tile_ref(const int col, const int row) {
 Tile &DungeonFloor::get_tile_ref(const Vector2 position) {
   return grid[(int)position.x][(int)position.y];
 }
+
+const vector<entity_id> &DungeonFloor::get_entities(const int col,
+                                                    const int row) const {
+
+  return grid[col][row].get_entities();
+}

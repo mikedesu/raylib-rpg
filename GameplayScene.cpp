@@ -199,7 +199,17 @@ bool GameplayScene::init() {
     // spawning a player is a function of spawn_entity
     // we can write code to put into a function that spawns the player
     spawn_player((Vector2){1, 1});
+
     spawn_column((Vector2){2, 2});
+    spawn_column((Vector2){2, 3});
+    spawn_column((Vector2){2, 4});
+    spawn_column((Vector2){2, 5});
+
+    spawn_column((Vector2){3, 2});
+
+    spawn_column((Vector2){4, 2});
+    spawn_column((Vector2){4, 3});
+    spawn_column((Vector2){4, 5});
     // set the player's dungeon position
     mPrint("Setting camera offset...");
     get_camera2d().target.x = -450;
@@ -328,18 +338,41 @@ inline void GameplayScene::draw() {
       draw_tile(s, i, j);
     }
   }
-  // draw player
-  get_sprite(player_id)->draw();
+  // we will actually need to draw things in a specific order
+  // we wont be able to simply iterate the data structures
+  // instead, we will need to move thru the dungeon row by row, column by column
+  // this way, handling each row, we can properly draw things such that
+  // when the player is above a wall,
+  // the wall renders on 'top' of the player
+  // and when the player is below a wall,
+  // the wall renders 'behind' the player
+  for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
+    for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
+      // get entities on the tile
+      const vector<entity_id> &entities = dungeon_floor.get_entities(i, j);
 
-  // draw walls
-  for (auto &s : get_sprites()) {
-    if (s.second->get_type() == SPRITETYPE_WALL) {
-      s.second->draw();
-      if (get_debug_panel_on()) {
-        s.second->draw_hitbox();
+      // draw entities
+      for (auto &e : entities) {
+        get_sprite(e)->draw();
       }
+      // const tile_type t = dungeon_floor.get_tile_type(i, j);
+      // const string s = tile_key_for_type(t);
+      // draw_tile(s, i, j);
     }
   }
+
+  // draw player
+  // get_sprite(player_id)->draw();
+
+  // draw walls
+  // for (auto &s : get_sprites()) {
+  //  if (s.second->get_type() == SPRITETYPE_WALL) {
+  //    s.second->draw();
+  //    if (get_debug_panel_on()) {
+  //      s.second->draw_hitbox();
+  //    }
+  //  }
+  //}
   EndMode2D();
   handle_draw_debug_panel();
   draw_controls();
