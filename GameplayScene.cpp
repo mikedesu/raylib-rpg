@@ -1,5 +1,4 @@
 #include "GameplayScene.h"
-// #include "Sprite.h"
 #include "Tile.h"
 #include "mPrint.h"
 #include "raymath.h"
@@ -10,28 +9,20 @@ using std::to_string;
 
 GameplayScene::GameplayScene() {
   mPrint("GameplayScene constructor");
-
   last_mouse_click_pos = (Vector2){0, 0};
-
+  last_tile_click_pos = (Vector2){-1, -1};
   set_control_mode(CONTROL_MODE_PLAYER);
   set_texture_filepath("game_textures.txt");
-  // set_global_scale(1.0f);
-  //  set_global_scale(2.0f);
   set_global_scale(3.0f);
-  //  set_global_scale(4.0f);
   set_scene_transition(SCENE_TRANSITION_IN);
   set_scene_type(SCENE_TYPE_GAMEPLAY);
   // load_music("/home/darkmage/Music/darkmage/lets-fkn-go.mp3");
 }
 
 GameplayScene::~GameplayScene() { mPrint("GameplayScene destructor"); }
-
 void GameplayScene::gameover() { set_scene_transition(SCENE_TRANSITION_OUT); }
-
 void GameplayScene::update_player_movement() {}
-
 void GameplayScene::update_enemy_movement() {}
-
 void GameplayScene::handle_player_collision() {}
 
 void GameplayScene::update() {
@@ -45,7 +36,6 @@ void GameplayScene::update() {
     Vector2 dungeon_pos = dungeon_floor.get_entity_position(s.first);
     s.second->update(dungeon_pos);
   }
-
   if (player_did_move) {
     turn_count++;
     player_did_move = false;
@@ -68,13 +58,10 @@ void GameplayScene::handle_camera_input() {
 
   const float zoom_incr = 1;
   if (IsKeyDown(KEY_RIGHT_SHIFT) && IsKeyPressed(KEY_Z)) {
-    // mPrint("right shift + z");
     set_scale(get_global_scale() - zoom_incr);
   } else if (IsKeyDown(KEY_LEFT_SHIFT) && IsKeyPressed(KEY_Z)) {
-    // mPrint("left shift + z");
     set_scale(get_global_scale() - zoom_incr);
   } else if (IsKeyPressed(KEY_Z)) {
-    // mPrint("z");
     set_scale(get_global_scale() + zoom_incr);
   }
 }
@@ -85,45 +72,27 @@ void GameplayScene::handle_dungeon_move_pos(const entity_id id,
   if (Vector2Equals(c_pos, t_pos)) {
     return;
   }
-
   tile_type t = dungeon_floor.get_tile_type(t_pos.x, t_pos.y);
-
-  // mPrint("Tile type: " + to_string(t));
-
-  // message_log.push_back(to_string(id) + " moving to " + to_string(t_pos.x) +
-  //                       ", " + to_string(t_pos.y));
-
   switch (t) {
   case TILE_FLOOR_BASIC:
   case TILE_FLOOR_STONE:
   case TILE_FLOOR_WOOD:
-  case TILE_FLOOR_DIRT:
-    // get_sprites()[id]->set_dungeon_position(t_pos);
-    // dungeon_floor.set_entity_position(id, t_pos);
-    {
-      bool r = dungeon_floor.move_entity_to_tile(id, t_pos);
-      if (r) {
-        const string s = "Moved to " + to_string((int)t_pos.x) + ", " +
-                         to_string((int)t_pos.y);
-        message_log.push_back(s);
-        get_popup_manager()->render("Moved");
-      } else {
-        message_log.push_back("Cannot move to " + to_string((int)t_pos.x) +
-                              ", " + to_string((int)t_pos.y));
-        get_popup_manager()->render("Cannot move");
-      }
+  case TILE_FLOOR_DIRT: {
+    bool r = dungeon_floor.move_entity_to_tile(id, t_pos);
+    if (r) {
+      const string s = "Moved to " + to_string((int)t_pos.x) + ", " +
+                       to_string((int)t_pos.y);
+      message_log.push_back(s);
+      get_popup_manager()->render("Moved");
+    } else {
+      message_log.push_back("Cannot move to " + to_string((int)t_pos.x) + ", " +
+                            to_string((int)t_pos.y));
+      get_popup_manager()->render("Cannot move");
     }
-
-    // message_log.push_back(to_string(id) + " moved to " +
-    //                       to_string((int)t_pos.x) + ", " +
-    //                       to_string((int)t_pos.y));
-    break;
+  } break;
   default:
     message_log.push_back("Bumped into wall or other");
     get_popup_manager()->render("Cannot move");
-    // message_log.push_back(to_string(id) + " cannot move to " +
-    //                       to_string((int)t_pos.x) + ", " +
-    //                       to_string((int)t_pos.y));
     break;
   }
 }
@@ -133,69 +102,24 @@ void GameplayScene::handle_dungeon_move_dir(const entity_id id,
   // we have to check the dungeon position of the sprite
   // if the target tile is a location we cant move to, like none, void, or wall,
   // then we don't move
-
   // get the current dungeon position of the sprite
-  // Vector2 cur_pos = get_sprites()[id]->get_dungeon_position();
   Vector2 cur_pos = dungeon_floor.get_entity_position(id);
-
   Vector2 t_pos = Vector2Add(cur_pos, direction);
-
   // if the locations are equal, no move is executed
   // this way be interpeted as a "wait" action in the future
   handle_dungeon_move_pos(id, cur_pos, t_pos);
-
-  // check if the target dungeon position is valid
-  // if (t == TILE_FLOOR_BASIC) {
-  // move the sprite to the target position
-  //}
 }
 
 void GameplayScene::handle_player_input() {
-
   // select a tile on screen
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     // get the mouse position
     Vector2 mouse_pos = GetMousePosition();
     // translate the mouse position to the world position
     Vector2 world_pos = GetScreenToWorld2D(mouse_pos, get_camera2d());
-
-    // mPrint("Mouse position: " + to_string(mouse_pos.x) + ", " +
-    //        to_string(mouse_pos.y));
-    // mPrint("World position: " + to_string(world_pos.x) + ", " +
-    //        to_string(world_pos.y));
-
     last_mouse_click_pos = world_pos;
     tile_is_selected = true;
-
     // draw a rectangle at the mouse position
-
-    // get the dungeon position of the player
-    // Vector2 player_pos = dungeon_floor.get_entity_position(player_id);
-    // get the player sprite
-    // shared_ptr<Sprite> player_sprite = get_sprite(player_id);
-    // get the player's onscreen position
-    // Vector2 player_screen_pos = player_sprite->get_screen_position();
-    // get the player's onscreen destination
-    // Rectangle player_dest = player_sprite->get_dest();
-    // get the player's onscreen hitbox
-    // Rectangle player_hitbox = player_sprite->get_hitbox();
-    // get the player's onscreen hitbox
-    // Rectangle player_hitbox_dest = player_sprite->get_hitbox_dest();
-    // get the player's onscreen hitbox
-    // Rectangle player_hitbox_src = player_sprite->get_hitbox_src();
-    // get the player's onscreen hitbox
-    // Rectangle player_hitbox_dest_src = player_sprite->get_hitbox_dest_src();
-
-    // check if the mouse is within the player's hitbox
-    // if (CheckCollisionPointRec(mouse_pos, player_hitbox)) {
-    // if the mouse is within the player's hitbox, then we can move the
-    // player
-    // get the dungeon position of the mouse
-    // Vector2 mouse_dungeon_pos =
-    // dungeon_floor.get_dungeon_position(mouse_pos);
-    // move the player to the mouse position
-    // handle_dungeon_move_pos(player_id, player_pos, mouse_dungeon_pos);
-    //}
   }
 
   if (IsKeyPressed(KEY_UP)) {
@@ -204,7 +128,6 @@ void GameplayScene::handle_player_input() {
     // set the player sprite's context
     get_sprite(player_id)->set_context(1);
     get_sprite(player_id)->set_is_flipped(false);
-    // last_mouse_click_pos = (Vector2){-1, -1};
     tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_DOWN)) {
@@ -212,7 +135,6 @@ void GameplayScene::handle_player_input() {
     player_did_move = true;
     get_sprite(player_id)->set_context(0);
     get_sprite(player_id)->set_is_flipped(false);
-    // last_mouse_click_pos = (Vector2){-1, -1};
     tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_LEFT)) {
@@ -220,7 +142,6 @@ void GameplayScene::handle_player_input() {
     player_did_move = true;
     get_sprite(player_id)->set_context(2);
     get_sprite(player_id)->set_is_flipped(true);
-    // last_mouse_click_pos = (Vector2){-1, -1};
     tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_RIGHT)) {
@@ -228,84 +149,17 @@ void GameplayScene::handle_player_input() {
     player_did_move = true;
     get_sprite(player_id)->set_context(2);
     get_sprite(player_id)->set_is_flipped(false);
-    // last_mouse_click_pos = (Vector2){-1, -1};
     tile_is_selected = false;
   }
-
-  // diagonals and numpad keypad entry
-  // if (IsKeyPressed(KEY_KP_7)) {
-  //  handle_dungeon_move_dir(player_id, (Vector2){-1, -1});
-  //  player_did_move = true;
-  //}
-
-  // if (IsKeyPressed(KEY_KP_9)) {
-  //   handle_dungeon_move_dir(player_id, (Vector2){1, -1});
-  //   player_did_move = true;
-  // }
-
-  // if (IsKeyPressed(KEY_KP_1)) {
-  //   handle_dungeon_move_dir(player_id, (Vector2){-1, 1});
-  //   player_did_move = true;
-  // }
-
-  // if (IsKeyPressed(KEY_KP_3)) {
-  //   handle_dungeon_move_dir(player_id, (Vector2){1, 1});
-  //   player_did_move = true;
-  // }
-
-  // if (IsKeyPressed(KEY_KP_8)) {
-  //   handle_dungeon_move_dir(player_id, (Vector2){0, -1});
-  //   player_did_move = true;
-  // }
-
-  // if (IsKeyPressed(KEY_KP_2)) {
-  //   handle_dungeon_move_dir(player_id, (Vector2){0, 1});
-  //   player_did_move = true;
-  // }
-
-  // if (IsKeyPressed(KEY_KP_4)) {
-  //   handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
-  //   player_did_move = true;
-  // }
-
-  // if (IsKeyPressed(KEY_KP_6)) {
-  //   handle_dungeon_move_dir(player_id, (Vector2){1, 0});
-  //   player_did_move = true;
-  // }
-
-  // if (IsKeyPressed(KEY_R)) {
-  //  change tile at 0, 0 to floor
-  //  dungeon_floor.set_tile_type(0, 0, TILE_FLOOR_BASIC);
-  //  spawn a torch at a random location
-  //  spawn_torch(
-  //      (Vector2){(float)GetRandomValue(0, dungeon_floor.get_gridsize() - 1),
-  //                (float)GetRandomValue(0, dungeon_floor.get_gridsize() -
-  //                1)});
-  //}
-
-  // if (IsKeyPressed(KEY_P)) {
-  //  popup message
-  //  show_test_popup = !show_test_popup;
-
-  // if (show_test_popup) {
-  //   get_popup_manager()->render("Test Popup");
-  // }
-  //}
-
-  // if (IsKeyPressed(KEY_T)) {
-  //
-  //  }
 }
 
 void GameplayScene::handle_input() {
   if (IsKeyPressed(KEY_D)) {
     flip_debug_panel();
   }
-
   if (IsKeyPressed(KEY_F)) {
     ToggleFullscreen();
   }
-
   if (IsKeyPressed(KEY_C)) {
     if (get_control_mode() == CONTROL_MODE_PLAYER) {
       set_control_mode(CONTROL_MODE_CAMERA);
@@ -313,7 +167,6 @@ void GameplayScene::handle_input() {
       set_control_mode(CONTROL_MODE_PLAYER);
     }
   }
-
   if (get_control_mode() == CONTROL_MODE_CAMERA) {
     handle_camera_input();
   } else if (get_control_mode() == CONTROL_MODE_PLAYER) {
@@ -322,7 +175,6 @@ void GameplayScene::handle_input() {
 }
 
 void GameplayScene::set_scale(const float f) {
-  // assert(s > 0.0f);
   if (f > 0) {
     set_global_scale(f);
     for (auto &s : get_sprites()) {
@@ -346,35 +198,13 @@ bool GameplayScene::init() {
     mPrint("Spawning player...");
     // spawning a player is a function of spawn_entity
     // we can write code to put into a function that spawns the player
-
-    // const int offset_x = 0;
-    // const int offset_y = 0;
-
     spawn_player((Vector2){1, 1});
-
     // set the player's dungeon position
-    // get_sprites()[player_id]->set_dungeon_position((Vector2){1, 1});
-
-    // for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
-    //   for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
-    //     if (dungeon_floor.get_tile_type(i, j) == TILE_FLOOR_BASIC) {
-    //       spawn_tile_stone(i, j, i * 20, j * 20);
-    //     } else if (dungeon_floor.get_tile_type(i, j) == TILE_WALL_BASIC) {
-    //       spawn_tile_void(i * 20, j * 20);
-    //     }
-    //   }
-    // }
-
-    // spawn_goblin((Vector2){2, 2});
-
     mPrint("Setting camera offset...");
     get_camera2d().target.x = -450;
     get_camera2d().target.y = -220;
-
     mPrint("Loading sound effects...");
-
     set_has_been_initialized(true);
-
     mPrint("GameplayScene initialized");
   }
   return true;
@@ -399,21 +229,6 @@ const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
   dungeon_floor.set_entity_position(id, pos);
   return id;
 }
-
-// entity_id GameplayScene::spawn_tile_stone(float i, float j, float x, float y)
-// {
-//   entity_id id = spawn_entity("tile-stone", x, y, SPRITETYPE_TILE, false);
-//   // set the dungeon position of the sprite
-//   get_sprites()[id]->set_dungeon_position((Vector2){i, j});
-//   // player_id = id;
-//   return id;
-// }
-
-// entity_id GameplayScene::spawn_tile_void(float x, float y) {
-//   entity_id id = spawn_entity("tile-void", x, y, SPRITETYPE_TILE, false);
-//   player_id = id;
-//   return id;
-// }
 
 void GameplayScene::draw_debug_panel() {
   string camera_info_str =
@@ -462,7 +277,6 @@ inline void GameplayScene::draw_hud() {
       "Turn: " + to_string(turn_count) + "\n" +
       "Last Tile Click: " + to_string((int)last_tile_click_pos.x) + ", " +
       to_string((int)last_tile_click_pos.y) + "\n\n";
-  // "Message Log: \n";
 
   string messages = "";
   // iterate backwards thru message_log and construct a big string
@@ -475,11 +289,8 @@ inline void GameplayScene::draw_hud() {
   }
 
   const string s2 = s + messages;
-
   // DrawTextEx(get_global_font(), s2.c_str(), (Vector2){x + 10, y + 10},
-  // fontsize,
-  //            0.5f, WHITE);
-
+  // fontsize,            0.5f, WHITE);
   DrawText(s2.c_str(), x + 10, y + 10, fontsize, WHITE);
 }
 
@@ -499,27 +310,16 @@ void GameplayScene::cleanup() {
 
 inline void GameplayScene::draw() {
   BeginMode2D(get_camera2d());
-  // Color clear_color = (Color){0x10, 0x10, 0x10, 0xFF};
   Color clear_color = BLACK;
   ClearBackground(clear_color);
-  // const int unit = 20;
-  //  const int scaled_unit = unit * get_global_scale();
   //   draw all tiles first
-
   for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
     for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
-      // if (dungeon_floor.get_tile_type(i, j) == TILE_FLOOR_BASIC) {
-      //   draw_tile("tile-stone", i, j);
-      // } else if (dungeon_floor.get_tile_type(i, j) == TILE_WALL_BASIC) {
-      //   draw_tile("tile-void", i, j);
-      // }
-
       const tile_type t = dungeon_floor.get_tile_type(i, j);
       const string s = tile_key_for_type(t);
       draw_tile(s, i, j);
     }
   }
-
   // draw all other sprites
   for (auto &s : get_sprites()) {
     s.second->draw();
@@ -527,11 +327,9 @@ inline void GameplayScene::draw() {
       s.second->draw_hitbox();
     }
   }
-
   EndMode2D();
   handle_draw_debug_panel();
   draw_controls();
-
   handle_popup_manager();
   incr_current_frame();
 }
@@ -542,19 +340,15 @@ const string GameplayScene::tile_key_for_type(const tile_type t) {
   case TILE_FLOOR_BASIC:
     tile_key += "stone";
     break;
-
   case TILE_FLOOR_STONE:
     tile_key += "stone";
     break;
-
   case TILE_FLOOR_WOOD:
     tile_key += "wood";
     break;
-
   case TILE_FLOOR_DIRT:
     tile_key += "dirt";
     break;
-
   case TILE_WALL_BASIC:
     tile_key += "void";
     break;
@@ -569,9 +363,7 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
                                      const int j) {
   const int x = i * 20 * get_global_scale();
   const int y = j * 20 * get_global_scale();
-  // texture_info &t = get_textures()[tile_key];
   shared_ptr<texture_info> t = get_texture_info(tile_key);
-
   Rectangle src = {0.0f, 0.0f, (float)t->texture.width,
                    (float)t->texture.height};
   Rectangle dest = {(float)x, (float)y,
@@ -580,7 +372,6 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
   Vector2 origin = {0, 0};
   Color color = WHITE;
   DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
-
   // check to see if we need to 'select' the tile
   if (!tile_is_selected) {
     return;
@@ -595,15 +386,10 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
 inline void GameplayScene::handle_popup_manager() {
   if (show_test_popup) {
     if (get_popup_manager() != nullptr) {
-
-      // const float x = GetScreenWidth() / 2.0f - 100.0f - 50.0f;
-      // const float y = GetScreenHeight() / 2.0f - 100.0f - 50.0f;
-
       const Rectangle dest = get_sprite(player_id)->get_dest();
       const int off_x = -20;
       const int off_y = -40;
       const Vector2 dest_vector = (Vector2){dest.x + off_x, dest.y + off_y};
-
       Vector2 s = GetWorldToScreen2D(dest_vector, get_camera2d());
       // Get the screen space position for
       // a 2d camera world space position
@@ -613,11 +399,9 @@ inline void GameplayScene::handle_popup_manager() {
 }
 
 inline void GameplayScene::handle_draw_debug_panel() {
-
   if (get_hud_on()) {
     draw_hud();
   }
-
   if (get_debug_panel_on()) {
     DrawFPS(GetScreenWidth() - 80, 10);
     draw_debug_panel();
@@ -640,13 +424,11 @@ void GameplayScene::close() {
   // get_bg_entity_ids().clear();
   mPrint("Unloading font...");
   UnloadFont(get_global_font());
-
   // if (music != NULL) {
   //  stop music
   //  Mix_PauseMusic();
   //  Mix_FreeMusic(music);
   //}
-
   set_has_been_initialized(false);
   player_id = -1;
   get_popup_manager()->zero_alpha();
