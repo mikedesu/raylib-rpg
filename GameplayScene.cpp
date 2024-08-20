@@ -199,6 +199,7 @@ bool GameplayScene::init() {
     // spawning a player is a function of spawn_entity
     // we can write code to put into a function that spawns the player
     spawn_player((Vector2){1, 1});
+    spawn_column((Vector2){2, 2});
     // set the player's dungeon position
     mPrint("Setting camera offset...");
     get_camera2d().target.x = -450;
@@ -218,17 +219,24 @@ const entity_id GameplayScene::spawn_player(const Vector2 pos) {
   return id;
 }
 
+const entity_id GameplayScene::spawn_column(const Vector2 pos) {
+  entity_id id =
+      spawn_entity("column", 0, 0, SPRITETYPE_WALL, true, get_global_scale());
+  dungeon_floor.set_entity_position(id, pos);
+  return id;
+}
+
 // const entity_id GameplayScene::spawn_goblin(const Vector2 pos) {
 //   entity_id id = spawn_entity("goblin", 0, 0, SPRITETYPE_ENEMY, true);
 //   dungeon_floor.set_entity_position(id, pos);
 //   return id;
 // }
 
-const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
-  entity_id id = spawn_entity("torch", 0, 0, SPRITETYPE_ITEM, true);
-  dungeon_floor.set_entity_position(id, pos);
-  return id;
-}
+// const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
+//   entity_id id = spawn_entity("torch", 0, 0, SPRITETYPE_ITEM, true);
+//   dungeon_floor.set_entity_position(id, pos);
+//   return id;
+// }
 
 void GameplayScene::draw_debug_panel() {
   string camera_info_str =
@@ -320,11 +328,16 @@ inline void GameplayScene::draw() {
       draw_tile(s, i, j);
     }
   }
-  // draw all other sprites
+  // draw player
+  get_sprite(player_id)->draw();
+
+  // draw walls
   for (auto &s : get_sprites()) {
-    s.second->draw();
-    if (get_debug_panel_on()) {
-      s.second->draw_hitbox();
+    if (s.second->get_type() == SPRITETYPE_WALL) {
+      s.second->draw();
+      if (get_debug_panel_on()) {
+        s.second->draw_hitbox();
+      }
     }
   }
   EndMode2D();
@@ -349,9 +362,9 @@ const string GameplayScene::tile_key_for_type(const tile_type t) {
   case TILE_FLOOR_DIRT:
     tile_key += "dirt";
     break;
-  case TILE_WALL_BASIC:
-    tile_key += "wall";
-    break;
+  // case TILE_WALL_BASIC:
+  //   tile_key += "wall";
+  //   break;
   default:
     tile_key += "void";
     break;
