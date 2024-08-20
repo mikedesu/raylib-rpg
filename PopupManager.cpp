@@ -1,8 +1,4 @@
 #include "PopupManager.h"
-// #include <iostream>
-
-// using std::cout;
-// using std::endl;
 
 PopupManager::PopupManager() {
   // Constructor
@@ -24,7 +20,6 @@ void PopupManager::draw(const float x, const float y) {
   // draw a outline around the popup
   // DrawRectangleLines(x, y, target.texture.width, target.texture.height,
   // WHITE);
-
   alpha -= 0.01f;
 }
 
@@ -32,9 +27,11 @@ void PopupManager::render(string s) {
   BeginDrawing();
   BeginTextureMode(target);
   ClearBackground(BLANK);
-  // DrawRectangle(0, 0, 200, 200, RED);
   DrawText(s.c_str(), 10, 10, fontsize, WHITE);
   EndTextureMode();
   EndDrawing();
   alpha = 1.0f;
 }
+
+void PopupManager::set_fontsize(const int size) { fontsize = size; }
+const int PopupManager::get_fontsize() const { return fontsize; }
