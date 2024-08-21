@@ -21,9 +21,9 @@ GameplayScene::GameplayScene() {
 
 GameplayScene::~GameplayScene() { mPrint("GameplayScene destructor"); }
 void GameplayScene::gameover() { set_scene_transition(SCENE_TRANSITION_OUT); }
-void GameplayScene::update_player_movement() {}
-void GameplayScene::update_enemy_movement() {}
-void GameplayScene::handle_player_collision() {}
+// inline void GameplayScene::update_player_movement() {}
+// inline void GameplayScene::update_enemy_movement() {}
+// inline void GameplayScene::handle_player_collision() {}
 
 void GameplayScene::update() {
   /*
@@ -36,13 +36,13 @@ void GameplayScene::update() {
     Vector2 dungeon_pos = dungeon_floor.get_entity_position(s.first);
     s.second->update(dungeon_pos);
   }
-  if (player_did_move) {
+  if (player_attempted_move) {
     turn_count++;
-    player_did_move = false;
+    player_attempted_move = false;
   }
 }
 
-void GameplayScene::handle_camera_input() {
+inline void GameplayScene::handle_camera_input() {
   if (IsKeyDown(KEY_UP)) {
     get_camera2d().target.y -= 10;
   }
@@ -66,39 +66,45 @@ void GameplayScene::handle_camera_input() {
   }
 }
 
-void GameplayScene::handle_dungeon_move_pos(const entity_id id,
+bool GameplayScene::handle_dungeon_move_pos(const entity_id id,
                                             const Vector2 c_pos,
                                             const Vector2 t_pos) {
-  if (Vector2Equals(c_pos, t_pos)) {
-    return;
-  }
-  tile_type t = dungeon_floor.get_tile_type(t_pos.x, t_pos.y);
-  switch (t) {
-  case TILE_FLOOR_BASIC:
-  case TILE_FLOOR_STONE:
-  case TILE_FLOOR_WOOD:
-  case TILE_FLOOR_DIRT: {
-    bool r = dungeon_floor.move_entity_to_tile(id, t_pos);
-    if (r) {
-      const string s = "Moved to " + to_string((int)t_pos.x) + ", " +
-                       to_string((int)t_pos.y);
-      message_log.push_back(s);
-      get_popup_manager()->render("Moved");
-    } else {
-      message_log.push_back("Cannot move to " + to_string((int)t_pos.x) + ", " +
-                            to_string((int)t_pos.y));
+  bool retval = false;
+  // Vector2 retval = (Vector2){0, 0};
+  //  if they are different tiles...
+  if (!Vector2Equals(c_pos, t_pos)) {
+    tile_type t = dungeon_floor.get_tile_type(t_pos.x, t_pos.y);
+    switch (t) {
+    case TILE_FLOOR_BASIC:
+    case TILE_FLOOR_STONE:
+    case TILE_FLOOR_WOOD:
+    case TILE_FLOOR_DIRT: {
+      bool r = dungeon_floor.move_entity_to_tile(id, t_pos);
+      if (r) {
+        const string s = "Moved to " + to_string((int)t_pos.x) + ", " +
+                         to_string((int)t_pos.y);
+        message_log.push_back(s);
+        get_popup_manager()->render("Moved");
+        retval = true;
+      } else {
+        message_log.push_back("Cannot move to " + to_string((int)t_pos.x) +
+                              ", " + to_string((int)t_pos.y));
+        get_popup_manager()->render("Cannot move");
+        retval = false;
+      }
+    } break;
+    default:
+      message_log.push_back("Bumped into wall or other");
       get_popup_manager()->render("Cannot move");
+      retval = false;
+      break;
     }
-  } break;
-  default:
-    message_log.push_back("Bumped into wall or other");
-    get_popup_manager()->render("Cannot move");
-    break;
   }
+  return retval;
 }
 
-void GameplayScene::handle_dungeon_move_dir(const entity_id id,
-                                            const Vector2 direction) {
+Vector2 GameplayScene::handle_dungeon_move_dir(const entity_id id,
+                                               const Vector2 direction) {
   // we have to check the dungeon position of the sprite
   // if the target tile is a location we cant move to, like none, void, or wall,
   // then we don't move
@@ -107,10 +113,15 @@ void GameplayScene::handle_dungeon_move_dir(const entity_id id,
   Vector2 t_pos = Vector2Add(cur_pos, direction);
   // if the locations are equal, no move is executed
   // this way be interpeted as a "wait" action in the future
-  handle_dungeon_move_pos(id, cur_pos, t_pos);
+  bool success = handle_dungeon_move_pos(id, cur_pos, t_pos);
+  Vector2 retval = (Vector2){0, 0};
+  if (success) {
+    retval = direction;
+  }
+  return retval;
 }
 
-void GameplayScene::handle_player_input() {
+inline void GameplayScene::handle_player_input() {
   // select a tile on screen
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     // get the mouse position
@@ -122,35 +133,45 @@ void GameplayScene::handle_player_input() {
     // draw a rectangle at the mouse position
   }
 
+  Vector2 player_move_dir = (Vector2){0, 0};
+
   if (IsKeyPressed(KEY_UP)) {
-    handle_dungeon_move_dir(player_id, (Vector2){0, -1});
-    player_did_move = true;
+    player_move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, -1});
+    // player_did_move = true;
+    player_attempted_move = true;
     // set the player sprite's context
     get_sprite(player_id)->set_context(1);
     get_sprite(player_id)->set_is_flipped(false);
     tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_DOWN)) {
-    handle_dungeon_move_dir(player_id, (Vector2){0, 1});
-    player_did_move = true;
+    player_move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, 1});
+    // player_move_dir = true;
+    player_attempted_move = true;
     get_sprite(player_id)->set_context(0);
     get_sprite(player_id)->set_is_flipped(false);
     tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_LEFT)) {
-    handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
-    player_did_move = true;
+    player_move_dir = handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
+    // player_move_dir = true;
+    player_attempted_move = true;
     get_sprite(player_id)->set_context(2);
     get_sprite(player_id)->set_is_flipped(true);
     tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_RIGHT)) {
-    handle_dungeon_move_dir(player_id, (Vector2){1, 0});
-    player_did_move = true;
+    player_move_dir = handle_dungeon_move_dir(player_id, (Vector2){1, 0});
+    // player_move_dir = true;
+    player_attempted_move = true;
     get_sprite(player_id)->set_context(2);
     get_sprite(player_id)->set_is_flipped(false);
     tile_is_selected = false;
   }
+
+  // update the camera
+  get_camera2d().target.x += player_move_dir.x * 20 * get_global_scale();
+  get_camera2d().target.y += player_move_dir.y * 20 * get_global_scale();
 }
 
 void GameplayScene::handle_input() {
@@ -211,9 +232,13 @@ bool GameplayScene::init() {
     spawn_column((Vector2){4, 3});
     spawn_column((Vector2){4, 5});
     // set the player's dungeon position
-    mPrint("Setting camera offset...");
-    get_camera2d().target.x = -450;
-    get_camera2d().target.y = -220;
+    mPrint("Setting camera target...");
+    // we want to lock the camera to the player in the center of the screen
+    // get_camera2d().target = dungeon_floor.get_entity_position(player_id);
+
+    get_camera2d().target.x = -770;
+    get_camera2d().target.y = -400;
+
     mPrint("Loading sound effects...");
     set_has_been_initialized(true);
     mPrint("GameplayScene initialized");
@@ -248,7 +273,7 @@ const entity_id GameplayScene::spawn_column(const Vector2 pos) {
 //   return id;
 // }
 
-void GameplayScene::draw_debug_panel() {
+inline void GameplayScene::draw_debug_panel() {
   string camera_info_str =
       "Current Frame: " + to_string(get_current_frame()) + "\n" +
       "Control mode: " + to_string(get_control_mode()) + "\n" +

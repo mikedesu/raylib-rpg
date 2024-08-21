@@ -44,19 +44,16 @@ void Scene::close() {
   }
 
   has_been_initialized = false;
-  // player_id = -1;
 
   mPrint("Scene closed.");
 }
 
 void Scene::draw() {}
-
 void Scene::update() {}
 void Scene::handle_input() {}
 void Scene::draw_debug_panel() {}
 void Scene::draw_hud() {}
 void Scene::cleanup() {}
-
 bool Scene::init() { return true; }
 
 bool Scene::load_textures() {
@@ -117,7 +114,6 @@ bool Scene::load_texture(const char *asset_name, const char *asset_path,
                          const int height) {
 
   string asset_name_str = string(asset_name);
-
   mPrint("Attempting to load texture: " + asset_name_str);
 
   // if the asset name begins with "tile-", then it is assumed to be a tile
@@ -143,13 +139,9 @@ bool Scene::load_texture(const char *asset_name, const char *asset_path,
     //  apply custom dithering
     Image img = LoadImageFromTexture(t);
     ImageDither(&img, 4, 4, 4, 4);
-
     Texture2D tt = LoadTextureFromImage(img);
     UnloadImage(img);
     t = tt;
-    //  t = LoadTextureFromImage(img);
-    //  UnloadImage(img);
-    //}
   }
 
   ti.texture = t;
@@ -160,7 +152,6 @@ bool Scene::load_texture(const char *asset_name, const char *asset_path,
   ti.width = width;
   ti.height = height;
 
-  // textures[asset_name] = ti;
   textures[asset_name] = make_shared<texture_info>(ti);
 
   return true;
@@ -225,16 +216,12 @@ unordered_map<entity_id, shared_ptr<Sprite>> &Scene::get_sprites() {
   return sprites;
 }
 
-// unordered_map<entity_id, shared_ptr<Sprite>> &Scene::get_bgsprites() {
-//   return bgsprites;
-// }
-
 unordered_map<string, shared_ptr<texture_info>> &Scene::get_textures() {
   return textures;
 }
+
 Camera2D &Scene::get_camera2d() { return camera2d; }
 vector<entity_id> &Scene::get_entity_ids() { return entity_ids; }
-
 float Scene::get_global_scale() { return global_scale; }
 scene_transition Scene::get_scene_transition() { return transition; }
 scene_id Scene::get_id() { return id; }
