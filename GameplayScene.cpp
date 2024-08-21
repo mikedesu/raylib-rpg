@@ -221,6 +221,9 @@ bool GameplayScene::init() {
     // we can write code to put into a function that spawns the player
     spawn_player((Vector2){1, 1});
 
+    // these are hardcoded values, but we would prefer to do this
+    // algorithmically and intelligently the columns, for now, represent walls
+    // that sit on top of tiles
     spawn_column((Vector2){2, 2});
     spawn_column((Vector2){2, 3});
     spawn_column((Vector2){2, 4});
@@ -236,6 +239,8 @@ bool GameplayScene::init() {
     // we want to lock the camera to the player in the center of the screen
     // get_camera2d().target = dungeon_floor.get_entity_position(player_id);
 
+    // these values are hardcoded, but we would prefer to do this
+    // algorithmically
     get_camera2d().target.x = -770;
     get_camera2d().target.y = -400;
 
