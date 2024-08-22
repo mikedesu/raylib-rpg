@@ -28,11 +28,14 @@ public:
   ~Game();
 
   void run();
-  void update();
-  void draw();
-  void handle_input();
-  void handle_camera_input();
-  void handle_player_input();
+  inline void update();
+  inline void handle_input();
+  inline void cleanup();
+  inline void draw();
+
+  // void handle_camera_input();
+  // void handle_player_input();
+
   void handle_transition_in();
   void handle_transition_out();
   void draw_debug_panel();
@@ -45,7 +48,6 @@ public:
   void set_camera_default_values();
   void set_has_been_initialized(bool b);
   void close();
-  void cleanup();
   void spawn_scenes();
 
   bool get_has_been_initialized();

@@ -65,7 +65,7 @@ bool Game::init() {
       return false;
     }
 
-    //current_scene_id = scene_keys["title"];
+    // current_scene_id = scene_keys["title"];
     current_scene_id = scene_keys["gameplay"];
     //   current_scene_id = scene_keys["gameover"];
 
@@ -122,11 +122,12 @@ void Game::set_window_title(const char *title) { window_title = title; }
 void Game::set_screen_width(int w) { screen_rect.width = w; }
 void Game::set_screen_height(int h) { screen_rect.height = -h; }
 void Game::set_debug_panel(bool b) { debug_panel_on = b; }
-void Game::handle_input() { scenes[current_scene_id]->handle_input(); }
-void Game::update() { scenes[current_scene_id]->update(); }
 void Game::set_has_been_initialized(bool b) { has_been_initialized = b; }
 bool Game::get_has_been_initialized() { return has_been_initialized; }
-void Game::cleanup() { scenes[current_scene_id]->cleanup(); }
+
+inline void Game::handle_input() { scenes[current_scene_id]->handle_input(); }
+inline void Game::update() { scenes[current_scene_id]->update(); }
+inline void Game::cleanup() { scenes[current_scene_id]->cleanup(); }
 
 void Game::set_global_scale(float s) {
   assert(s > 0.0f);
@@ -203,14 +204,13 @@ void Game::handle_transition_in() {
   }
 }
 
-void Game::draw() {
+inline void Game::draw() {
   BeginDrawing();
   BeginTextureMode(target);
   ClearBackground(BLACK);
   scenes[current_scene_id]->draw();
   EndTextureMode();
   DrawTextureRec(target.texture, screen_rect, (Vector2){0, 0}, WHITE);
-
   switch (scenes[current_scene_id]->get_scene_transition()) {
   case SCENE_TRANSITION_NONE:
     break;
@@ -223,7 +223,6 @@ void Game::draw() {
   default:
     break;
   }
-
   EndDrawing();
   current_frame++;
 }
