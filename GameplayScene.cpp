@@ -56,10 +56,16 @@ inline void GameplayScene::handle_camera_input() {
   const float zoom_incr = 1;
   if (IsKeyDown(KEY_RIGHT_SHIFT) && IsKeyPressed(KEY_Z)) {
     set_scale(get_global_scale() - zoom_incr);
+    prev_tile_click_zoom_level = tile_click_zoom_level;
+    tile_click_zoom_level = get_global_scale();
   } else if (IsKeyDown(KEY_LEFT_SHIFT) && IsKeyPressed(KEY_Z)) {
     set_scale(get_global_scale() - zoom_incr);
+    prev_tile_click_zoom_level = tile_click_zoom_level;
+    tile_click_zoom_level = get_global_scale();
   } else if (IsKeyPressed(KEY_Z)) {
     set_scale(get_global_scale() + zoom_incr);
+    prev_tile_click_zoom_level = tile_click_zoom_level;
+    tile_click_zoom_level = get_global_scale();
   }
 }
 
@@ -74,7 +80,9 @@ bool GameplayScene::handle_dungeon_move_pos(const entity_id id,
     case TILE_FLOOR_BASIC:
     case TILE_FLOOR_STONE:
     case TILE_FLOOR_WOOD:
-    case TILE_FLOOR_DIRT: {
+    case TILE_FLOOR_DIRT:
+    case TILE_FLOOR_UPSTAIRS:
+    case TILE_FLOOR_DOWNSTAIRS: {
       bool r = dungeon_floor.move_entity_to_tile(id, t_pos);
       if (r) {
         dungeon_events.push_back(
@@ -168,6 +176,7 @@ inline void GameplayScene::handle_player_input() {
   // update the camera
   get_camera2d().target.x += player_move_dir.x * tilesize * get_global_scale();
   get_camera2d().target.y += player_move_dir.y * tilesize * get_global_scale();
+  prev_tile_click_zoom_level = tile_click_zoom_level;
 }
 
 void GameplayScene::handle_input() {
@@ -256,6 +265,9 @@ bool GameplayScene::init() {
     get_camera2d().target.x = -770;
     get_camera2d().target.y = -400;
 
+    prev_tile_click_zoom_level = get_global_scale();
+    tile_click_zoom_level = get_global_scale();
+
     mPrint("Loading sound effects...");
     set_has_been_initialized(true);
     mPrint("GameplayScene initialized");
@@ -286,7 +298,10 @@ inline void GameplayScene::draw_debug_panel() {
       to_string(get_camera2d().target.y) + "\n" + "GameplayScene" +
       "Sprites: " + to_string(get_sprites().size()) + "\n" +
       "IsPaused: " + to_string(get_paused()) + "\n" +
-      "Global Scale: " + to_string(get_global_scale()) + "\n";
+      "Global Scale: " + to_string(get_global_scale()) + "\n" +
+      "Tile Click Zoom Level: " + to_string(tile_click_zoom_level) + "\n" +
+      "Prev Tile Click Zoom Level: " + to_string(prev_tile_click_zoom_level) +
+      "\n";
 
   const int w = 500;
   const int h = 200;
@@ -482,6 +497,12 @@ const string GameplayScene::tile_key_for_type(const tile_type t) {
   case TILE_FLOOR_DIRT:
     tile_key += "dirt";
     break;
+  case TILE_FLOOR_UPSTAIRS:
+    tile_key += "upstairs";
+    break;
+  case TILE_FLOOR_DOWNSTAIRS:
+    tile_key += "downstairs";
+    break;
   default:
     tile_key += "void";
     break;
@@ -492,36 +513,36 @@ const string GameplayScene::tile_key_for_type(const tile_type t) {
 inline void GameplayScene::draw_tile(const string tile_key, const int i,
                                      const int j) {
   shared_ptr<texture_info> t = get_texture_info(tile_key);
-  const float w = t->texture.width;
-  const float h = t->texture.height;
   const float scale = get_global_scale();
-  const float ws = w * scale;
-  const float hs = h * scale;
-  const float x = i * 20 * scale;
-  const float y = j * 20 * scale - (h * scale - 20 * scale);
-  Rectangle src = {0, 0, w, h};
-  Rectangle dest = {x, y, ws, hs};
+  Rectangle src = {0, 0, (float)t->texture.width, (float)t->texture.height};
+  Rectangle dest = {i * 20 * scale,
+                    j * 20 * scale - (t->texture.height * scale - 20 * scale),
+                    t->texture.width * scale, t->texture.height * scale};
   Vector2 origin = {0, 0};
   Color color = WHITE;
   DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
   // check to see if we need to 'select' the tile
-  if (!tile_is_selected) {
-    return;
-  } else if (CheckCollisionPointRec(last_mouse_click_pos, dest)) {
-    DrawRectangleLinesEx(dest, 4, GREEN);
-    last_tile_click_pos = (Vector2){(float)i, (float)j};
-  } else if (i == last_tile_click_pos.x && j == last_tile_click_pos.y) {
-    DrawRectangleLinesEx(dest, 4, GREEN);
+  if (tile_is_selected) {
+
+    if (i == last_tile_click_pos.x && j == last_tile_click_pos.y) {
+      DrawRectangleLinesEx(dest, 4, GREEN);
+    }
+
+    else if (CheckCollisionPointRec(last_mouse_click_pos, dest) &&
+
+             prev_tile_click_zoom_level == tile_click_zoom_level) {
+      // DrawRectangleLinesEx(dest, 4, GREEN);
+      last_tile_click_pos = (Vector2){(float)i, (float)j};
+    }
   }
 }
 
 inline void GameplayScene::handle_popup_manager() {
   if (show_test_popup) {
     if (get_popup_manager() != nullptr) {
-      const Rectangle dest = get_sprite(player_id)->get_dest();
-      const int off_x = -20;
-      const int off_y = -40;
-      const Vector2 dest_vector = (Vector2){dest.x + off_x, dest.y + off_y};
+      const Vector2 dest_vector =
+          (Vector2){get_sprite(player_id)->get_dest().x - 20,
+                    get_sprite(player_id)->get_dest().y - 40};
       Vector2 s = GetWorldToScreen2D(dest_vector, get_camera2d());
       // Get the screen space position for
       // a 2d camera world space position

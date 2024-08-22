@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Entity.h"
 #include "PopupManager.h"
 #include "Sprite.h"
 #include "control_mode.h"
@@ -63,9 +64,12 @@ public:
 
   unordered_map<entity_id, shared_ptr<Sprite>> &get_sprites();
   unordered_map<string, shared_ptr<texture_info>> &get_textures();
+  unordered_map<entity_id, shared_ptr<Entity>> &get_entities();
 
   shared_ptr<Sprite> get_sprite(entity_id id);
   shared_ptr<texture_info> get_texture_info(const string key);
+  shared_ptr<Entity> get_entity(entity_id id);
+
   shared_ptr<PopupManager> get_popup_manager();
 
   Camera2D &get_camera2d();
@@ -75,7 +79,8 @@ public:
   control_mode get_control_mode();
 
   vector<entity_id> &get_entity_ids();
-  vector<entity_id> &get_bg_entity_ids();
+
+  // vector<entity_id> &get_bg_entity_ids();
 
   scene_transition get_scene_transition();
   scene_id get_id();
@@ -116,6 +121,7 @@ private:
   unordered_map<entity_id, shared_ptr<Sprite>> sprites;
 
   vector<entity_id> entity_ids;
+  unordered_map<entity_id, shared_ptr<Entity>> entities;
 
   Font global_font;
 

@@ -7,6 +7,9 @@ DungeonFloor::DungeonFloor() {
     set_tile_type(i, 0, TILE_FLOOR_WOOD);
     set_tile_type(i, 1, TILE_FLOOR_DIRT);
   }
+
+  set_tile_type(0, 0, TILE_FLOOR_UPSTAIRS);
+  set_tile_type(7, 7, TILE_FLOOR_DOWNSTAIRS);
 }
 
 DungeonFloor::~DungeonFloor() {}

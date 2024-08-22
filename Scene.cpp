@@ -271,3 +271,5 @@ void Scene::set_popup_manager(shared_ptr<PopupManager> pm) {
 shared_ptr<texture_info> Scene::get_texture_info(const string key) {
   return textures[key];
 }
+
+shared_ptr<Entity> Scene::get_entity(entity_id id) { return entities[id]; }

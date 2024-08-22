@@ -3,6 +3,7 @@
 #include "DungeonEvent.h"
 #include "DungeonFloor.h"
 #include "Scene.h"
+
 #include <vector>
 
 class GameplayScene : public Scene {
@@ -59,6 +60,9 @@ private:
   entity_id player_id = -1;
 
   unsigned int turn_count = 0;
+
+  float prev_tile_click_zoom_level = 1.0f;
+  float tile_click_zoom_level = 1.0f;
 
   DungeonFloor dungeon_floor;
 

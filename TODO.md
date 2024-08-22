@@ -55,6 +55,7 @@
 - [x] mouse-click select tile
     - [x] translate mouse-click on screen into in world x,y
     - [x] translate world x,y into dungeon tile x,y
-    - [ ] make the select tile draw occur after all other drawing 
+    - [ ] make the select tile draw occur after all other drawing (optional?)
     - [ ] make the select tile actually draw a box around any entity that is on the tile
+    - [ ] **TODO** fix the bug that is causing the "last tile clicked" to change locations when zooming in and out
 - [ ] apply optional dithering to textures read in, not just on tiles
