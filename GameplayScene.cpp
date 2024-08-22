@@ -77,20 +77,19 @@ bool GameplayScene::handle_dungeon_move_pos(const entity_id id,
     case TILE_FLOOR_DIRT: {
       bool r = dungeon_floor.move_entity_to_tile(id, t_pos);
       if (r) {
-        const string s = "Moved to " + to_string((int)t_pos.x) + ", " +
-                         to_string((int)t_pos.y);
-        message_log.push_back(s);
+        dungeon_events.push_back(
+            DungeonEvent(id, EVENT_ENTITY_MOVE_SUCCESS, t_pos));
         get_popup_manager()->render("Moved");
         retval = true;
       } else {
-        message_log.push_back("Cannot move to " + to_string((int)t_pos.x) +
-                              ", " + to_string((int)t_pos.y));
+        dungeon_events.push_back(
+            DungeonEvent(id, EVENT_ENTITY_MOVE_FAIL, t_pos));
         get_popup_manager()->render("Cannot move");
         retval = false;
       }
     } break;
     default:
-      message_log.push_back("Bumped into wall or other");
+      dungeon_events.push_back(DungeonEvent(id, EVENT_ENTITY_MOVE_FAIL, t_pos));
       get_popup_manager()->render("Cannot move");
       retval = false;
       break;
@@ -364,19 +363,44 @@ inline void GameplayScene::draw_hud() {
 }
 
 inline void GameplayScene::draw_message_log() {
-  // -----
+  const int max_messages = 8;
   const int w = 500;
   const int h = GetScreenHeight() / 4;
   const float x = GetScreenWidth() - w - 10;
   const int y = 10 + h + 10;
   const int fontsize = 24;
-  const int max_messages = 30;
   const Color c0 = Fade(BLACK, 0.5f);
   DrawRectangle(x, y, w, h, c0);
-
-  const string s = "Messages:\n";
+  string s = "Messages:\n\n";
+  // for (auto e : dungeon_events) {
+  int count = 0;
+  for (int i = (int)dungeon_events.size() - 1; i >= 0 && count < max_messages;
+       i--) {
+    DungeonEvent &e = dungeon_events[i];
+    s += get_dungeon_event_str(e);
+    count++;
+  }
   DrawRectangleLines(x, y, w, h, GRAY);
   DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
+}
+
+const string
+GameplayScene::get_dungeon_event_str(const DungeonEvent &dungeon_event) {
+
+  string s = "";
+  switch (dungeon_event.get_type()) {
+  case EVENT_ENTITY_MOVE_SUCCESS:
+    s = "Moved to ";
+    break;
+  case EVENT_ENTITY_MOVE_FAIL:
+    s = "Cannot move to ";
+    break;
+  default:
+    s = "Unknown action";
+    break;
+  }
+  s += "\n";
+  return s;
 }
 
 void GameplayScene::cleanup() {

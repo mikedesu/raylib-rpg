@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DungeonEvent.h"
 #include "DungeonFloor.h"
 #include "Scene.h"
 #include <vector>
@@ -50,6 +51,7 @@ public:
 
   // entity_id spawn_tile_stone(float i, float j, float x, float y);
   // entity_id spawn_tile_void(float x, float y);
+  const string get_dungeon_event_str(const DungeonEvent &dungeon_event);
 
 private:
   bool show_test_popup = true;
@@ -60,7 +62,8 @@ private:
 
   DungeonFloor dungeon_floor;
 
-  vector<string> message_log;
+  // vector<string> message_log;
+  vector<DungeonEvent> dungeon_events;
 
   bool player_did_move = false;
   bool player_attempted_move = false;
