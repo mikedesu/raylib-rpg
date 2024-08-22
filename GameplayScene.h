@@ -17,6 +17,8 @@ public:
   inline void handle_player_input();
   inline void handle_player_move_direction();
   inline void handle_camera_input();
+  inline void handle_camera_input_move();
+  inline void handle_camera_input_zoom();
 
   inline void draw_debug_panel();
   inline void draw_hud();

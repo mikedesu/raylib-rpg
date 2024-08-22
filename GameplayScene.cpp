@@ -23,12 +23,10 @@ GameplayScene::~GameplayScene() { mPrint("GameplayScene destructor"); }
 void GameplayScene::gameover() { set_scene_transition(SCENE_TRANSITION_OUT); }
 
 void GameplayScene::update() {
-  /*
-   * we will need to update the relative onscreen positions of the sprites
-   * depending on
-   * 1. position in the dungeon
-   * 2. global scale
-   */
+  // we will need to update the relative onscreen positions of the sprites
+  // depending on
+  // 1. position in the dungeon
+  // 2. global scale
   for (auto &s : get_sprites()) {
     Vector2 dungeon_pos = dungeon_floor.get_entity_position(s.first);
     s.second->update(dungeon_pos);
@@ -38,8 +36,7 @@ void GameplayScene::update() {
     player_attempted_move = false;
   }
 }
-
-inline void GameplayScene::handle_camera_input() {
+inline void GameplayScene::handle_camera_input_move() {
   if (IsKeyDown(KEY_UP)) {
     get_camera2d().target.y -= 10;
   }
@@ -52,7 +49,9 @@ inline void GameplayScene::handle_camera_input() {
   if (IsKeyDown(KEY_RIGHT)) {
     get_camera2d().target.x += 10;
   }
+}
 
+inline void GameplayScene::handle_camera_input_zoom() {
   const float zoom_incr = 1;
   if (IsKeyDown(KEY_RIGHT_SHIFT) && IsKeyPressed(KEY_Z)) {
     set_scale(get_global_scale() - zoom_incr);
@@ -70,6 +69,11 @@ inline void GameplayScene::handle_camera_input() {
     tile_click_zoom_level = get_global_scale();
     last_mouse_click_pos = (Vector2){-1, -1};
   }
+}
+
+inline void GameplayScene::handle_camera_input() {
+  handle_camera_input_move();
+  handle_camera_input_zoom();
 }
 
 bool GameplayScene::handle_dungeon_move_pos(const entity_id id,
@@ -512,15 +516,8 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
   Vector2 origin = {0, 0};
   Color color = WHITE;
   DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
-  handle_tile_click(dest, i, j);
   // check to see if we need to 'select' the tile
-  // if (tile_is_selected) {
-  //  if (i == last_tile_click_pos.x && j == last_tile_click_pos.y) {
-  //    DrawRectangleLinesEx(dest, 4, GREEN);
-  //  } else if (CheckCollisionPointRec(last_mouse_click_pos, dest)) {
-  //    last_tile_click_pos = (Vector2){(float)i, (float)j};
-  //  }
-  //}
+  handle_tile_click(dest, i, j);
 }
 
 inline void GameplayScene::handle_tile_click(const Rectangle dest, const int i,
