@@ -15,6 +15,7 @@ public:
   bool init();
   void handle_input();
   inline void handle_player_input();
+  inline void handle_player_move_direction();
   inline void handle_camera_input();
 
   inline void draw_debug_panel();
@@ -24,12 +25,15 @@ public:
   inline void draw();
   inline void draw_tile(const string tile_key, const int i, const int j);
   inline void handle_popup_manager();
+  inline void handle_tile_click(const Rectangle dest, const int i, const int j);
 
-  const string tile_key_for_type(const tile_type t);
+  const string tile_key_for_type(const tile_type t) const;
 
   void close();
   void cleanup();
   void gameover();
+  void init_dungeon_floor();
+  const Vector2 get_start_location() const;
 
   // inline void update_player_movement();
   // inline void update_enemy_movement();

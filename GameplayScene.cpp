@@ -58,14 +58,17 @@ inline void GameplayScene::handle_camera_input() {
     set_scale(get_global_scale() - zoom_incr);
     prev_tile_click_zoom_level = tile_click_zoom_level;
     tile_click_zoom_level = get_global_scale();
+    last_mouse_click_pos = (Vector2){-1, -1};
   } else if (IsKeyDown(KEY_LEFT_SHIFT) && IsKeyPressed(KEY_Z)) {
     set_scale(get_global_scale() - zoom_incr);
     prev_tile_click_zoom_level = tile_click_zoom_level;
     tile_click_zoom_level = get_global_scale();
+    last_mouse_click_pos = (Vector2){-1, -1};
   } else if (IsKeyPressed(KEY_Z)) {
     set_scale(get_global_scale() + zoom_incr);
     prev_tile_click_zoom_level = tile_click_zoom_level;
     tile_click_zoom_level = get_global_scale();
+    last_mouse_click_pos = (Vector2){-1, -1};
   }
 }
 
@@ -124,58 +127,49 @@ Vector2 GameplayScene::handle_dungeon_move_dir(const entity_id id,
   return retval;
 }
 
-inline void GameplayScene::handle_player_input() {
-  // select a tile on screen
-  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    // get the mouse position
-    Vector2 mouse_pos = GetMousePosition();
-    // translate the mouse position to the world position
-    Vector2 world_pos = GetScreenToWorld2D(mouse_pos, get_camera2d());
-    last_mouse_click_pos = world_pos;
-    tile_is_selected = true;
-    // draw a rectangle at the mouse position
-  }
-
-  Vector2 player_move_dir = (Vector2){0, 0};
-
+inline void GameplayScene::handle_player_move_direction() {
+  const int tilesize = 20;
+  Vector2 move_dir = (Vector2){0, 0};
   if (IsKeyPressed(KEY_UP)) {
-    player_move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, -1});
-    // player_did_move = true;
+    move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, -1});
     player_attempted_move = true;
     // set the player sprite's context
     get_sprite(player_id)->set_context(1);
     get_sprite(player_id)->set_is_flipped(false);
-    tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_DOWN)) {
-    player_move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, 1});
-    // player_move_dir = true;
+    move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, 1});
     player_attempted_move = true;
     get_sprite(player_id)->set_context(0);
     get_sprite(player_id)->set_is_flipped(false);
-    tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_LEFT)) {
-    player_move_dir = handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
-    // player_move_dir = true;
+    move_dir = handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
     player_attempted_move = true;
     get_sprite(player_id)->set_context(2);
     get_sprite(player_id)->set_is_flipped(true);
-    tile_is_selected = false;
   }
   if (IsKeyPressed(KEY_RIGHT)) {
-    player_move_dir = handle_dungeon_move_dir(player_id, (Vector2){1, 0});
-    // player_move_dir = true;
+    move_dir = handle_dungeon_move_dir(player_id, (Vector2){1, 0});
     player_attempted_move = true;
     get_sprite(player_id)->set_context(2);
     get_sprite(player_id)->set_is_flipped(false);
-    tile_is_selected = false;
   }
-  const int tilesize = 20;
-
   // update the camera
-  get_camera2d().target.x += player_move_dir.x * tilesize * get_global_scale();
-  get_camera2d().target.y += player_move_dir.y * tilesize * get_global_scale();
+  get_camera2d().target.x += move_dir.x * tilesize * get_global_scale();
+  get_camera2d().target.y += move_dir.y * tilesize * get_global_scale();
+}
+
+inline void GameplayScene::handle_player_input() {
+  // select a tile on screen
+  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    Vector2 mouse_pos = GetMousePosition();
+    Vector2 world_pos = GetScreenToWorld2D(mouse_pos, get_camera2d());
+    last_mouse_click_pos = world_pos;
+    tile_is_selected = true;
+  }
+  handle_player_move_direction();
+  // handle player move direction
   prev_tile_click_zoom_level = tile_click_zoom_level;
 }
 
@@ -186,17 +180,10 @@ void GameplayScene::handle_input() {
   if (IsKeyPressed(KEY_F)) {
     ToggleFullscreen();
   }
-
   control_mode mode = get_control_mode();
-
   if (IsKeyPressed(KEY_C)) {
     set_control_mode((mode == CONTROL_MODE_PLAYER) ? CONTROL_MODE_CAMERA
                                                    : CONTROL_MODE_PLAYER);
-    // if (mode == CONTROL_MODE_PLAYER) {
-    //   set_control_mode(CONTROL_MODE_CAMERA);
-    // } else {
-    //   set_control_mode(CONTROL_MODE_PLAYER);
-    // }
   }
 
   switch (mode) {
@@ -209,12 +196,6 @@ void GameplayScene::handle_input() {
   default:
     break;
   }
-
-  // if (mode == CONTROL_MODE_CAMERA) {
-  //   handle_camera_input();
-  // } else if (get_control_mode() == CONTROL_MODE_PLAYER) {
-  //   handle_player_input();
-  // }
 }
 
 void GameplayScene::set_scale(const float f) {
@@ -224,6 +205,26 @@ void GameplayScene::set_scale(const float f) {
       s.second->set_scale(f);
     }
   }
+}
+
+void GameplayScene::init_dungeon_floor() {
+  // these are hardcoded values, but we would prefer to do this
+  // algorithmically and intelligently the columns, for now, represent walls
+  // that sit on top of tiles
+  spawn_column((Vector2){2, 2});
+  spawn_column((Vector2){2, 3});
+  spawn_column((Vector2){2, 4});
+  spawn_column((Vector2){2, 5});
+
+  spawn_column((Vector2){3, 2});
+
+  spawn_column((Vector2){4, 2});
+  spawn_column((Vector2){4, 3});
+  spawn_column((Vector2){4, 5});
+}
+
+const Vector2 GameplayScene::get_start_location() const {
+  return (Vector2){1, 1};
 }
 
 bool GameplayScene::init() {
@@ -238,23 +239,13 @@ bool GameplayScene::init() {
       mPrint("Error loading textures. Exiting...");
       return false;
     }
+
+    init_dungeon_floor();
+
     mPrint("Spawning player...");
-    // spawning a player is a function of spawn_entity
-    // we can write code to put into a function that spawns the player
-    spawn_player((Vector2){1, 1});
-    // these are hardcoded values, but we would prefer to do this
-    // algorithmically and intelligently the columns, for now, represent walls
-    // that sit on top of tiles
-    spawn_column((Vector2){2, 2});
-    spawn_column((Vector2){2, 3});
-    spawn_column((Vector2){2, 4});
-    spawn_column((Vector2){2, 5});
+    Vector2 start_loc = get_start_location();
+    spawn_player(start_loc);
 
-    spawn_column((Vector2){3, 2});
-
-    spawn_column((Vector2){4, 2});
-    spawn_column((Vector2){4, 3});
-    spawn_column((Vector2){4, 5});
     // set the player's dungeon position
     mPrint("Setting camera target...");
     // we want to lock the camera to the player in the center of the screen
@@ -347,7 +338,7 @@ inline void GameplayScene::draw_hud() {
   const float x = GetScreenWidth() - w - 10;
   const int y = 10;
   const int fontsize = 24;
-  const int max_messages = 30;
+  // const int max_messages = 30;
   const Color c0 = Fade(BLACK, 0.5f);
   DrawRectangle(x, y, w, h, c0);
   // draw some text
@@ -482,7 +473,7 @@ inline void GameplayScene::draw() {
   incr_current_frame();
 }
 
-const string GameplayScene::tile_key_for_type(const tile_type t) {
+const string GameplayScene::tile_key_for_type(const tile_type t) const {
   string tile_key = "tile-";
   switch (t) {
   case TILE_FLOOR_BASIC:
@@ -521,17 +512,23 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
   Vector2 origin = {0, 0};
   Color color = WHITE;
   DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
+  handle_tile_click(dest, i, j);
   // check to see if we need to 'select' the tile
-  if (tile_is_selected) {
+  // if (tile_is_selected) {
+  //  if (i == last_tile_click_pos.x && j == last_tile_click_pos.y) {
+  //    DrawRectangleLinesEx(dest, 4, GREEN);
+  //  } else if (CheckCollisionPointRec(last_mouse_click_pos, dest)) {
+  //    last_tile_click_pos = (Vector2){(float)i, (float)j};
+  //  }
+  //}
+}
 
+inline void GameplayScene::handle_tile_click(const Rectangle dest, const int i,
+                                             const int j) {
+  if (tile_is_selected) {
     if (i == last_tile_click_pos.x && j == last_tile_click_pos.y) {
       DrawRectangleLinesEx(dest, 4, GREEN);
-    }
-
-    else if (CheckCollisionPointRec(last_mouse_click_pos, dest) &&
-
-             prev_tile_click_zoom_level == tile_click_zoom_level) {
-      // DrawRectangleLinesEx(dest, 4, GREEN);
+    } else if (CheckCollisionPointRec(last_mouse_click_pos, dest)) {
       last_tile_click_pos = (Vector2){(float)i, (float)j};
     }
   }
