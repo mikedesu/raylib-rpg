@@ -21,9 +21,6 @@ GameplayScene::GameplayScene() {
 
 GameplayScene::~GameplayScene() { mPrint("GameplayScene destructor"); }
 void GameplayScene::gameover() { set_scene_transition(SCENE_TRANSITION_OUT); }
-// inline void GameplayScene::update_player_movement() {}
-// inline void GameplayScene::update_enemy_movement() {}
-// inline void GameplayScene::handle_player_collision() {}
 
 void GameplayScene::update() {
   /*
@@ -70,7 +67,6 @@ bool GameplayScene::handle_dungeon_move_pos(const entity_id id,
                                             const Vector2 c_pos,
                                             const Vector2 t_pos) {
   bool retval = false;
-  // Vector2 retval = (Vector2){0, 0};
   //  if they are different tiles...
   if (!Vector2Equals(c_pos, t_pos)) {
     tile_type t = dungeon_floor.get_tile_type(t_pos.x, t_pos.y);
@@ -168,10 +164,11 @@ inline void GameplayScene::handle_player_input() {
     get_sprite(player_id)->set_is_flipped(false);
     tile_is_selected = false;
   }
+  const int tilesize = 20;
 
   // update the camera
-  get_camera2d().target.x += player_move_dir.x * 20 * get_global_scale();
-  get_camera2d().target.y += player_move_dir.y * 20 * get_global_scale();
+  get_camera2d().target.x += player_move_dir.x * tilesize * get_global_scale();
+  get_camera2d().target.y += player_move_dir.y * tilesize * get_global_scale();
 }
 
 void GameplayScene::handle_input() {
@@ -181,18 +178,35 @@ void GameplayScene::handle_input() {
   if (IsKeyPressed(KEY_F)) {
     ToggleFullscreen();
   }
+
+  control_mode mode = get_control_mode();
+
   if (IsKeyPressed(KEY_C)) {
-    if (get_control_mode() == CONTROL_MODE_PLAYER) {
-      set_control_mode(CONTROL_MODE_CAMERA);
-    } else {
-      set_control_mode(CONTROL_MODE_PLAYER);
-    }
+    set_control_mode((mode == CONTROL_MODE_PLAYER) ? CONTROL_MODE_CAMERA
+                                                   : CONTROL_MODE_PLAYER);
+    // if (mode == CONTROL_MODE_PLAYER) {
+    //   set_control_mode(CONTROL_MODE_CAMERA);
+    // } else {
+    //   set_control_mode(CONTROL_MODE_PLAYER);
+    // }
   }
-  if (get_control_mode() == CONTROL_MODE_CAMERA) {
+
+  switch (mode) {
+  case CONTROL_MODE_CAMERA:
     handle_camera_input();
-  } else if (get_control_mode() == CONTROL_MODE_PLAYER) {
+    break;
+  case CONTROL_MODE_PLAYER:
     handle_player_input();
+    break;
+  default:
+    break;
   }
+
+  // if (mode == CONTROL_MODE_CAMERA) {
+  //   handle_camera_input();
+  // } else if (get_control_mode() == CONTROL_MODE_PLAYER) {
+  //   handle_player_input();
+  // }
 }
 
 void GameplayScene::set_scale(const float f) {
@@ -220,7 +234,6 @@ bool GameplayScene::init() {
     // spawning a player is a function of spawn_entity
     // we can write code to put into a function that spawns the player
     spawn_player((Vector2){1, 1});
-
     // these are hardcoded values, but we would prefer to do this
     // algorithmically and intelligently the columns, for now, represent walls
     // that sit on top of tiles
@@ -266,18 +279,6 @@ const entity_id GameplayScene::spawn_column(const Vector2 pos) {
   return id;
 }
 
-// const entity_id GameplayScene::spawn_goblin(const Vector2 pos) {
-//   entity_id id = spawn_entity("goblin", 0, 0, SPRITETYPE_ENEMY, true);
-//   dungeon_floor.set_entity_position(id, pos);
-//   return id;
-// }
-
-// const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
-//   entity_id id = spawn_entity("torch", 0, 0, SPRITETYPE_ITEM, true);
-//   dungeon_floor.set_entity_position(id, pos);
-//   return id;
-// }
-
 inline void GameplayScene::draw_debug_panel() {
   string camera_info_str =
       "Current Frame: " + to_string(get_current_frame()) + "\n" +
@@ -287,34 +288,54 @@ inline void GameplayScene::draw_debug_panel() {
       "Sprites: " + to_string(get_sprites().size()) + "\n" +
       "IsPaused: " + to_string(get_paused()) + "\n" +
       "Global Scale: " + to_string(get_global_scale()) + "\n";
-  DrawRectangle(0, 0, 500, 200, Fade(BLACK, 0.5f));
-  DrawTextEx(get_global_font(), camera_info_str.c_str(), (Vector2){10, 10}, 16,
-             0.5f, WHITE);
+
+  const int x = 10;
+  const int y = 10;
+  const int w = 500;
+  const int h = 200;
+  const Color c0 = Fade(BLACK, 0.5f);
+  const Color c1 = WHITE;
+  const Color c2 = GRAY;
+  const int fontsize = 16;
+  const float alpha = 0.5f;
+  DrawRectangle(x, y, w, h, c0);
+  const Vector2 loc = (Vector2){x, y};
+  DrawTextEx(get_global_font(), camera_info_str.c_str(), loc, fontsize, alpha,
+             c1);
+  DrawRectangleLines(x, y, w, h, c2);
 }
 
 inline void GameplayScene::draw_controls() {
   const int fontsize = 24;
   const int x = 10;
   const int y = 10;
+  const Color c0 = Fade(BLACK, 0.5f);
+  const Color c1 = WHITE;
+  const Color c2 = GRAY;
+  const int w = 400;
+  const int h = 200;
+  const int pad = 10;
   const string s = "Controls: \n"
                    "Arrow keys: move player\n"
                    "D: toggle debug panel\n"
                    "C: toggle player/cam mode\n"
                    "Zz: zoom in/out\n"
                    "Q: quit\n";
-  DrawText(s.c_str(), x, y, fontsize, WHITE);
+  DrawRectangle(x, y, w, h, c0);
+  DrawText(s.c_str(), x + pad, y + pad, fontsize, c1);
+  DrawRectangleLines(x, y, w, h, c2);
 }
 
 inline void GameplayScene::draw_hud() {
   // draw a black box on the right side of the screen
   const int w = 500;
-  const int h = GetScreenHeight();
+  const int h = GetScreenHeight() - 100;
   const float x = GetScreenWidth() - w;
   const int y = 0;
   const int fontsize = 24;
   const int max_messages = 30;
-
-  DrawRectangle(x, y, w, h, BLACK);
+  const Color c0 = Fade(BLACK, 0.5f);
+  DrawRectangle(x, y, w, h, c0);
   // draw some text
   const string s =
       "Player Position: " +
@@ -325,21 +346,21 @@ inline void GameplayScene::draw_hud() {
       "Turn: " + to_string(turn_count) + "\n" +
       "Last Tile Click: " + to_string((int)last_tile_click_pos.x) + ", " +
       to_string((int)last_tile_click_pos.y) + "\n\n";
-
-  string messages = "";
-  // iterate backwards thru message_log and construct a big string
-  // only show the last 10 messages
-  int count = 0;
-  for (int i = (int)message_log.size() - 1; i >= 0 && count < max_messages;
-       i--) {
-    messages += message_log[i] + "\n";
-    count++;
-  }
-
-  const string s2 = s + messages;
-  // DrawTextEx(get_global_font(), s2.c_str(), (Vector2){x + 10, y + 10},
-  // fontsize,            0.5f, WHITE);
-  DrawText(s2.c_str(), x + 10, y + 10, fontsize, WHITE);
+  // draw a gray border around the rectangle
+  DrawRectangleLines(x, y, w, h, GRAY);
+  // string messages = "";
+  //  iterate backwards thru message_log and construct a big string
+  //  only show the last 10 messages
+  // int count = 0;
+  // for (int i = (int)message_log.size() - 1; i >= 0 && count < max_messages;
+  //      i--) {
+  //   messages += message_log[i] + "\n";
+  //   count++;
+  // }
+  // const string s2 = s + messages;
+  //  DrawTextEx(get_global_font(), s2.c_str(), (Vector2){x + 10, y + 10},
+  //  fontsize,            0.5f, WHITE);
+  DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
 }
 
 void GameplayScene::cleanup() {
@@ -380,29 +401,13 @@ inline void GameplayScene::draw() {
     for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
       // get entities on the tile
       const vector<entity_id> &entities = dungeon_floor.get_entities(i, j);
-
       // draw entities
       for (auto &e : entities) {
         get_sprite(e)->draw();
       }
-      // const tile_type t = dungeon_floor.get_tile_type(i, j);
-      // const string s = tile_key_for_type(t);
-      // draw_tile(s, i, j);
     }
   }
 
-  // draw player
-  // get_sprite(player_id)->draw();
-
-  // draw walls
-  // for (auto &s : get_sprites()) {
-  //  if (s.second->get_type() == SPRITETYPE_WALL) {
-  //    s.second->draw();
-  //    if (get_debug_panel_on()) {
-  //      s.second->draw_hitbox();
-  //    }
-  //  }
-  //}
   EndMode2D();
   handle_draw_debug_panel();
   draw_controls();
@@ -425,9 +430,6 @@ const string GameplayScene::tile_key_for_type(const tile_type t) {
   case TILE_FLOOR_DIRT:
     tile_key += "dirt";
     break;
-  // case TILE_WALL_BASIC:
-  //   tile_key += "wall";
-  //   break;
   default:
     tile_key += "void";
     break;
