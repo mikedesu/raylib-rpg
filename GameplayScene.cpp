@@ -288,17 +288,17 @@ inline void GameplayScene::draw_debug_panel() {
       "IsPaused: " + to_string(get_paused()) + "\n" +
       "Global Scale: " + to_string(get_global_scale()) + "\n";
 
-  const int x = 10;
-  const int y = 10;
   const int w = 500;
   const int h = 200;
+  const int x = 10;
+  const int y = GetScreenHeight() - h - 80;
   const Color c0 = Fade(BLACK, 0.5f);
   const Color c1 = WHITE;
   const Color c2 = GRAY;
   const int fontsize = 16;
   const float alpha = 0.5f;
   DrawRectangle(x, y, w, h, c0);
-  const Vector2 loc = (Vector2){x, y};
+  const Vector2 loc = (Vector2){(float)x, (float)y};
   DrawTextEx(get_global_font(), camera_info_str.c_str(), loc, fontsize, alpha,
              c1);
   DrawRectangleLines(x, y, w, h, c2);
