@@ -329,9 +329,9 @@ inline void GameplayScene::draw_controls() {
 inline void GameplayScene::draw_hud() {
   // draw a black box on the right side of the screen
   const int w = 500;
-  const int h = GetScreenHeight() - 100;
-  const float x = GetScreenWidth() - w;
-  const int y = 0;
+  const int h = GetScreenHeight() / 4;
+  const float x = GetScreenWidth() - w - 10;
+  const int y = 10;
   const int fontsize = 24;
   const int max_messages = 30;
   const Color c0 = Fade(BLACK, 0.5f);
@@ -360,6 +360,22 @@ inline void GameplayScene::draw_hud() {
   // const string s2 = s + messages;
   //  DrawTextEx(get_global_font(), s2.c_str(), (Vector2){x + 10, y + 10},
   //  fontsize,            0.5f, WHITE);
+  DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
+}
+
+inline void GameplayScene::draw_message_log() {
+  // -----
+  const int w = 500;
+  const int h = GetScreenHeight() / 4;
+  const float x = GetScreenWidth() - w - 10;
+  const int y = 10 + h + 10;
+  const int fontsize = 24;
+  const int max_messages = 30;
+  const Color c0 = Fade(BLACK, 0.5f);
+  DrawRectangle(x, y, w, h, c0);
+
+  const string s = "Messages:\n";
+  DrawRectangleLines(x, y, w, h, GRAY);
   DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
 }
 
@@ -409,7 +425,19 @@ inline void GameplayScene::draw() {
   }
 
   EndMode2D();
-  handle_draw_debug_panel();
+
+  if (get_hud_on()) {
+    draw_hud();
+  }
+  if (get_debug_panel_on()) {
+    DrawFPS(10, GetScreenHeight() - 50);
+    draw_debug_panel();
+  }
+
+  if (display_message_log) {
+    draw_message_log();
+  }
+
   draw_controls();
   handle_popup_manager();
   incr_current_frame();
@@ -475,16 +503,6 @@ inline void GameplayScene::handle_popup_manager() {
       // a 2d camera world space position
       get_popup_manager()->draw(s.x, s.y);
     }
-  }
-}
-
-inline void GameplayScene::handle_draw_debug_panel() {
-  if (get_hud_on()) {
-    draw_hud();
-  }
-  if (get_debug_panel_on()) {
-    DrawFPS(GetScreenWidth() - 80, 10);
-    draw_debug_panel();
   }
 }
 

@@ -17,10 +17,10 @@ public:
 
   inline void draw_debug_panel();
   inline void draw_hud();
+  inline void draw_message_log();
   inline void draw_controls();
   inline void draw();
   inline void draw_tile(const string tile_key, const int i, const int j);
-  inline void handle_draw_debug_panel();
   inline void handle_popup_manager();
 
   const string tile_key_for_type(const tile_type t);
@@ -65,6 +65,7 @@ private:
   bool player_did_move = false;
   bool player_attempted_move = false;
   bool tile_is_selected = false;
+  bool display_message_log = true;
 
   Vector2 last_mouse_click_pos;
   Vector2 last_tile_click_pos;
