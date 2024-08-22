@@ -2,8 +2,10 @@
 
 #include <raylib.h>
 #include <string>
+// #include <memory>
 
 using std::string;
+// using std::shared_ptr;
 
 class PopupManager {
 
@@ -21,4 +23,6 @@ private:
   RenderTexture target;
   float alpha = 1.0f;
   int fontsize = 24;
+
+  // Font &font;
 };

@@ -1,11 +1,6 @@
 #include "GameplayScene.h"
-#include "Tile.h"
 #include "mPrint.h"
 #include "raymath.h"
-#include <string>
-
-using std::string;
-using std::to_string;
 
 GameplayScene::GameplayScene() {
   mPrint("GameplayScene constructor");
@@ -315,15 +310,15 @@ inline void GameplayScene::draw_debug_panel() {
 }
 
 inline void GameplayScene::draw_controls() {
-  const int fontsize = 24;
+  const int fontsize = 16;
   const int x = 10;
   const int y = 10;
-  const Color c0 = Fade(BLACK, 0.5f);
-  const Color c1 = WHITE;
-  const Color c2 = GRAY;
   const int w = 400;
   const int h = 200;
   const int pad = 10;
+  const Color c0 = Fade(BLACK, 0.5f);
+  const Color c1 = WHITE;
+  const Color c2 = GRAY;
   const string s = "Controls: \n"
                    "Arrow keys: move player\n"
                    "D: toggle debug panel\n"
@@ -331,8 +326,10 @@ inline void GameplayScene::draw_controls() {
                    "Zz: zoom in/out\n"
                    "Q: quit\n";
   DrawRectangle(x, y, w, h, c0);
-  DrawText(s.c_str(), x + pad, y + pad, fontsize, c1);
   DrawRectangleLines(x, y, w, h, c2);
+  // DrawText(s.c_str(), x + pad, y + pad, fontsize, c1);
+  DrawTextEx(get_global_font(), s.c_str(),
+             (Vector2){(float)x + pad, (float)y + pad}, fontsize, 0.5f, c1);
 }
 
 inline void GameplayScene::draw_hud() {
@@ -341,44 +338,62 @@ inline void GameplayScene::draw_hud() {
   const int h = GetScreenHeight() / 4;
   const float x = GetScreenWidth() - w - 10;
   const int y = 10;
-  const int fontsize = 24;
+  const int fontsize = 16;
   // const int max_messages = 30;
   const Color c0 = Fade(BLACK, 0.5f);
   DrawRectangle(x, y, w, h, c0);
+  // get the tile type string of the last tile clicked
+  string tile_type_str = "TILE_NONE";
+  if (last_tile_click_pos.x >= 0 && last_tile_click_pos.y >= 0) {
+    tile_type_str =
+        dungeon_floor
+            .get_tile_by_col_row(last_tile_click_pos.x, last_tile_click_pos.y)
+            .get_type_str();
+  }
+
   // draw some text
-  const string s =
-      "Player Position: " +
-      to_string((int)dungeon_floor.get_entity_position(player_id).x) + ", " +
-      to_string((int)dungeon_floor.get_entity_position(player_id).y) + "\n" +
-      "Camera: " + to_string((int)get_camera2d().target.x) + ", " +
-      to_string((int)get_camera2d().target.y) + "\n" +
-      "Turn: " + to_string(turn_count) + "\n" +
-      "Last Tile Click: " + to_string((int)last_tile_click_pos.x) + ", " +
-      to_string((int)last_tile_click_pos.y) + "\n\n";
-  // draw a gray border around the rectangle
+  string s = "";
+  s += "Name: darkmage\n";
+  s += "Level: 1\n";
+  s += "Race: human\n";
+  s += "Class: wizard\n";
+  s += "HP: 1/1\n";
+  s += "Stats: [10,10,10,10,10,10]\n";
+  s += "Position: " +
+       to_string((int)dungeon_floor.get_entity_position(player_id).x) + ", " +
+       to_string((int)dungeon_floor.get_entity_position(player_id).y) + "\n";
+  s += "Camera: " + to_string((int)get_camera2d().target.x) + ", " +
+       to_string((int)get_camera2d().target.y) + "\n";
+  s += "Turn: " + to_string(turn_count) + "\n";
+  s += "Last Tile Click: " + to_string((int)last_tile_click_pos.x) + ", " +
+       to_string((int)last_tile_click_pos.y) + "\n";
+  s += "Tile Type Clicked: " + tile_type_str + "\n";
+  s += "\n";
+
+  // const string s =
+  //     "Player Position: " +
+  //     to_string((int)dungeon_floor.get_entity_position(player_id).x) + ", " +
+  //     to_string((int)dungeon_floor.get_entity_position(player_id).y) + "\n" +
+  //     "Camera: " + to_string((int)get_camera2d().target.x) + ", " +
+  //     to_string((int)get_camera2d().target.y) + "\n" +
+  //     "Turn: " + to_string(turn_count) + "\n" +
+  //     "Last Tile Click: " + to_string((int)last_tile_click_pos.x) + ", " +
+  //     to_string((int)last_tile_click_pos.y) + "\n" +
+  //     "Tile Type Clicked: " + tile_type_str + "\n\n";
+  //  draw a gray border around the rectangle
   DrawRectangleLines(x, y, w, h, GRAY);
-  // string messages = "";
-  //  iterate backwards thru message_log and construct a big string
-  //  only show the last 10 messages
-  // int count = 0;
-  // for (int i = (int)message_log.size() - 1; i >= 0 && count < max_messages;
-  //      i--) {
-  //   messages += message_log[i] + "\n";
-  //   count++;
-  // }
-  // const string s2 = s + messages;
-  //  DrawTextEx(get_global_font(), s2.c_str(), (Vector2){x + 10, y + 10},
-  //  fontsize,            0.5f, WHITE);
-  DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
+  // DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
+  DrawTextEx(get_global_font(), s.c_str(),
+             (Vector2){(float)x + 10, (float)y + 10}, fontsize, 0.5f, WHITE);
 }
 
 inline void GameplayScene::draw_message_log() {
-  const int max_messages = 8;
+  const int max_messages = 12;
   const int w = 500;
   const int h = GetScreenHeight() / 4;
   const float x = GetScreenWidth() - w - 10;
   const int y = 10 + h + 10;
-  const int fontsize = 24;
+  const int fontsize = 16;
   const Color c0 = Fade(BLACK, 0.5f);
   DrawRectangle(x, y, w, h, c0);
   string s = "Messages:\n\n";
@@ -391,7 +406,9 @@ inline void GameplayScene::draw_message_log() {
     count++;
   }
   DrawRectangleLines(x, y, w, h, GRAY);
-  DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
+  // DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
+  DrawTextEx(get_global_font(), s.c_str(),
+             (Vector2){(float)x + 10, (float)y + 10}, fontsize, 0.5f, WHITE);
 }
 
 const string
@@ -514,9 +531,19 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
                     j * 20 * scale - (t->texture.height * scale - 20 * scale),
                     t->texture.width * scale, t->texture.height * scale};
   Vector2 origin = {0, 0};
+  // Color color = WHITE;
   Color color = WHITE;
+
+  // float alpha =
+  //     dungeon_floor.get_tile_by_col_row(i, j).get_light_level() * 0.1f;
+  float alpha =
+      1.0f - dungeon_floor.get_tile_by_col_row(i, j).get_light_level() * 0.1f;
+
   DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
-  // check to see if we need to 'select' the tile
+  // Draw a black rectangle in front of the tile
+  DrawRectangle(dest.x, dest.y, dest.width, dest.height, Fade(BLACK, alpha));
+  // DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
+  //  check to see if we need to 'select' the tile
   handle_tile_click(dest, i, j);
 }
 

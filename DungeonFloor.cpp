@@ -107,11 +107,11 @@ const bool DungeonFloor::move_entity_to_tile(entity_id id,
   return true;
 }
 
-Tile &DungeonFloor::get_tile_ref(const int col, const int row) {
+Tile &DungeonFloor::get_tile_by_col_row(const int col, const int row) {
   return grid[col][row];
 }
 
-Tile &DungeonFloor::get_tile_ref(const Vector2 position) {
+Tile &DungeonFloor::get_tile_by_vec(const Vector2 position) {
   return grid[(int)position.x][(int)position.y];
 }
 
