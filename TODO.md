@@ -9,6 +9,14 @@
 - [ ] trap tiles
 - [x] the tiles have to be displayed in such a way as that, if a tile type were to change, its associated display also changes
 - [x] message log / event log
+    - [ ] this needs to be greatly re-vamped
+    - [ ] the HUD and message log need to be separated
+    - [ ] the message log will need to be re-structured in such a way that
+        - [ ] the text rendered is based off of structured message-objects that contain specific information about
+            - [ ] which entity performed the action
+            - [ ] what location the action was performed at
+            - [ ] what action was performed or what event occured
+                - [ ] example: mike attacks a goblin, goblin takes 5 damage
 - [x] place enemies on tiles / spawn them
 - [x] be able to bump into enemies/entities
 - [ ] make enemy sprite sheets with 3 directions, up, down, right
