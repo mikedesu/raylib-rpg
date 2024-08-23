@@ -1,4 +1,5 @@
 #include "Tile.h"
+#include "mPrint.h"
 
 Tile::Tile() {
   set_type(TILE_VOID);
@@ -18,15 +19,20 @@ void Tile::set_light_level(const int level) {
   } else {
     light_level = level;
   }
+
+  mPrint("Light level set to: " + to_string(light_level));
 }
 
 Tile::~Tile() {}
 
 const tile_type Tile::get_type() const { return type; }
+
 const vector<entity_id> &Tile::get_entities() const { return entities; }
 
 void Tile::set_type(const tile_type t) { type = t; }
+
 void Tile::add_entity(const entity_id id) { entities.push_back(id); }
+
 void Tile::remove_entity(const entity_id id) {
   for (auto it = entities.begin(); it != entities.end(); it++) {
     if (*it == id) {
@@ -72,12 +78,14 @@ const string Tile::get_type_str() const {
 
 void Tile::increase_light_level() {
   if (light_level < max_light_level) {
-    light_level += light_incr;
+    light_level++;
   }
 }
+
 const int Tile::get_light_level() const { return light_level; }
+
 void Tile::decrease_light_level() {
   if (light_level > 0) {
-    light_level -= light_incr;
+    light_level--;
   }
 }

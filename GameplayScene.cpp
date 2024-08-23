@@ -184,6 +184,8 @@ inline void GameplayScene::handle_player_input() {
     }
     if (can_place) {
       spawn_torch(last_tile_click_pos);
+
+      t.set_light_level(10);
     }
   }
 
@@ -371,11 +373,16 @@ inline void GameplayScene::draw_hud() {
   DrawRectangle(x, y, w, h, c0);
   // get the tile type string of the last tile clicked
   string tile_type_str = "TILE_NONE";
+  string tile_light_level_str = "0";
   if (last_tile_click_pos.x >= 0 && last_tile_click_pos.y >= 0) {
     tile_type_str =
         dungeon_floor
             .get_tile_by_col_row(last_tile_click_pos.x, last_tile_click_pos.y)
             .get_type_str();
+    tile_light_level_str = to_string(
+        dungeon_floor
+            .get_tile_by_col_row(last_tile_click_pos.x, last_tile_click_pos.y)
+            .get_light_level());
   }
 
   // draw some text
@@ -395,6 +402,7 @@ inline void GameplayScene::draw_hud() {
   s += "Last Tile Click: " + to_string((int)last_tile_click_pos.x) + ", " +
        to_string((int)last_tile_click_pos.y) + "\n";
   s += "Tile Type Clicked: " + tile_type_str + "\n";
+  s += "Tile Light Level: " + tile_light_level_str + "\n";
   s += "\n";
 
   // const string s =
@@ -565,6 +573,7 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
   //     dungeon_floor.get_tile_by_col_row(i, j).get_light_level() * 0.1f;
   float alpha =
       1.0f - dungeon_floor.get_tile_by_col_row(i, j).get_light_level() * 0.1f;
+  // float alpha = 1.0f;
 
   DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
   // Draw a black rectangle in front of the tile
@@ -581,6 +590,9 @@ inline void GameplayScene::handle_tile_click(const Rectangle dest, const int i,
       DrawRectangleLinesEx(dest, 4, GREEN);
     } else if (CheckCollisionPointRec(last_mouse_click_pos, dest)) {
       last_tile_click_pos = (Vector2){(float)i, (float)j};
+
+      // increase the light level of the tile
+      dungeon_floor.get_tile_by_col_row(i, j).increase_light_level();
     }
   }
 }
