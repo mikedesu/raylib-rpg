@@ -8,3 +8,4 @@ fonts
 game
 test
 unit_tests.c
+*.zip
