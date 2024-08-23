@@ -167,6 +167,26 @@ inline void GameplayScene::handle_player_input() {
     last_mouse_click_pos = world_pos;
     tile_is_selected = true;
   }
+
+  if (IsKeyPressed(KEY_R)) {
+    // get the tile at the last clicked tile
+    Tile t = dungeon_floor.get_tile_by_col_row(last_tile_click_pos.x,
+                                               last_tile_click_pos.y);
+    // get the entities on the tile
+    vector<entity_id> entities = dungeon_floor.get_entities(
+        last_tile_click_pos.x, last_tile_click_pos.y);
+
+    bool can_place = true;
+    for (auto entity_id : entities) {
+      if (get_sprite(entity_id)->get_type() == SPRITETYPE_WALL) {
+        can_place = false;
+      }
+    }
+    if (can_place) {
+      spawn_torch(last_tile_click_pos);
+    }
+  }
+
   handle_player_move_direction();
   // handle player move direction
   prev_tile_click_zoom_level = tile_click_zoom_level;
