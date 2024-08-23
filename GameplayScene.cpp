@@ -280,6 +280,13 @@ const entity_id GameplayScene::spawn_column(const Vector2 pos) {
   return id;
 }
 
+const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
+  entity_id id =
+      spawn_entity("torch", 0, 0, SPRITETYPE_ITEM, true, get_global_scale());
+  dungeon_floor.set_entity_position(id, pos);
+  return id;
+}
+
 inline void GameplayScene::draw_debug_panel() {
   string camera_info_str =
       "Current Frame: " + to_string(get_current_frame()) + "\n" +

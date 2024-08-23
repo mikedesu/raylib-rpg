@@ -54,7 +54,7 @@ public:
   const entity_id spawn_player(const Vector2 pos);
   const entity_id spawn_column(const Vector2 pos);
   // const entity_id spawn_goblin(const Vector2 pos);
-  // const entity_id spawn_torch(const Vector2 pos);
+  const entity_id spawn_torch(const Vector2 pos);
 
   // entity_id spawn_tile_stone(float i, float j, float x, float y);
   // entity_id spawn_tile_void(float x, float y);
