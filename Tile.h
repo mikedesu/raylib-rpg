@@ -47,6 +47,8 @@ public:
 
   void set_light_level(const int level);
   void increase_light_level();
+  void increase_light_level_by(const int level);
+  void decrease_light_level_by(const int level);
   const int get_light_level() const;
   void decrease_light_level();
 
@@ -57,4 +59,5 @@ private:
   int light_level = TILE_DEFAULT_LIGHT_LEVEL;
   const float light_incr = TILE_DEFAULT_LIGHT_INCR;
   const int max_light_level = TILE_DEFAULT_MAX_LIGHT_LEVEL;
+  const int min_light_level = TILE_DEFAULT_MIN_LIGHT_LEVEL;
 };

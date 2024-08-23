@@ -16,6 +16,7 @@ public:
   void handle_input();
   inline void handle_player_input();
   inline void handle_player_move_direction();
+  inline void handle_player_mouse_click();
   inline void handle_camera_input();
   inline void handle_camera_input_move();
   inline void handle_camera_input_zoom();
@@ -59,6 +60,8 @@ public:
   // entity_id spawn_tile_stone(float i, float j, float x, float y);
   // entity_id spawn_tile_void(float x, float y);
   const string get_dungeon_event_str(const DungeonEvent &dungeon_event);
+
+  void update_lighting_at(const Vector2 loc);
 
 private:
   bool show_test_popup = true;

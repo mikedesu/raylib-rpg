@@ -89,3 +89,17 @@ void Tile::decrease_light_level() {
     light_level--;
   }
 }
+
+void Tile::increase_light_level_by(const int level) {
+  light_level += level;
+  if (light_level > max_light_level) {
+    light_level = max_light_level;
+  }
+}
+
+void Tile::decrease_light_level_by(const int level) {
+  light_level -= level;
+  if (light_level < min_light_level) {
+    light_level = min_light_level;
+  }
+}
