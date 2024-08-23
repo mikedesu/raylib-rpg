@@ -166,12 +166,13 @@ inline void GameplayScene::handle_player_input() {
     Vector2 world_pos = GetScreenToWorld2D(mouse_pos, get_camera2d());
     last_mouse_click_pos = world_pos;
     tile_is_selected = true;
+    // dungeon_floor.get_tile_by_col_row(i, j).increase_light_level();
   }
 
   if (IsKeyPressed(KEY_R)) {
     // get the tile at the last clicked tile
-    Tile t = dungeon_floor.get_tile_by_col_row(last_tile_click_pos.x,
-                                               last_tile_click_pos.y);
+    Tile &t = dungeon_floor.get_tile_by_col_row(last_tile_click_pos.x,
+                                                last_tile_click_pos.y);
     // get the entities on the tile
     vector<entity_id> entities = dungeon_floor.get_entities(
         last_tile_click_pos.x, last_tile_click_pos.y);
@@ -592,7 +593,7 @@ inline void GameplayScene::handle_tile_click(const Rectangle dest, const int i,
       last_tile_click_pos = (Vector2){(float)i, (float)j};
 
       // increase the light level of the tile
-      dungeon_floor.get_tile_by_col_row(i, j).increase_light_level();
+      // dungeon_floor.get_tile_by_col_row(i, j).increase_light_level();
     }
   }
 }
