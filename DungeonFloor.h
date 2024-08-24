@@ -28,8 +28,8 @@ public:
   const vector<entity_id> &get_entities(const int col, const int row) const;
 
 private:
-  const int gridsize = 8;
-  Tile grid[8][8];
+  const int gridsize = 16;
+  Tile grid[16][16];
 
   unordered_map<entity_id, Vector2> entity_positions;
 };

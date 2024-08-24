@@ -103,3 +103,5 @@ void Tile::decrease_light_level_by(const int level) {
     light_level = min_light_level;
   }
 }
+
+const int Tile::get_max_light_level() const { return max_light_level; }

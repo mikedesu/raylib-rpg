@@ -12,7 +12,7 @@ using std::string;
 using std::vector;
 
 #define TILE_DEFAULT_LIGHT_LEVEL 0
-#define TILE_DEFAULT_MAX_LIGHT_LEVEL 10
+#define TILE_DEFAULT_MAX_LIGHT_LEVEL 20
 #define TILE_DEFAULT_MIN_LIGHT_LEVEL 0
 #define TILE_DEFAULT_LIGHT_INCR 0.1f
 
@@ -51,6 +51,7 @@ public:
   void decrease_light_level_by(const int level);
   const int get_light_level() const;
   void decrease_light_level();
+  const int get_max_light_level() const;
 
 private:
   tile_type type = TILE_VOID;

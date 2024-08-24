@@ -174,10 +174,7 @@ inline void GameplayScene::handle_player_input() {
   handle_player_mouse_click();
 
   if (IsKeyPressed(KEY_R)) {
-    // get the tile at the last clicked tile
-    Tile &t = dungeon_floor.get_tile_by_col_row(last_tile_click_pos.x,
-                                                last_tile_click_pos.y);
-    // get the entities on the tile
+    // get the tile at the last clicked tile and get its entities
     vector<entity_id> entities = dungeon_floor.get_entities(
         last_tile_click_pos.x, last_tile_click_pos.y);
 
@@ -189,12 +186,10 @@ inline void GameplayScene::handle_player_input() {
     }
     if (can_place) {
       spawn_torch(last_tile_click_pos);
-
-      update_lighting_at(last_tile_click_pos);
       // update the lighting for that tile as well as the surrounding tiles
       // this will require a method that takes in the vector2 position of the
       // tile and then dynamically modify the surrounding tile lighting
-      // t.increase_light_level_by(5);
+      update_lighting_at(last_tile_click_pos, 5);
     }
   }
 
@@ -203,45 +198,46 @@ inline void GameplayScene::handle_player_input() {
   prev_tile_click_zoom_level = tile_click_zoom_level;
 }
 
-void GameplayScene::update_lighting_at(const Vector2 loc) {
-  Tile &t = dungeon_floor.get_tile_by_col_row(loc.x, loc.y);
-  t.increase_light_level_by(5);
+void GameplayScene::update_lighting_at(const Vector2 loc,
+                                       const int light_level) {
 
-  // update the surrounding tiles
-  for (int i = 1; i < 5; i++) {
-    const int light_incr = 5 - i;
-    if (loc.y - i >= 0) {
-      Tile &t = dungeon_floor.get_tile_by_col_row(loc.x, loc.y - i);
-      t.increase_light_level_by(light_incr);
-    }
-    if (loc.y + i < dungeon_floor.get_gridsize()) {
-      Tile &t = dungeon_floor.get_tile_by_col_row(loc.x, loc.y + i);
-      t.increase_light_level_by(light_incr);
-    }
-    if (loc.x - i >= 0) {
-      Tile &t = dungeon_floor.get_tile_by_col_row(loc.x - i, loc.y);
-      t.increase_light_level_by(light_incr);
-    }
-    if (loc.x + i < dungeon_floor.get_gridsize()) {
-      Tile &t = dungeon_floor.get_tile_by_col_row(loc.x + i, loc.y);
-      t.increase_light_level_by(light_incr);
-    }
-    if (loc.y - i >= 0 && loc.x - i >= 0) {
-      Tile &t = dungeon_floor.get_tile_by_col_row(loc.x - i, loc.y - i);
-      t.increase_light_level_by(light_incr - 1);
-    }
-    if (loc.y - i >= 0 && loc.x + i < dungeon_floor.get_gridsize()) {
-      Tile &t = dungeon_floor.get_tile_by_col_row(loc.x + i, loc.y - i);
-      t.increase_light_level_by(light_incr - 1);
-    }
-    if (loc.y + i < dungeon_floor.get_gridsize() && loc.x - i >= 0) {
-      Tile &t = dungeon_floor.get_tile_by_col_row(loc.x - i, loc.y + i);
-      t.increase_light_level_by(light_incr - 1);
-    }
-    if (loc.y + i < dungeon_floor.get_gridsize() &&
-        loc.x + i < dungeon_floor.get_gridsize()) {
-      Tile &t = dungeon_floor.get_tile_by_col_row(loc.x + i, loc.y + i);
-      t.increase_light_level_by(light_incr - 1);
+  if (loc.x < 0 || loc.y < 0) {
+    return;
+  }
+
+  if (loc.x >= dungeon_floor.get_gridsize() ||
+      loc.y >= dungeon_floor.get_gridsize()) {
+    return;
+  }
+
+  if (light_level <= 0) {
+    return;
+  }
+
+  const int gridsize = dungeon_floor.get_gridsize();
+
+  for (int j = 0; j < light_level; j++) {
+    for (int i = 0; i < light_level - j; i++) {
+      const int light_incr = light_level - j - i;
+      if (light_incr <= 0) {
+        break;
+      }
+      if (loc.y - i >= 0 && loc.x - j >= 0) {
+        Tile &t = dungeon_floor.get_tile_by_col_row(loc.x - j, loc.y - i);
+        t.increase_light_level_by(light_incr);
+      }
+      if (loc.y + i < gridsize && loc.x - j >= 0) {
+        Tile &t = dungeon_floor.get_tile_by_col_row(loc.x - j, loc.y + i);
+        t.increase_light_level_by(light_incr);
+      }
+      if (loc.y - i >= 0 && loc.x + j < gridsize) {
+        Tile &t = dungeon_floor.get_tile_by_col_row(loc.x + j, loc.y - i);
+        t.increase_light_level_by(light_incr);
+      }
+      if (loc.y + i < gridsize && loc.x + j < gridsize) {
+        Tile &t = dungeon_floor.get_tile_by_col_row(loc.x + j, loc.y + i);
+        t.increase_light_level_by(light_incr);
+      }
     }
   }
 }
@@ -623,8 +619,9 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
 
   // float alpha =
   //     dungeon_floor.get_tile_by_col_row(i, j).get_light_level() * 0.1f;
-  float alpha =
-      1.0f - dungeon_floor.get_tile_by_col_row(i, j).get_light_level() * 0.1f;
+  Tile &tile = dungeon_floor.get_tile_by_col_row(i, j);
+  const float light_incr = 1.0f / tile.get_max_light_level();
+  float alpha = 1.0f - tile.get_light_level() * light_incr;
   // float alpha = 1.0f;
 
   DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);

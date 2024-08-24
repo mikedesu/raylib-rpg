@@ -61,7 +61,8 @@ public:
   // entity_id spawn_tile_void(float x, float y);
   const string get_dungeon_event_str(const DungeonEvent &dungeon_event);
 
-  void update_lighting_at(const Vector2 loc);
+  // void update_lighting_at(const Vector2 loc);
+  void update_lighting_at(const Vector2 loc, const int light_level);
 
 private:
   bool show_test_popup = true;
