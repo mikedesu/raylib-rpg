@@ -12,6 +12,7 @@ all: game
 game: $(OBJ_FILES_WITH_MAIN)
 	$(CC) $^ $(FLAGS) $(LIBS) -o $@
 
+
 Game.o: Game.cpp
 	$(CC) $^ $(FLAGS) -c -o $@
 

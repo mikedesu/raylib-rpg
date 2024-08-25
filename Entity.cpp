@@ -2,11 +2,16 @@
 
 Entity::Entity() {
   // Constructor
+  name = "unnamed";
+  id = -1;
+  type = ENTITY_NONE;
 }
 
-Entity::Entity(string n) {
+Entity::Entity(entity_id e_id, entity_type t, string n) {
   // Constructor
   name = n;
+  id = e_id;
+  type = t;
 }
 
 Entity::~Entity() {
