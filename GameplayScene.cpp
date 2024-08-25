@@ -1,4 +1,5 @@
 #include "GameplayScene.h"
+#include "entity_type.h"
 #include "mPrint.h"
 #include "raymath.h"
 
@@ -31,6 +32,7 @@ void GameplayScene::update() {
     player_attempted_move = false;
   }
 }
+
 inline void GameplayScene::handle_camera_input_move() {
   if (IsKeyDown(KEY_UP)) {
     get_camera2d().target.y -= 10;
@@ -189,7 +191,7 @@ inline void GameplayScene::handle_player_input() {
       // update the lighting for that tile as well as the surrounding tiles
       // this will require a method that takes in the vector2 position of the
       // tile and then dynamically modify the surrounding tile lighting
-      update_lighting_at(last_tile_click_pos, 5);
+      update_lighting_at(last_tile_click_pos, 3);
     }
   }
 
@@ -200,12 +202,7 @@ inline void GameplayScene::handle_player_input() {
 
 void GameplayScene::update_lighting_at(const Vector2 loc,
                                        const int light_level) {
-
-  if (loc.x < 0 || loc.y < 0) {
-    return;
-  }
-
-  if (loc.x >= dungeon_floor.get_gridsize() ||
+  if (loc.x < 0 || loc.y < 0 || loc.x >= dungeon_floor.get_gridsize() ||
       loc.y >= dungeon_floor.get_gridsize()) {
     return;
   }
@@ -215,28 +212,34 @@ void GameplayScene::update_lighting_at(const Vector2 loc,
   }
 
   const int gridsize = dungeon_floor.get_gridsize();
+  const int x = loc.x;
+  const int y = loc.y;
 
   for (int j = 0; j < light_level; j++) {
+    const int x0 = x - j;
+    const int x1 = x + j;
     for (int i = 0; i < light_level - j; i++) {
       const int light_incr = light_level - j - i;
       if (light_incr <= 0) {
         break;
       }
-      if (loc.y - i >= 0 && loc.x - j >= 0) {
-        Tile &t = dungeon_floor.get_tile_by_col_row(loc.x - j, loc.y - i);
-        t.increase_light_level_by(light_incr);
+      const int y0 = y - i;
+      const int y1 = y + i;
+      if (y0 >= 0 && x0 >= 0) {
+        dungeon_floor.get_tile_by_col_row(x0, y0).increase_light_level_by(
+            light_incr);
       }
-      if (loc.y + i < gridsize && loc.x - j >= 0) {
-        Tile &t = dungeon_floor.get_tile_by_col_row(loc.x - j, loc.y + i);
-        t.increase_light_level_by(light_incr);
+      if (y1 < gridsize && x0 >= 0) {
+        dungeon_floor.get_tile_by_col_row(x0, y1).increase_light_level_by(
+            light_incr);
       }
-      if (loc.y - i >= 0 && loc.x + j < gridsize) {
-        Tile &t = dungeon_floor.get_tile_by_col_row(loc.x + j, loc.y - i);
-        t.increase_light_level_by(light_incr);
+      if (y0 >= 0 && x1 < gridsize) {
+        dungeon_floor.get_tile_by_col_row(x1, y0).increase_light_level_by(
+            light_incr);
       }
-      if (loc.y + i < gridsize && loc.x + j < gridsize) {
-        Tile &t = dungeon_floor.get_tile_by_col_row(loc.x + j, loc.y + i);
-        t.increase_light_level_by(light_incr);
+      if (y1 < gridsize && x1 < gridsize) {
+        dungeon_floor.get_tile_by_col_row(x1, y1).increase_light_level_by(
+            light_incr);
       }
     }
   }
@@ -339,21 +342,21 @@ const entity_id GameplayScene::spawn_player(const Vector2 pos) {
   entity_id id =
       spawn_entity("player", 0, 0, SPRITETYPE_PLAYER, true, get_global_scale());
   player_id = id;
-  dungeon_floor.set_entity_position(id, pos);
+  dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_PLAYER, pos);
   return id;
 }
 
 const entity_id GameplayScene::spawn_column(const Vector2 pos) {
   entity_id id =
       spawn_entity("column", 0, 0, SPRITETYPE_WALL, true, get_global_scale());
-  dungeon_floor.set_entity_position(id, pos);
+  dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_WALL, pos);
   return id;
 }
 
 const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
   entity_id id =
       spawn_entity("torch", 0, 0, SPRITETYPE_ITEM, true, get_global_scale());
-  dungeon_floor.set_entity_position(id, pos);
+  dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_TORCH, pos);
   return id;
 }
 
@@ -370,6 +373,7 @@ inline void GameplayScene::draw_debug_panel() {
       "Prev Tile Click Zoom Level: " + to_string(prev_tile_click_zoom_level) +
       "\n";
 
+  const int pad = 10;
   const int w = 500;
   const int h = 200;
   const int x = 10;
@@ -380,7 +384,7 @@ inline void GameplayScene::draw_debug_panel() {
   const int fontsize = 16;
   const float alpha = 0.5f;
   DrawRectangle(x, y, w, h, c0);
-  const Vector2 loc = (Vector2){(float)x, (float)y};
+  const Vector2 loc = (Vector2){(float)x + pad, (float)y + pad};
   DrawTextEx(get_global_font(), camera_info_str.c_str(), loc, fontsize, alpha,
              c1);
   DrawRectangleLines(x, y, w, h, c2);
@@ -529,8 +533,10 @@ void GameplayScene::cleanup() {
 
 inline void GameplayScene::draw() {
   BeginMode2D(get_camera2d());
+
   Color clear_color = BLACK;
   ClearBackground(clear_color);
+
   //   draw all tiles first
   for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
     for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
@@ -670,10 +676,8 @@ void GameplayScene::close() {
   get_textures().clear();
   mPrint("Clearing sprites...");
   get_sprites().clear();
-  // get_bgsprites().clear();
   mPrint("Clearing entity ids...");
   get_entity_ids().clear();
-  // get_bg_entity_ids().clear();
   mPrint("Unloading font...");
   UnloadFont(get_global_font());
   // if (music != NULL) {

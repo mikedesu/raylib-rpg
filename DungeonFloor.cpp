@@ -14,14 +14,6 @@ DungeonFloor::DungeonFloor() {
 
 DungeonFloor::~DungeonFloor() {}
 
-// void DungeonFloor::set_tile_type_all(const tile_type value) {
-//   for (int i = 0; i < gridsize; i++) {
-//     for (int j = 0; j < gridsize; j++) {
-//       set_tile_type(i, j, value);
-//     }
-//   }
-// }
-
 void DungeonFloor::set_tile_type(const int col, const int row,
                                  const tile_type value) {
   if (row < 0 || row >= gridsize || col < 0 || col >= gridsize) {
@@ -39,6 +31,7 @@ void DungeonFloor::set_tile_type_all(const tile_type value) {
 }
 
 const int DungeonFloor::get_gridsize() const { return gridsize; }
+
 const tile_type DungeonFloor::get_tile_type(const int col,
                                             const int row) const {
 
@@ -49,17 +42,14 @@ const tile_type DungeonFloor::get_tile_type(const int col,
   return grid[col][row].get_type();
 }
 
-// void DungeonFloor::set_tile_type(const int col, const int row,
-//                                  const tile_type value) {
-//
-// }
-
-void DungeonFloor::set_entity_position(const entity_id id,
-                                       const Vector2 position) {
+void DungeonFloor::set_entity_on_tile_with_type(const entity_id id,
+                                                const entity_type type,
+                                                const Vector2 position) {
 
   // if the entity is not in the map, add it
   if (entity_positions.find(id) == entity_positions.end()) {
     entity_positions[id] = position;
+    entity_types[id] = type;
     // add the entity to the tile
     grid[(int)position.x][(int)position.y].add_entity(id);
   } else {
@@ -95,9 +85,9 @@ const bool DungeonFloor::move_entity_to_tile(entity_id id,
   Tile &tile_dst = grid[(int)t_pos.x][(int)t_pos.y];
 
   // check if the destination tile contains enemies or other entities
-  if (tile_dst.get_entities().size() > 0) {
-    return false;
-  }
+  // if (tile_dst.get_entities().size() > 0) {
+  //  return false;
+  //}
 
   tile_src.remove_entity(id);
   tile_dst.add_entity(id);
@@ -119,4 +109,14 @@ const vector<entity_id> &DungeonFloor::get_entities(const int col,
                                                     const int row) const {
 
   return grid[col][row].get_entities();
+}
+
+void DungeonFloor::remove_entity(const entity_id id) {
+  remove_entity_from_tile(id, get_entity_position(id));
+}
+void DungeonFloor::remove_entity_from_tile(const entity_id id,
+                                           const Vector2 position) {
+  grid[(int)position.x][(int)position.y].remove_entity(id);
+  entity_positions.erase(id);
+  entity_types.erase(id);
 }
