@@ -76,16 +76,20 @@ void Sprite::init_rects(const float w, const float h) {
 Sprite::~Sprite() {}
 
 void Sprite::draw() {
+  // const Color color = BLACK;
   const Color color = WHITE;
-  // rlPushMatrix();
-  // rlTranslatef(dest.x + dest.width / 2, dest.y + dest.height / 2, 0);
-  // rlRotatef(rotation_angle, 0, 0, 1);
-  //  rlTranslatef(0, 0, 0);
-  // rlTranslatef(-dest.x - dest.width / 2, -dest.y - dest.height / 2, 0);
+  // const float alpha = 1.0f;
+  // const Color color = Fade(BLACK, alpha);
+  const float angle = 0.0f;
+  //  rlPushMatrix();
+  //  rlTranslatef(dest.x + dest.width / 2, dest.y + dest.height / 2, 0);
+  //  rlRotatef(rotation_angle, 0, 0, 1);
+  //   rlTranslatef(0, 0, 0);
+  //  rlTranslatef(-dest.x - dest.width / 2, -dest.y - dest.height / 2, 0);
   if (is_flipped) {
-    DrawTexturePro(texture, flipped_src, dest, origin, 0.0f, color);
+    DrawTexturePro(texture, flipped_src, dest, origin, angle, color);
   } else {
-    DrawTexturePro(texture, src, dest, origin, 0.0f, color);
+    DrawTexturePro(texture, src, dest, origin, angle, color);
   }
   // rlPopMatrix();
   const int frame_freq = 10;

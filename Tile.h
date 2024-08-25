@@ -11,7 +11,7 @@ using std::shared_ptr;
 using std::string;
 using std::vector;
 
-#define TILE_DEFAULT_LIGHT_LEVEL 0
+#define TILE_DEFAULT_LIGHT_LEVEL 1
 #define TILE_DEFAULT_MAX_LIGHT_LEVEL 20
 #define TILE_DEFAULT_MIN_LIGHT_LEVEL 0
 #define TILE_DEFAULT_LIGHT_INCR 0.1f

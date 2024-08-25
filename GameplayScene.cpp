@@ -131,32 +131,33 @@ Vector2 GameplayScene::handle_dungeon_move_dir(const entity_id id,
 inline void GameplayScene::handle_player_move_direction() {
   const int tilesize = 20;
   Vector2 move_dir = (Vector2){0, 0};
+  // unsigned int context = get_sprite(player_id)->get_context();
+  bool is_flipped = false;
   if (IsKeyPressed(KEY_UP)) {
-    move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, -1});
     player_attempted_move = true;
     // set the player sprite's context
+    move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, -1});
     get_sprite(player_id)->set_context(1);
-    get_sprite(player_id)->set_is_flipped(false);
-  }
-  if (IsKeyPressed(KEY_DOWN)) {
+    get_sprite(player_id)->set_is_flipped(is_flipped);
+  } else if (IsKeyPressed(KEY_DOWN)) {
+    player_attempted_move = true;
     move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, 1});
-    player_attempted_move = true;
     get_sprite(player_id)->set_context(0);
-    get_sprite(player_id)->set_is_flipped(false);
-  }
-  if (IsKeyPressed(KEY_LEFT)) {
+    get_sprite(player_id)->set_is_flipped(is_flipped);
+  } else if (IsKeyPressed(KEY_LEFT)) {
+    player_attempted_move = true;
+    is_flipped = true;
     move_dir = handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
-    player_attempted_move = true;
     get_sprite(player_id)->set_context(2);
-    get_sprite(player_id)->set_is_flipped(true);
-  }
-  if (IsKeyPressed(KEY_RIGHT)) {
+    get_sprite(player_id)->set_is_flipped(is_flipped);
+  } else if (IsKeyPressed(KEY_RIGHT)) {
+    player_attempted_move = true;
     move_dir = handle_dungeon_move_dir(player_id, (Vector2){1, 0});
-    player_attempted_move = true;
     get_sprite(player_id)->set_context(2);
-    get_sprite(player_id)->set_is_flipped(false);
+    get_sprite(player_id)->set_is_flipped(is_flipped);
   }
-  // update the camera
+  // get_sprite(player_id)->set_context(context);
+  //  update the camera
   get_camera2d().target.x += move_dir.x * tilesize * get_global_scale();
   get_camera2d().target.y += move_dir.y * tilesize * get_global_scale();
 }
@@ -626,16 +627,14 @@ inline void GameplayScene::draw() {
   // the wall renders on 'top' of the player
   // and when the player is below a wall,
   // the wall renders 'behind' the player
-  for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
-    for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
-      // get entities on the tile
-      const vector<entity_id> &entities = dungeon_floor.get_entities(i, j);
-      // draw entities
-      for (auto &e : entities) {
-        get_sprite(e)->draw();
-      }
-    }
-  }
+  // for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
+  //  for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
+  //    const vector<entity_id> &entities = dungeon_floor.get_entities(i, j);
+  //    for (auto &e : entities) {
+  //      get_sprite(e)->draw();
+  //    }
+  //  }
+  //}
   EndMode2D();
 
   if (get_hud_on()) {
@@ -687,10 +686,12 @@ const string GameplayScene::tile_key_for_type(const tile_type t) const {
 inline void GameplayScene::draw_tile(const string tile_key, const int i,
                                      const int j) {
   shared_ptr<texture_info> t = get_texture_info(tile_key);
+  const int t_sz = 20;
   const float scale = get_global_scale();
   Rectangle src = {0, 0, (float)t->texture.width, (float)t->texture.height};
-  Rectangle dest = {i * 20 * scale,
-                    j * 20 * scale - (t->texture.height * scale - 20 * scale),
+  Rectangle dest = {i * t_sz * scale,
+                    j * t_sz * scale -
+                        (t->texture.height * scale - t_sz * scale),
                     t->texture.width * scale, t->texture.height * scale};
   Vector2 origin = {0, 0};
   Color color = WHITE;
@@ -700,8 +701,32 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
   float alpha = 1.0f - tile.get_light_level() * light_incr;
 
   DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
-  // Draw a black rectangle in front of the tile
+
+  // now, for an upgrade, we want to draw the entities on the tile before we
+  // draw the shade box this way, the entities will be drawn below the shade box
+
+  // draw the entities on the tile
+  const vector<entity_id> &entities = dungeon_floor.get_entities(i, j);
+  // int width = t_sz;
+  // int height = t_sz;
+  //  to properly shade the entities, we will have to find the tallest
+  //  we will make an effort to keep entity sprites within the tile width
+  //  but some sprites may be taller and in fact are at times
+  //  Draw a black rectangle in front of the tile
   DrawRectangle(dest.x, dest.y, dest.width, dest.height, Fade(BLACK, alpha));
+
+  for (auto &e : entities) {
+    // get the sprite's dimensions
+    // if (get_sprite(e)->get_height() / scale > height) {
+    //  height = get_sprite(e)->get_height() / scale;
+    //}
+    get_sprite(e)->draw();
+  }
+  // update the dest.height
+  // dest.height = height * scale;
+  // update the dest.y
+  // dest.y = j * t_sz * scale - (height * scale - t_sz * scale);
+
   //  check to see if we need to 'select' the tile
   handle_tile_click(dest, i, j);
 }
