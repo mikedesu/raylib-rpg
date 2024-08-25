@@ -12,10 +12,10 @@ GameplayScene::GameplayScene() {
   set_global_scale(3.0f);
   set_scene_transition(SCENE_TRANSITION_IN);
   set_scene_type(SCENE_TYPE_GAMEPLAY);
-  // load_music("/home/darkmage/Music/darkmage/lets-fkn-go.mp3");
 }
 
 GameplayScene::~GameplayScene() { mPrint("GameplayScene destructor"); }
+
 void GameplayScene::gameover() { set_scene_transition(SCENE_TRANSITION_OUT); }
 
 void GameplayScene::update() {
@@ -174,34 +174,68 @@ inline void GameplayScene::handle_player_mouse_click() {
 
 inline void GameplayScene::handle_player_input() {
   handle_player_mouse_click();
-
   if (IsKeyPressed(KEY_R)) {
+    if (Vector2Equals(last_tile_click_pos, (Vector2){-1, -1}))
+      return;
     // get the tile at the last clicked tile and get its entities
     vector<entity_id> entities = dungeon_floor.get_entities(
         last_tile_click_pos.x, last_tile_click_pos.y);
-
     bool can_place = true;
+
     for (auto entity_id : entities) {
       if (get_sprite(entity_id)->get_type() == SPRITETYPE_WALL) {
         can_place = false;
       }
     }
+
     if (can_place) {
       spawn_torch(last_tile_click_pos);
       // update the lighting for that tile as well as the surrounding tiles
       // this will require a method that takes in the vector2 position of the
       // tile and then dynamically modify the surrounding tile lighting
-      update_lighting_at(last_tile_click_pos, 3);
+      increase_lighting_at(last_tile_click_pos, 3);
+    }
+  }
+
+  if (IsKeyPressed(KEY_T)) {
+    if (Vector2Equals(last_tile_click_pos, (Vector2){-1, -1}))
+      return;
+    vector<entity_id> entities = dungeon_floor.get_entities(
+        last_tile_click_pos.x, last_tile_click_pos.y);
+    bool can_place = true;
+
+    for (auto entity_id : entities) {
+      if (get_sprite(entity_id)->get_type() == SPRITETYPE_WALL) {
+        can_place = false;
+      }
+    }
+
+    if (can_place) {
+      // we must iterate thru the entities on the tile and remove the first
+      // torch if we are successful, then we can decrease the lighting
+      bool success = false;
+      for (auto entity_id : dungeon_floor.get_entities(last_tile_click_pos.x,
+                                                       last_tile_click_pos.y)) {
+
+        if (dungeon_floor.get_entity_type(entity_id) == ENTITY_TORCH) {
+          dungeon_floor.remove_entity(entity_id);
+          success = true;
+          break;
+        }
+      }
+
+      if (success) {
+        decrease_lighting_at(last_tile_click_pos, 3);
+      }
     }
   }
 
   handle_player_move_direction();
-  // handle player move direction
   prev_tile_click_zoom_level = tile_click_zoom_level;
 }
 
-void GameplayScene::update_lighting_at(const Vector2 loc,
-                                       const int light_level) {
+void GameplayScene::increase_lighting_at(const Vector2 loc,
+                                         const int light_level) {
   if (loc.x < 0 || loc.y < 0 || loc.x >= dungeon_floor.get_gridsize() ||
       loc.y >= dungeon_floor.get_gridsize()) {
     return;
@@ -220,23 +254,27 @@ void GameplayScene::update_lighting_at(const Vector2 loc,
     const int x1 = x + j;
     for (int i = 0; i < light_level - j; i++) {
       const int light_incr = light_level - j - i;
+      const int y0 = y - i;
+      const int y1 = y + i;
       if (light_incr <= 0) {
         break;
       }
-      const int y0 = y - i;
-      const int y1 = y + i;
+
       if (y0 >= 0 && x0 >= 0) {
         dungeon_floor.get_tile_by_col_row(x0, y0).increase_light_level_by(
             light_incr);
       }
+
       if (y1 < gridsize && x0 >= 0) {
         dungeon_floor.get_tile_by_col_row(x0, y1).increase_light_level_by(
             light_incr);
       }
+
       if (y0 >= 0 && x1 < gridsize) {
         dungeon_floor.get_tile_by_col_row(x1, y0).increase_light_level_by(
             light_incr);
       }
+
       if (y1 < gridsize && x1 < gridsize) {
         dungeon_floor.get_tile_by_col_row(x1, y1).increase_light_level_by(
             light_incr);
@@ -245,19 +283,78 @@ void GameplayScene::update_lighting_at(const Vector2 loc,
   }
 }
 
+void GameplayScene::decrease_lighting_at(const Vector2 loc,
+                                         const int light_level) {
+  if (loc.x < 0 || loc.y < 0 || loc.x >= dungeon_floor.get_gridsize() ||
+      loc.y >= dungeon_floor.get_gridsize()) {
+    return;
+  }
+
+  if (light_level <= 0) {
+    return;
+  }
+
+  const int gridsize = dungeon_floor.get_gridsize();
+  const int x = loc.x;
+  const int y = loc.y;
+
+  for (int j = 0; j < light_level; j++) {
+    const int x0 = x - j;
+    const int x1 = x + j;
+    for (int i = 0; i < light_level - j; i++) {
+      const int light_incr = light_level - j - i;
+      const int y0 = y - i;
+      const int y1 = y + i;
+
+      if (light_incr <= 0) {
+        break;
+      }
+
+      if (y0 >= 0 && x0 >= 0) {
+        dungeon_floor.get_tile_by_col_row(x0, y0).decrease_light_level_by(
+            light_incr);
+      }
+
+      if (y1 < gridsize && x0 >= 0) {
+        dungeon_floor.get_tile_by_col_row(x0, y1).decrease_light_level_by(
+            light_incr);
+      }
+
+      if (y0 >= 0 && x1 < gridsize) {
+        dungeon_floor.get_tile_by_col_row(x1, y0).decrease_light_level_by(
+            light_incr);
+      }
+
+      if (y1 < gridsize && x1 < gridsize) {
+        dungeon_floor.get_tile_by_col_row(x1, y1).decrease_light_level_by(
+            light_incr);
+      }
+    }
+  }
+}
+
+inline void GameplayScene::handle_control_mode_switch() {
+  control_mode mode = get_control_mode();
+  if (IsKeyPressed(KEY_C)) {
+    if (mode == CONTROL_MODE_CAMERA) {
+      set_control_mode(CONTROL_MODE_PLAYER);
+    } else if (mode == CONTROL_MODE_PLAYER) {
+      set_control_mode(CONTROL_MODE_CAMERA);
+    }
+  }
+}
+
 void GameplayScene::handle_input() {
   if (IsKeyPressed(KEY_D)) {
     flip_debug_panel();
   }
+
   if (IsKeyPressed(KEY_F)) {
     ToggleFullscreen();
   }
-  control_mode mode = get_control_mode();
-  if (IsKeyPressed(KEY_C)) {
-    set_control_mode((mode == CONTROL_MODE_PLAYER) ? CONTROL_MODE_CAMERA
-                                                   : CONTROL_MODE_PLAYER);
-  }
 
+  handle_control_mode_switch();
+  control_mode mode = get_control_mode();
   switch (mode) {
   case CONTROL_MODE_CAMERA:
     handle_camera_input();
@@ -311,26 +408,20 @@ bool GameplayScene::init() {
       mPrint("Error loading textures. Exiting...");
       return false;
     }
-
     init_dungeon_floor();
-
     mPrint("Spawning player...");
     Vector2 start_loc = get_start_location();
     spawn_player(start_loc);
-
     // set the player's dungeon position
     mPrint("Setting camera target...");
     // we want to lock the camera to the player in the center of the screen
     // get_camera2d().target = dungeon_floor.get_entity_position(player_id);
-
     // these values are hardcoded, but we would prefer to do this
     // algorithmically
     get_camera2d().target.x = -770;
     get_camera2d().target.y = -400;
-
     prev_tile_click_zoom_level = get_global_scale();
     tile_click_zoom_level = get_global_scale();
-
     mPrint("Loading sound effects...");
     set_has_been_initialized(true);
     mPrint("GameplayScene initialized");
@@ -367,12 +458,12 @@ inline void GameplayScene::draw_debug_panel() {
       "Camera target: " + to_string(get_camera2d().target.x) + ", " +
       to_string(get_camera2d().target.y) + "\n" + "GameplayScene" +
       "Sprites: " + to_string(get_sprites().size()) + "\n" +
+      "Textures: " + to_string(get_textures().size()) + "\n" +
       "IsPaused: " + to_string(get_paused()) + "\n" +
       "Global Scale: " + to_string(get_global_scale()) + "\n" +
       "Tile Click Zoom Level: " + to_string(tile_click_zoom_level) + "\n" +
       "Prev Tile Click Zoom Level: " + to_string(prev_tile_click_zoom_level) +
       "\n";
-
   const int pad = 10;
   const int w = 500;
   const int h = 200;
@@ -383,8 +474,8 @@ inline void GameplayScene::draw_debug_panel() {
   const Color c2 = GRAY;
   const int fontsize = 16;
   const float alpha = 0.5f;
-  DrawRectangle(x, y, w, h, c0);
   const Vector2 loc = (Vector2){(float)x + pad, (float)y + pad};
+  DrawRectangle(x, y, w, h, c0);
   DrawTextEx(get_global_font(), camera_info_str.c_str(), loc, fontsize, alpha,
              c1);
   DrawRectangleLines(x, y, w, h, c2);
@@ -408,7 +499,6 @@ inline void GameplayScene::draw_controls() {
                    "Q: quit\n";
   DrawRectangle(x, y, w, h, c0);
   DrawRectangleLines(x, y, w, h, c2);
-  // DrawText(s.c_str(), x + pad, y + pad, fontsize, c1);
   DrawTextEx(get_global_font(), s.c_str(),
              (Vector2){(float)x + pad, (float)y + pad}, fontsize, 0.5f, c1);
 }
@@ -420,7 +510,6 @@ inline void GameplayScene::draw_hud() {
   const float x = GetScreenWidth() - w - 10;
   const int y = 10;
   const int fontsize = 16;
-  // const int max_messages = 30;
   const Color c0 = Fade(BLACK, 0.5f);
   DrawRectangle(x, y, w, h, c0);
   // get the tile type string of the last tile clicked
@@ -457,19 +546,7 @@ inline void GameplayScene::draw_hud() {
   s += "Tile Light Level: " + tile_light_level_str + "\n";
   s += "\n";
 
-  // const string s =
-  //     "Player Position: " +
-  //     to_string((int)dungeon_floor.get_entity_position(player_id).x) + ", " +
-  //     to_string((int)dungeon_floor.get_entity_position(player_id).y) + "\n" +
-  //     "Camera: " + to_string((int)get_camera2d().target.x) + ", " +
-  //     to_string((int)get_camera2d().target.y) + "\n" +
-  //     "Turn: " + to_string(turn_count) + "\n" +
-  //     "Last Tile Click: " + to_string((int)last_tile_click_pos.x) + ", " +
-  //     to_string((int)last_tile_click_pos.y) + "\n" +
-  //     "Tile Type Clicked: " + tile_type_str + "\n\n";
-  //  draw a gray border around the rectangle
   DrawRectangleLines(x, y, w, h, GRAY);
-  // DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
   DrawTextEx(get_global_font(), s.c_str(),
              (Vector2){(float)x + 10, (float)y + 10}, fontsize, 0.5f, WHITE);
 }
@@ -493,7 +570,6 @@ inline void GameplayScene::draw_message_log() {
     count++;
   }
   DrawRectangleLines(x, y, w, h, GRAY);
-  // DrawText(s.c_str(), x + 10, y + 10, fontsize, WHITE);
   DrawTextEx(get_global_font(), s.c_str(),
              (Vector2){(float)x + 10, (float)y + 10}, fontsize, 0.5f, WHITE);
 }
@@ -518,7 +594,6 @@ GameplayScene::get_dungeon_event_str(const DungeonEvent &dungeon_event) {
 }
 
 void GameplayScene::cleanup() {
-  // mPrint("cleanup");
   for (int i = 0; i < (int)get_entity_ids().size(); i++) {
     entity_id id = get_entity_ids()[i];
     if (get_sprites()[id]->get_is_marked_for_deletion()) {
@@ -533,10 +608,8 @@ void GameplayScene::cleanup() {
 
 inline void GameplayScene::draw() {
   BeginMode2D(get_camera2d());
-
   Color clear_color = BLACK;
   ClearBackground(clear_color);
-
   //   draw all tiles first
   for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
     for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
@@ -563,12 +636,12 @@ inline void GameplayScene::draw() {
       }
     }
   }
-
   EndMode2D();
 
   if (get_hud_on()) {
     draw_hud();
   }
+
   if (get_debug_panel_on()) {
     DrawFPS(10, GetScreenHeight() - 50);
     draw_debug_panel();
@@ -620,20 +693,15 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
                     j * 20 * scale - (t->texture.height * scale - 20 * scale),
                     t->texture.width * scale, t->texture.height * scale};
   Vector2 origin = {0, 0};
-  // Color color = WHITE;
   Color color = WHITE;
 
-  // float alpha =
-  //     dungeon_floor.get_tile_by_col_row(i, j).get_light_level() * 0.1f;
   Tile &tile = dungeon_floor.get_tile_by_col_row(i, j);
   const float light_incr = 1.0f / tile.get_max_light_level();
   float alpha = 1.0f - tile.get_light_level() * light_incr;
-  // float alpha = 1.0f;
 
   DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
   // Draw a black rectangle in front of the tile
   DrawRectangle(dest.x, dest.y, dest.width, dest.height, Fade(BLACK, alpha));
-  // DrawTexturePro(t->texture, src, dest, origin, 0.0f, color);
   //  check to see if we need to 'select' the tile
   handle_tile_click(dest, i, j);
 }
@@ -645,9 +713,7 @@ inline void GameplayScene::handle_tile_click(const Rectangle dest, const int i,
       DrawRectangleLinesEx(dest, 4, GREEN);
     } else if (CheckCollisionPointRec(last_mouse_click_pos, dest)) {
       last_tile_click_pos = (Vector2){(float)i, (float)j};
-
       // increase the light level of the tile
-      // dungeon_floor.get_tile_by_col_row(i, j).increase_light_level();
     }
   }
 }

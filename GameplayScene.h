@@ -20,6 +20,7 @@ public:
   inline void handle_camera_input();
   inline void handle_camera_input_move();
   inline void handle_camera_input_zoom();
+  void handle_control_mode_switch();
 
   inline void draw_debug_panel();
   inline void draw_hud();
@@ -62,7 +63,8 @@ public:
   const string get_dungeon_event_str(const DungeonEvent &dungeon_event);
 
   // void update_lighting_at(const Vector2 loc);
-  void update_lighting_at(const Vector2 loc, const int light_level);
+  void increase_lighting_at(const Vector2 loc, const int light_level);
+  void decrease_lighting_at(const Vector2 loc, const int light_level);
 
 private:
   bool show_test_popup = true;

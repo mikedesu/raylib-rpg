@@ -34,6 +34,8 @@ public:
   void remove_entity(const entity_id id);
   void remove_entity_from_tile(const entity_id id, const Vector2 position);
 
+  const entity_type get_entity_type(const entity_id id) const;
+
 private:
   const int gridsize = 16;
   Tile grid[16][16];

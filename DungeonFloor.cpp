@@ -120,3 +120,10 @@ void DungeonFloor::remove_entity_from_tile(const entity_id id,
   entity_positions.erase(id);
   entity_types.erase(id);
 }
+
+const entity_type DungeonFloor::get_entity_type(const entity_id id) const {
+  if (entity_types.find(id) == entity_types.end()) {
+    return ENTITY_NONE;
+  }
+  return entity_types.at(id);
+}
