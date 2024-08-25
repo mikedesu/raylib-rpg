@@ -13,7 +13,7 @@ Scene::Scene() {
   mPrint("Scene constructor");
   controlmode = CONTROL_MODE_PLAYER;
   texture_filepath = "";
-  debug_panel_on = false;
+  debug_panel_on = true;
 }
 
 void Scene::set_texture_filepath(const char *filepath) {
@@ -173,8 +173,10 @@ void Scene::set_global_scale(float s) {
 
 void Scene::load_fonts() {
   mPrint("Loading fonts...");
+  const unsigned int global_font_size = 20;
   const char font_path[] = "fonts/hack.ttf";
-  global_font = LoadFont(font_path);
+  // global_font = LoadFont(font_path);
+  global_font = LoadFontEx(font_path, global_font_size, 0, 250);
 }
 
 entity_id Scene::spawn_entity(const char *texture_key, float x, float y,
@@ -273,3 +275,10 @@ shared_ptr<texture_info> Scene::get_texture_info(const string key) {
 }
 
 shared_ptr<Entity> Scene::get_entity(entity_id id) { return entities[id]; }
+
+const unsigned int Scene::get_global_font_size() const {
+  return global_font.baseSize;
+}
+void Scene::set_global_font_size(const unsigned int size) {
+  global_font.baseSize = size;
+}

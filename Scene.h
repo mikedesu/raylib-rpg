@@ -116,6 +116,9 @@ public:
 
   Mix_Music *get_music();
 
+  const unsigned int get_global_font_size() const;
+  void set_global_font_size(const unsigned int size);
+
 private:
   unordered_map<string, shared_ptr<texture_info>> textures;
   unordered_map<entity_id, shared_ptr<Sprite>> sprites;
@@ -140,6 +143,7 @@ private:
   control_mode controlmode = CONTROL_MODE_PLAYER;
 
   unsigned int current_frame = 0;
+  unsigned int global_font_size = 20;
 
   string texture_filepath;
   string music_path;

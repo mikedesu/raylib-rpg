@@ -467,13 +467,14 @@ inline void GameplayScene::draw_debug_panel() {
       "\n";
   const int pad = 10;
   const int w = 500;
-  const int h = 200;
-  const int x = 10;
+  const int h = 200 + pad;
+  const int x = pad;
   const int y = GetScreenHeight() - h - 80;
   const Color c0 = Fade(BLACK, 0.5f);
   const Color c1 = WHITE;
   const Color c2 = GRAY;
-  const int fontsize = 16;
+  // const int fontsize = 20;
+  const int fontsize = get_global_font().baseSize;
   const float alpha = 0.5f;
   const Vector2 loc = (Vector2){(float)x + pad, (float)y + pad};
   DrawRectangle(x, y, w, h, c0);
@@ -483,7 +484,7 @@ inline void GameplayScene::draw_debug_panel() {
 }
 
 inline void GameplayScene::draw_controls() {
-  const int fontsize = 16;
+  const int fontsize = get_global_font().baseSize;
   const int x = 10;
   const int y = 10;
   const int w = 400;
@@ -507,10 +508,11 @@ inline void GameplayScene::draw_controls() {
 inline void GameplayScene::draw_hud() {
   // draw a black box on the right side of the screen
   const int w = 500;
-  const int h = GetScreenHeight() / 4;
+  const int h = GetScreenHeight() / 4 + 10;
   const float x = GetScreenWidth() - w - 10;
   const int y = 10;
-  const int fontsize = 16;
+  // const int fontsize = 20;
+  const int fontsize = get_global_font().baseSize;
   const Color c0 = Fade(BLACK, 0.5f);
   DrawRectangle(x, y, w, h, c0);
   // get the tile type string of the last tile clicked
@@ -554,11 +556,13 @@ inline void GameplayScene::draw_hud() {
 
 inline void GameplayScene::draw_message_log() {
   const int max_messages = 12;
+  const int pad = 10;
   const int w = 500;
   const int h = GetScreenHeight() / 4;
   const float x = GetScreenWidth() - w - 10;
-  const int y = 10 + h + 10;
-  const int fontsize = 16;
+  const int y = h + pad + pad + pad;
+  // const int fontsize = 20;
+  const int fontsize = get_global_font().baseSize;
   const Color c0 = Fade(BLACK, 0.5f);
   DrawRectangle(x, y, w, h, c0);
   string s = "Messages:\n\n";
