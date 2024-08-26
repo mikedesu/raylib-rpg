@@ -27,15 +27,12 @@ public:
   Game();
   ~Game();
 
-  void run();
   inline void update();
   inline void handle_input();
   inline void cleanup();
   inline void draw();
 
-  // void handle_camera_input();
-  // void handle_player_input();
-
+  void run();
   void handle_transition_in();
   void handle_transition_out();
   void draw_debug_panel();
@@ -52,6 +49,8 @@ public:
 
   bool get_has_been_initialized();
   bool init();
+  bool init_audio();
+
   string get_window_title();
 
 private:

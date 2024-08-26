@@ -18,36 +18,35 @@ Game::Game() {
   controlmode = CONTROL_MODE_PLAYER;
 }
 
+bool Game::init_audio() {
+  if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+    mPrint("SDL2 audio could not be initialized. Exiting...");
+    return false;
+  }
+
+  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+    mPrint("SDL2 audio could not be initialized. Exiting...");
+    return false;
+  }
+
+  return true;
+}
+
 bool Game::init() {
   if (!has_been_initialized) {
-    mPrint("Initializing game...");
-    mPrint("Checking that player texture key is set...");
-    mPrint("Initializing window...");
     InitWindow(screen_rect.width, -screen_rect.height,
                get_window_title().c_str());
 
     // init SDL2 for audio
-
-    if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-      mPrint("SDL2 audio could not be initialized. Exiting...");
+    if (!init_audio()) {
       return false;
     }
 
-    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-      mPrint("SDL2 audio could not be initialized. Exiting...");
-      return false;
-    }
-
-    // InitAudioDevice();
-    mPrint("Initializing camera...");
     set_camera_default_values();
+
     SetTargetFPS(60); // Set our game to run at 60 frames-per-second
 
-    // init popupmanager
-    mPrint("Initializing popup manager...");
     popup_manager = make_shared<PopupManager>();
-
-    mPrint("Loading scene...");
 
     spawn_scenes();
 
@@ -60,25 +59,19 @@ bool Game::init() {
       }
     }
 
+    // set the current scene
+    string key = "title";
     if (scene_keys.find("title") == scene_keys.end()) {
       mPrint("Error: title scene not found.");
       return false;
     }
+    current_scene_id = scene_keys[key];
 
-    // current_scene_id = scene_keys["title"];
-    current_scene_id = scene_keys["gameplay"];
-    //   current_scene_id = scene_keys["gameover"];
-
-    mPrint("Loading render texture...");
     target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-    mPrint("Setting exit key...");
+
     SetExitKey(KEY_Q);
 
-    // seed the RNG
     SetRandomSeed(GetTime());
-
-    // init rlgl
-    mPrint("Initializing rlgl...");
 
     rlglInit(screen_rect.width, -screen_rect.height);
 
