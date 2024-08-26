@@ -3,6 +3,10 @@
 #include "entity_id.h"
 #include "raylib.h"
 
+#include <string>
+
+using std::string;
+
 typedef enum {
   EVENT_NONE = 0,
   EVENT_ENTITY_MOVE_SUCCESS,
@@ -21,8 +25,11 @@ public:
   const entity_id get_actor_id() const;
   const Vector2 get_target() const;
 
+  const string get_message() const;
+
 private:
   DungeonEventType type;
   entity_id actor_id;
   Vector2 target;
+  string message;
 };

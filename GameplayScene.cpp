@@ -423,6 +423,10 @@ bool GameplayScene::init() {
     get_camera2d().target.y = -400;
     prev_tile_click_zoom_level = get_global_scale();
     tile_click_zoom_level = get_global_scale();
+
+    message_pane = make_shared<MessagePane>(
+        get_global_font(), get_global_font().baseSize, dungeon_events);
+
     mPrint("Loading sound effects...");
     set_has_been_initialized(true);
     mPrint("GameplayScene initialized");
@@ -555,48 +559,43 @@ inline void GameplayScene::draw_hud() {
 }
 
 inline void GameplayScene::draw_message_log() {
-  const int max_messages = 12;
+  const int max_messages = 14;
   const int pad = 10;
   const int w = 500;
   const int h = 500;
   const float x = GetScreenWidth() - w - 10;
-  const int y = h + pad + pad + pad;
-  // const int fontsize = 20;
+  const float y = h + 3 * pad;
   const int fontsize = get_global_font().baseSize;
   const Color c0 = Fade(BLACK, 0.5f);
-  DrawRectangle(x, y, w, h, c0);
   string s = "Messages:\n\n";
-  // for (auto e : dungeon_events) {
+  DrawRectangle(x, y, w, h, c0);
   int count = 0;
-  for (int i = (int)dungeon_events.size() - 1; i >= 0 && count < max_messages;
-       i--) {
-    DungeonEvent &e = dungeon_events[i];
-    s += get_dungeon_event_str(e);
+  for (int i = dungeon_events.size() - 1; i >= 0 && count < max_messages; i--) {
+    s += dungeon_events[i].get_message();
     count++;
   }
   DrawRectangleLines(x, y, w, h, GRAY);
-  DrawTextEx(get_global_font(), s.c_str(),
-             (Vector2){(float)x + 10, (float)y + 10}, fontsize, 0.5f, WHITE);
+  DrawTextEx(get_global_font(), s.c_str(), (Vector2){x + 10, y + 10}, fontsize,
+             0.5f, WHITE);
 }
 
-const string
-GameplayScene::get_dungeon_event_str(const DungeonEvent &dungeon_event) {
-
-  string s = "";
-  switch (dungeon_event.get_type()) {
-  case EVENT_ENTITY_MOVE_SUCCESS:
-    s = "Moved to ";
-    break;
-  case EVENT_ENTITY_MOVE_FAIL:
-    s = "Cannot move to ";
-    break;
-  default:
-    s = "Unknown action";
-    break;
-  }
-  s += "\n";
-  return s;
-}
+// const string
+// GameplayScene::get_dungeon_event_str(const DungeonEvent &dungeon_event) {
+//   string s = "";
+//   switch (dungeon_event.get_type()) {
+//   case EVENT_ENTITY_MOVE_SUCCESS:
+//     s = "Moved to ";
+//     break;
+//   case EVENT_ENTITY_MOVE_FAIL:
+//     s = "Cannot move to ";
+//     break;
+//   default:
+//     s = "Unknown action";
+//     break;
+//   }
+//   s += "\n";
+//   return s;
+// }
 
 void GameplayScene::cleanup() {
   for (int i = 0; i < (int)get_entity_ids().size(); i++) {
@@ -637,7 +636,8 @@ inline void GameplayScene::draw() {
   }
 
   if (display_message_log) {
-    draw_message_log();
+    // draw_message_log();
+    message_pane->draw();
   }
 
   draw_controls();
