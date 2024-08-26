@@ -60,9 +60,10 @@ bool Game::init() {
     }
 
     // set the current scene
-    string key = "title";
-    if (scene_keys.find("title") == scene_keys.end()) {
-      mPrint("Error: title scene not found.");
+    // string key = "title";
+    string key = "gameplay";
+    if (scene_keys.find(key) == scene_keys.end()) {
+      mPrint("Error: " + key + " scene not found.");
       return false;
     }
     current_scene_id = scene_keys[key];

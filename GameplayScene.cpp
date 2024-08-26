@@ -467,7 +467,7 @@ inline void GameplayScene::draw_debug_panel() {
       "\n";
   const int pad = 10;
   const int w = 500;
-  const int h = 200 + pad;
+  const int h = 300;
   const int x = pad;
   const int y = GetScreenHeight() - h - 80;
   const Color c0 = Fade(BLACK, 0.5f);
@@ -558,7 +558,7 @@ inline void GameplayScene::draw_message_log() {
   const int max_messages = 12;
   const int pad = 10;
   const int w = 500;
-  const int h = GetScreenHeight() / 4;
+  const int h = 500;
   const float x = GetScreenWidth() - w - 10;
   const int y = h + pad + pad + pad;
   // const int fontsize = 20;
@@ -616,6 +616,7 @@ inline void GameplayScene::draw() {
   Color clear_color = BLACK;
   ClearBackground(clear_color);
   //   draw all tiles first
+  //   entities existing on tiles will get drawn
   for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
     for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
       const tile_type t = dungeon_floor.get_tile_type(i, j);
@@ -623,22 +624,7 @@ inline void GameplayScene::draw() {
       draw_tile(s, i, j);
     }
   }
-  // we will actually need to draw things in a specific order
-  // we wont be able to simply iterate the data structures
-  // instead, we will need to move thru the dungeon row by row, column by column
-  // this way, handling each row, we can properly draw things such that
-  // when the player is above a wall,
-  // the wall renders on 'top' of the player
-  // and when the player is below a wall,
-  // the wall renders 'behind' the player
-  // for (int i = 0; i < dungeon_floor.get_gridsize(); i++) {
-  //  for (int j = 0; j < dungeon_floor.get_gridsize(); j++) {
-  //    const vector<entity_id> &entities = dungeon_floor.get_entities(i, j);
-  //    for (auto &e : entities) {
-  //      get_sprite(e)->draw();
-  //    }
-  //  }
-  //}
+
   EndMode2D();
 
   if (get_hud_on()) {
