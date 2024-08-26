@@ -3,33 +3,6 @@
 // #include <cstring>
 #include "mPrint.h"
 
-/*
-Sprite::Sprite(const char *filepath, const unsigned int frames, const float x,
-               const float y, sprite_type t) {
-  if (strlen(filepath) > 0) {
-    texture = LoadTexture(filepath);
-  }
-
-  anim_frames = frames;
-  set_scale(1.0f);
-  init_rects();
-  origin = (Vector2){0, 0};
-  dest.x = x;
-  dest.y = y;
-  current_frame = 0;
-  velocity = (Vector2){0, 0};
-  is_marked_for_deletion = false;
-  is_animating = false;
-  is_flipped = false;
-  type = t;
-  is_spinning = false;
-  velocity.x = 0;
-  velocity.y = 0;
-  acceleration.x = 0;
-  acceleration.y = 0;
-}
-*/
-
 Sprite::Sprite(Texture2D &t, const unsigned int frames, const unsigned int c,
                const float x, const float y, const int w, const int h,
                sprite_type spritetype) {
