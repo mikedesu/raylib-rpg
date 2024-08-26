@@ -271,6 +271,10 @@ void Scene::set_popup_manager(shared_ptr<PopupManager> pm) {
 }
 
 shared_ptr<texture_info> Scene::get_texture_info(const string key) {
+  if (textures.find(key) == textures.end()) {
+    mPrint("Error: texture not found: " + key);
+    return nullptr;
+  }
   return textures[key];
 }
 

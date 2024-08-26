@@ -28,7 +28,14 @@ public:
   void handle_input();
   void draw_debug_panel();
   void cleanup();
+  void close();
+
+  void prerender_texture();
 
 private:
   // Music music;
+  RenderTexture prerendered_texture;
+  Rectangle src_rect;
+  Rectangle dst_rect;
+  Vector2 origin = (Vector2){0, 0};
 };
