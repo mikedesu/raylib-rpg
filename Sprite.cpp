@@ -124,8 +124,8 @@ void Sprite::update(const Vector2 dungeon_position) {
   int y_off = 0;
 
   switch (type) {
-  case sprite_type::SPRITETYPE_PLAYER:
-    y_off = -10 * scale;
+    // case sprite_type::SPRITETYPE_PLAYER:
+    //  y_off = -10 * scale;
     break;
   case sprite_type::SPRITETYPE_WALL:
     y_off = -(height - 20) * scale;

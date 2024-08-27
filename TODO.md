@@ -72,7 +72,10 @@
     - [x] lighting increase needs to be done at the end of `spawn_torch`
 - [x] need to wrap-up the code to remove torches in the same way as `spawn_torch`
 - [ ] might be a good time to migrate all of the Vector2 code related to dungeon position to an integer-based data structure
-
-
+- [ ] remove the dependencies on `sprite_type` in favor of `entity_type`
+- [ ] type-naming should be re-done, e.g. `entity_type` would become `EntityType` to better integrate with raylib struct naming
+- [ ] considering re-sizing tiles for higher-resolution sprites
+- [ ] re-position player sprite on tile to be more within the tile to help eliminate some issues with drawing taller sprites
+    - [ ] we should be able to figure out how to properly shade/shadow/darken sprites when on an unlit tile or have no light source themselves
 
 

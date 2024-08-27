@@ -64,6 +64,21 @@ temporarily setting them to else ifs because that worked but resulted in top-lef
 cant hardcode this because we need to handle different light increments for future torches, rings, etc
 gonna take a break for tonight :D
 
+----------
+
+fixed the main lighting problem
+
+1. increasing/decreasing light of surrounding tiles requires specific position-checks to make sure we dont double-increment the same tiles
+2. have to have a relatively high maximum lighting so that the increment is rather small
+3. still can run into problems when adding multiple torches to one tile
+
+we'd also like to have a light source follow entities on screen
+
+1. lighting per-tile must become a function of
+    - is there a torch on the tile?
+    - does the player have any light-increasing items in their inventory?
+    - etc
+
 
 
 

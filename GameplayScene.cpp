@@ -186,24 +186,24 @@ inline void GameplayScene::handle_player_move_direction() {
     player_attempted_move = true;
     // set the player sprite's context
     move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, -1});
-    get_sprite(player_id)->set_context(1);
-    get_sprite(player_id)->set_is_flipped(is_flipped);
+    // get_sprite(player_id)->set_context(1);
+    // get_sprite(player_id)->set_is_flipped(is_flipped);
   } else if (IsKeyPressed(KEY_DOWN)) {
     player_attempted_move = true;
     move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, 1});
-    get_sprite(player_id)->set_context(0);
-    get_sprite(player_id)->set_is_flipped(is_flipped);
+    // get_sprite(player_id)->set_context(0);
+    // get_sprite(player_id)->set_is_flipped(is_flipped);
   } else if (IsKeyPressed(KEY_LEFT)) {
     player_attempted_move = true;
     is_flipped = true;
     move_dir = handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
-    get_sprite(player_id)->set_context(2);
-    get_sprite(player_id)->set_is_flipped(is_flipped);
+    // get_sprite(player_id)->set_context(2);
+    // get_sprite(player_id)->set_is_flipped(is_flipped);
   } else if (IsKeyPressed(KEY_RIGHT)) {
     player_attempted_move = true;
     move_dir = handle_dungeon_move_dir(player_id, (Vector2){1, 0});
-    get_sprite(player_id)->set_context(2);
-    get_sprite(player_id)->set_is_flipped(is_flipped);
+    // get_sprite(player_id)->set_context(2);
+    // get_sprite(player_id)->set_is_flipped(is_flipped);
   }
   // get_sprite(player_id)->set_context(context);
   //  update the camera
@@ -670,7 +670,7 @@ const string GameplayScene::tile_key_for_type(const tile_type t) const {
 inline void GameplayScene::draw_tile(const string tile_key, const int i,
                                      const int j) {
   shared_ptr<texture_info> t = get_texture_info(tile_key);
-  const int t_sz = 20;
+  const int t_sz = t->texture.width;
   const float scale = get_global_scale();
   Rectangle src = {0, 0, (float)t->texture.width, (float)t->texture.height};
   Rectangle dest = {i * t_sz * scale,
