@@ -425,9 +425,9 @@ bool GameplayScene::init() {
     prev_tile_click_zoom_level = get_global_scale();
     tile_click_zoom_level = get_global_scale();
 
-    message_pane =
-        make_shared<MessagePane>(get_global_font(), get_global_font().baseSize,
-                                 14, 500, 500, dungeon_events);
+    message_pane = make_shared<MessagePane>(
+        get_global_font(), get_global_font().baseSize, 14,
+        GetScreenWidth() - 500 - 10, 500 + 30, 500, 500, dungeon_events);
 
     mPrint("Loading sound effects...");
     set_has_been_initialized(true);
