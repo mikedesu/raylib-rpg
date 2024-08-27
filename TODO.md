@@ -63,7 +63,9 @@
     - [x] add the new control-mode to the enum
     - [x] handle the control-mode switch (there are 3 now)
     - [x] handle the new control-mode
-
+- [ ] there is a bug in tile-selection mode involving torches
+    - [ ] laying a torch down is not increasing the lighting
+    - [ ] lighting increase needs to be done at the end of `spawn_torch`
 
 
 

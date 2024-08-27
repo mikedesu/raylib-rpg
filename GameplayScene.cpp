@@ -112,6 +112,10 @@ inline void GameplayScene::handle_tile_selection_input() {
       tile_is_selected = true;
     }
   }
+
+  if (IsKeyPressed(KEY_R)) {
+    spawn_torch(last_tile_click_pos);
+  }
 }
 
 bool GameplayScene::handle_dungeon_move_pos(const entity_id id,
@@ -217,6 +221,9 @@ inline void GameplayScene::handle_player_mouse_click() {
 inline void GameplayScene::handle_player_input() {
   handle_player_mouse_click();
   if (IsKeyPressed(KEY_R)) {
+
+    // a lot of this code can be pulled into spawn_torch itself...
+
     if (Vector2Equals(last_tile_click_pos, (Vector2){-1, -1}))
       return;
     // get the tile at the last clicked tile and get its entities
