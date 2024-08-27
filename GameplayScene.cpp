@@ -425,8 +425,9 @@ bool GameplayScene::init() {
     prev_tile_click_zoom_level = get_global_scale();
     tile_click_zoom_level = get_global_scale();
 
-    message_pane = make_shared<MessagePane>(
-        get_global_font(), get_global_font().baseSize, dungeon_events);
+    message_pane =
+        make_shared<MessagePane>(get_global_font(), get_global_font().baseSize,
+                                 14, 500, 500, dungeon_events);
 
     mPrint("Loading sound effects...");
     set_has_been_initialized(true);
@@ -474,7 +475,7 @@ inline void GameplayScene::draw_debug_panel() {
   const int w = 500;
   const int h = 300;
   const int x = pad;
-  const int y = GetScreenHeight() - h - 80;
+  const int y = GetScreenHeight() - h - 50;
   const Color c0 = Fade(BLACK, 0.5f);
   const Color c1 = WHITE;
   const Color c2 = GRAY;
@@ -593,7 +594,7 @@ inline void GameplayScene::draw() {
   }
 
   if (get_debug_panel_on()) {
-    DrawFPS(10, GetScreenHeight() - 50);
+    // DrawFPS(10, GetScreenHeight() - 50);
     draw_debug_panel();
   }
 
