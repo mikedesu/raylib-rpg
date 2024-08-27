@@ -16,7 +16,6 @@ public:
 
   void set_tile_type(const int col, const int row, const tile_type value);
   void set_tile_type_all(const tile_type value);
-  // void set_entity_position(const entity_id id, const Vector2 position);
   void set_entity_on_tile_with_type(const entity_id id, const entity_type type,
                                     const Vector2 position);
 

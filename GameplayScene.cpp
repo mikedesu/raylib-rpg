@@ -116,6 +116,10 @@ inline void GameplayScene::handle_tile_selection_input() {
   if (IsKeyPressed(KEY_R)) {
     spawn_torch(last_tile_click_pos);
   }
+
+  if (IsKeyPressed(KEY_T)) {
+    remove_torch(last_tile_click_pos);
+  }
 }
 
 bool GameplayScene::handle_dungeon_move_pos(const entity_id id,
@@ -214,47 +218,30 @@ inline void GameplayScene::handle_player_mouse_click() {
     Vector2 world_pos = GetScreenToWorld2D(mouse_pos, get_camera2d());
     last_mouse_click_pos = world_pos;
     tile_is_selected = true;
-    // dungeon_floor.get_tile_by_col_row(i, j).increase_light_level();
+  }
+}
+
+void GameplayScene::remove_torch(const Vector2 pos) {
+  if (Vector2Equals(pos, (Vector2){-1, -1}))
+    return;
+  const vector<entity_id> &entities = dungeon_floor.get_entities(pos.x, pos.y);
+  for (auto entity_id : entities) {
+    if (dungeon_floor.get_entity_type(entity_id) == ENTITY_TORCH) {
+      dungeon_floor.remove_entity(entity_id);
+      decrease_lighting_at(pos, 3);
+      break;
+    }
   }
 }
 
 inline void GameplayScene::handle_player_input() {
   handle_player_mouse_click();
   if (IsKeyPressed(KEY_R)) {
-    spawn_torch(last_tile_click_pos);
+    spawn_torch(dungeon_floor.get_entity_position(player_id));
   }
 
   if (IsKeyPressed(KEY_T)) {
-    if (Vector2Equals(last_tile_click_pos, (Vector2){-1, -1}))
-      return;
-    vector<entity_id> entities = dungeon_floor.get_entities(
-        last_tile_click_pos.x, last_tile_click_pos.y);
-    bool can_place = true;
-
-    for (auto entity_id : entities) {
-      if (get_sprite(entity_id)->get_type() == SPRITETYPE_WALL) {
-        can_place = false;
-      }
-    }
-
-    if (can_place) {
-      // we must iterate thru the entities on the tile and remove the first
-      // torch if we are successful, then we can decrease the lighting
-      bool success = false;
-      for (auto entity_id : dungeon_floor.get_entities(last_tile_click_pos.x,
-                                                       last_tile_click_pos.y)) {
-
-        if (dungeon_floor.get_entity_type(entity_id) == ENTITY_TORCH) {
-          dungeon_floor.remove_entity(entity_id);
-          success = true;
-          break;
-        }
-      }
-
-      if (success) {
-        decrease_lighting_at(last_tile_click_pos, 3);
-      }
-    }
+    remove_torch(dungeon_floor.get_entity_position(player_id));
   }
 
   handle_player_move_direction();
@@ -292,17 +279,17 @@ void GameplayScene::increase_lighting_at(const Vector2 loc,
             light_incr);
       }
 
-      if (y1 < gridsize && x0 >= 0) {
+      else if (y1 < gridsize && x0 >= 0) {
         dungeon_floor.get_tile_by_col_row(x0, y1).increase_light_level_by(
             light_incr);
       }
 
-      if (y0 >= 0 && x1 < gridsize) {
+      else if (y0 >= 0 && x1 < gridsize) {
         dungeon_floor.get_tile_by_col_row(x1, y0).increase_light_level_by(
             light_incr);
       }
 
-      if (y1 < gridsize && x1 < gridsize) {
+      else if (y1 < gridsize && x1 < gridsize) {
         dungeon_floor.get_tile_by_col_row(x1, y1).increase_light_level_by(
             light_incr);
       }
@@ -342,17 +329,17 @@ void GameplayScene::decrease_lighting_at(const Vector2 loc,
             light_incr);
       }
 
-      if (y1 < gridsize && x0 >= 0) {
+      else if (y1 < gridsize && x0 >= 0) {
         dungeon_floor.get_tile_by_col_row(x0, y1).decrease_light_level_by(
             light_incr);
       }
 
-      if (y0 >= 0 && x1 < gridsize) {
+      else if (y0 >= 0 && x1 < gridsize) {
         dungeon_floor.get_tile_by_col_row(x1, y0).decrease_light_level_by(
             light_incr);
       }
 
-      if (y1 < gridsize && x1 < gridsize) {
+      else if (y1 < gridsize && x1 < gridsize) {
         dungeon_floor.get_tile_by_col_row(x1, y1).decrease_light_level_by(
             light_incr);
       }
@@ -483,11 +470,10 @@ const entity_id GameplayScene::spawn_column(const Vector2 pos) {
 
 const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
 
-  if (Vector2Equals(last_tile_click_pos, (Vector2){-1, -1}))
+  if (Vector2Equals(pos, (Vector2){-1, -1}))
     return -1;
   // get the tile at the last clicked tile and get its entities
-  vector<entity_id> entities =
-      dungeon_floor.get_entities(last_tile_click_pos.x, last_tile_click_pos.y);
+  vector<entity_id> entities = dungeon_floor.get_entities(pos.x, pos.y);
   bool can_place = true;
   for (auto entity_id : entities) {
     if (get_sprite(entity_id)->get_type() == SPRITETYPE_WALL) {

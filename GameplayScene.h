@@ -53,6 +53,7 @@ public:
   const entity_id spawn_player(const Vector2 pos);
   const entity_id spawn_column(const Vector2 pos);
   const entity_id spawn_torch(const Vector2 pos);
+  void remove_torch(const Vector2 pos);
 
   // const string get_dungeon_event_str(const DungeonEvent &dungeon_event);
 

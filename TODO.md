@@ -8,11 +8,15 @@
 - [ ] doors
 - [ ] trap tiles
 - [x] the tiles have to be displayed in such a way as that, if a tile type were to change, its associated display also changes
+- [ ] HUDPane similar to MessagePane
+- [ ] Generic Pane / some way to genericize text windows / popup information / better PopupManagement
+- [ ] Inventory
+- [ ] ActionContextMenu similar to Dragon Quest or Final Fantasy Tactics
 - [x] message log / event log
     - [ ] this needs to be greatly re-vamped
-    - [ ] the HUD and message log need to be separated
-    - [ ] the message log will need to be re-structured in such a way that
-        - [ ] the text rendered is based off of structured message-objects that contain specific information about
+    - [x] the HUD and message log need to be separated
+    - [x] the message log will need to be re-structured in such a way that
+        - [x] the text rendered is based off of structured message-objects that contain specific information about
             - [ ] which entity performed the action
             - [ ] what location the action was performed at
             - [ ] what action was performed or what event occured
@@ -63,10 +67,8 @@
     - [x] add the new control-mode to the enum
     - [x] handle the control-mode switch (there are 3 now)
     - [x] handle the new control-mode
-- [ ] there is a bug in tile-selection mode involving torches
-    - [ ] laying a torch down is not increasing the lighting
-    - [ ] lighting increase needs to be done at the end of `spawn_torch`
-
-
-
+- [x] there is a bug in tile-selection mode involving torches
+    - [x] laying a torch down is not increasing the lighting
+    - [x] lighting increase needs to be done at the end of `spawn_torch`
+- [x] need to wrap-up the code to remove torches in the same way as `spawn_torch`
 
