@@ -75,7 +75,7 @@
 - [ ] remove the dependencies on `sprite_type` in favor of `entity_type`
 - [ ] type-naming should be re-done, e.g. `entity_type` would become `EntityType` to better integrate with raylib struct naming
 - [ ] considering re-sizing tiles for higher-resolution sprites
-- [ ] re-position player sprite on tile to be more within the tile to help eliminate some issues with drawing taller sprites
+- [x] re-position player sprite on tile to be more within the tile to help eliminate some issues with drawing taller sprites
     - [ ] we should be able to figure out how to properly shade/shadow/darken sprites when on an unlit tile or have no light source themselves
-
+- [ ] separate out the logic for "light_level" and "lighting distance" because they are currently bound together
 

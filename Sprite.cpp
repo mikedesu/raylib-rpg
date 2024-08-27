@@ -120,22 +120,21 @@ void Sprite::incr_frame() {
 
 void Sprite::update(const Vector2 dungeon_position) {
   const int tilesize = 20;
-  int x_off = 0;
-  int y_off = 0;
+  // int x_off = 0;
+  // int y_off = 0;
+  // switch (type) {
+  //  case sprite_type::SPRITETYPE_PLAYER:
+  //   y_off = -10 * scale;
+  //  break;
+  // case sprite_type::SPRITETYPE_WALL:
+  //  y_off = -(height - 20) * scale;
+  //  break;
+  // default:
+  //  break;
+  //}
 
-  switch (type) {
-    // case sprite_type::SPRITETYPE_PLAYER:
-    //  y_off = -10 * scale;
-    break;
-  case sprite_type::SPRITETYPE_WALL:
-    y_off = -(height - 20) * scale;
-    break;
-  default:
-    break;
-  }
-
-  set_x(dungeon_position.x * tilesize * scale + x_off);
-  set_y(dungeon_position.y * tilesize * scale + y_off);
+  set_x(dungeon_position.x * tilesize * scale);
+  set_y(dungeon_position.y * tilesize * scale);
 
   if (is_spinning) {
     rotation_angle += rotation_speed;

@@ -691,25 +691,13 @@ inline void GameplayScene::draw_tile(const string tile_key, const int i,
 
   // draw the entities on the tile
   const vector<entity_id> &entities = dungeon_floor.get_entities(i, j);
-  // int width = t_sz;
-  // int height = t_sz;
-  //  to properly shade the entities, we will have to find the tallest
-  //  we will make an effort to keep entity sprites within the tile width
-  //  but some sprites may be taller and in fact are at times
-  //  Draw a black rectangle in front of the tile
-  DrawRectangle(dest.x, dest.y, dest.width, dest.height, Fade(BLACK, alpha));
 
   for (auto &e : entities) {
-    // get the sprite's dimensions
-    // if (get_sprite(e)->get_height() / scale > height) {
-    //  height = get_sprite(e)->get_height() / scale;
-    //}
     get_sprite(e)->draw();
   }
-  // update the dest.height
-  // dest.height = height * scale;
-  // update the dest.y
-  // dest.y = j * t_sz * scale - (height * scale - t_sz * scale);
+
+  // shading for lighting
+  DrawRectangle(dest.x, dest.y, dest.width, dest.height, Fade(BLACK, alpha));
 
   //  check to see if we need to 'select' the tile
   handle_tile_click(dest, i, j);
