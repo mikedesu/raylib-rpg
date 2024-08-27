@@ -48,6 +48,22 @@ in the end we have several things to do in the lighting department that i have t
 2. how to recursively light the tiles so that we do not light any tiles behind a wall, or dampen the light if it passes thru an entity or such
 3. moving light sources
 
+the problem with the black boxes is that we are calling the tile light decrease multiple times on the same tile
+we fixed it for some cases but not others
+meaning
+we still have a more generic version to look for
+
+lol thats one way to solve it
+increase the differential between light increments
+and set the default lighting to the minimum
+
+lets try a default of 5 or higher......
+i know the math wont be right but if it was, after removing all the torches the tiles light level should be the default again
+
+temporarily setting them to else ifs because that worked but resulted in top-left lighting only
+cant hardcode this because we need to handle different light increments for future torches, rings, etc
+gonna take a break for tonight :D
+
 
 
 
