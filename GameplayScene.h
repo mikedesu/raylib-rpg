@@ -33,6 +33,7 @@ public:
   inline void handle_camera_input();
   inline void handle_camera_input_move();
   inline void handle_camera_input_zoom();
+  inline void handle_tile_selection_input();
 
   inline void draw_debug_panel();
   inline void draw_hud();

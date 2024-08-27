@@ -59,3 +59,12 @@
     - [ ] make the select tile actually draw a box around any entity that is on the tile
     - [ ] **TODO** fix the bug that is causing the "last tile clicked" to change locations when zooming in and out
 - [ ] apply optional dithering to textures read in, not just on tiles
+- [x] add an additional control-mode that will allow for tile selection without the mouse
+    - [x] add the new control-mode to the enum
+    - [x] handle the control-mode switch (there are 3 now)
+    - [x] handle the new control-mode
+
+
+
+
+

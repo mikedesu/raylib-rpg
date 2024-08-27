@@ -74,6 +74,46 @@ inline void GameplayScene::handle_camera_input() {
   handle_camera_input_zoom();
 }
 
+inline void GameplayScene::handle_tile_selection_input() {
+  if (IsKeyPressed(KEY_ESCAPE)) {
+    tile_is_selected = false;
+    last_tile_click_pos = (Vector2){-1, -1};
+  }
+
+  if (IsKeyPressed(KEY_ENTER)) {
+    tile_is_selected = false;
+    last_tile_click_pos = (Vector2){-1, -1};
+  }
+
+  if (IsKeyPressed(KEY_UP)) {
+    if (last_tile_click_pos.y > 0) {
+      last_tile_click_pos.y--;
+      tile_is_selected = true;
+    }
+  }
+
+  if (IsKeyPressed(KEY_DOWN)) {
+    if (last_tile_click_pos.y < dungeon_floor.get_gridsize() - 1) {
+      last_tile_click_pos.y++;
+      tile_is_selected = true;
+    }
+  }
+
+  if (IsKeyPressed(KEY_LEFT)) {
+    if (last_tile_click_pos.x > 0) {
+      last_tile_click_pos.x--;
+      tile_is_selected = true;
+    }
+  }
+
+  if (IsKeyPressed(KEY_RIGHT)) {
+    if (last_tile_click_pos.x < dungeon_floor.get_gridsize() - 1) {
+      last_tile_click_pos.x++;
+      tile_is_selected = true;
+    }
+  }
+}
+
 bool GameplayScene::handle_dungeon_move_pos(const entity_id id,
                                             const Vector2 c_pos,
                                             const Vector2 t_pos) {
@@ -338,10 +378,12 @@ void GameplayScene::decrease_lighting_at(const Vector2 loc,
 inline void GameplayScene::handle_control_mode_switch() {
   control_mode mode = get_control_mode();
   if (IsKeyPressed(KEY_C)) {
-    if (mode == CONTROL_MODE_CAMERA) {
-      set_control_mode(CONTROL_MODE_PLAYER);
-    } else if (mode == CONTROL_MODE_PLAYER) {
+    if (mode == CONTROL_MODE_PLAYER) {
       set_control_mode(CONTROL_MODE_CAMERA);
+    } else if (mode == CONTROL_MODE_CAMERA) {
+      set_control_mode(CONTROL_MODE_TILE_SELECTION);
+    } else if (mode == CONTROL_MODE_TILE_SELECTION) {
+      set_control_mode(CONTROL_MODE_PLAYER);
     }
   }
 }
@@ -363,6 +405,9 @@ void GameplayScene::handle_input() {
     break;
   case CONTROL_MODE_PLAYER:
     handle_player_input();
+    break;
+  case CONTROL_MODE_TILE_SELECTION:
+    handle_tile_selection_input();
     break;
   default:
     break;
@@ -471,18 +516,17 @@ inline void GameplayScene::draw_debug_panel() {
       "Tile Click Zoom Level: " + to_string(tile_click_zoom_level) + "\n" +
       "Prev Tile Click Zoom Level: " + to_string(prev_tile_click_zoom_level) +
       "\n";
-  const int pad = 10;
+  const float pad = 10;
   const int w = 500;
   const int h = 300;
-  const int x = pad;
-  const int y = GetScreenHeight() - h - 50;
+  const float x = pad * 2;
+  const float y = GetScreenHeight() - h - 50 + pad;
   const Color c0 = Fade(BLACK, 0.5f);
   const Color c1 = WHITE;
   const Color c2 = GRAY;
-  // const int fontsize = 20;
   const int fontsize = get_global_font().baseSize;
   const float alpha = 0.5f;
-  const Vector2 loc = (Vector2){(float)x + pad, (float)y + pad};
+  const Vector2 loc = (Vector2){x, y};
   DrawRectangle(x, y, w, h, c0);
   DrawTextEx(get_global_font(), camera_info_str.c_str(), loc, fontsize, alpha,
              c1);
@@ -513,17 +557,20 @@ inline void GameplayScene::draw_controls() {
 
 inline void GameplayScene::draw_hud() {
   // draw a black box on the right side of the screen
+  const int pad = 10;
   const int w = 500;
-  const int h = GetScreenHeight() / 4 + 10;
-  const float x = GetScreenWidth() - w - 10;
-  const int y = 10;
-  // const int fontsize = 20;
+  const int h = GetScreenHeight() / 4 + pad * 3;
+  const float x = GetScreenWidth() - w - pad;
+  const float y = pad;
   const int fontsize = get_global_font().baseSize;
   const Color c0 = Fade(BLACK, 0.5f);
+  Vector2 text_pos = (Vector2){x + pad, y + pad};
+  string tile_type_str = "TILE_NONE";
+  string tile_light_level_str = "";
+  string s = "";
+
   DrawRectangle(x, y, w, h, c0);
   // get the tile type string of the last tile clicked
-  string tile_type_str = "TILE_NONE";
-  string tile_light_level_str = "0";
   if (last_tile_click_pos.x >= 0 && last_tile_click_pos.y >= 0) {
     tile_type_str =
         dungeon_floor
@@ -536,7 +583,6 @@ inline void GameplayScene::draw_hud() {
   }
 
   // draw some text
-  string s = "";
   s += "Name: darkmage\n";
   s += "Level: 1\n";
   s += "Race: human\n";
@@ -553,11 +599,11 @@ inline void GameplayScene::draw_hud() {
        to_string((int)last_tile_click_pos.y) + "\n";
   s += "Tile Type Clicked: " + tile_type_str + "\n";
   s += "Tile Light Level: " + tile_light_level_str + "\n";
+  s += "Control Mode: " + to_string(get_control_mode()) + "\n";
   s += "\n";
 
   DrawRectangleLines(x, y, w, h, GRAY);
-  DrawTextEx(get_global_font(), s.c_str(),
-             (Vector2){(float)x + 10, (float)y + 10}, fontsize, 0.5f, WHITE);
+  DrawTextEx(get_global_font(), s.c_str(), text_pos, fontsize, 0.5f, WHITE);
 }
 
 void GameplayScene::cleanup() {
@@ -688,10 +734,11 @@ inline void GameplayScene::handle_tile_click(const Rectangle dest, const int i,
   if (tile_is_selected) {
     if (i == last_tile_click_pos.x && j == last_tile_click_pos.y) {
       DrawRectangleLinesEx(dest, 4, GREEN);
-    } else if (CheckCollisionPointRec(last_mouse_click_pos, dest)) {
-      last_tile_click_pos = (Vector2){(float)i, (float)j};
-      // increase the light level of the tile
     }
+    // else if (CheckCollisionPointRec(last_mouse_click_pos, dest)) {
+    //   last_tile_click_pos = (Vector2){(float)i, (float)j};
+    //  increase the light level of the tile
+    //}
   }
 }
 
