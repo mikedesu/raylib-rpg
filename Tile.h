@@ -11,10 +11,10 @@ using std::shared_ptr;
 using std::string;
 using std::vector;
 
-#define TILE_DEFAULT_LIGHT_LEVEL 10
-#define TILE_DEFAULT_MAX_LIGHT_LEVEL 100
+#define TILE_DEFAULT_LIGHT_LEVEL 0
+#define TILE_DEFAULT_MAX_LIGHT_LEVEL 20
 #define TILE_DEFAULT_MIN_LIGHT_LEVEL 0
-#define TILE_DEFAULT_LIGHT_INCR 0.01f
+#define TILE_DEFAULT_LIGHT_INCR (1.0f / TILE_DEFAULT_MAX_LIGHT_LEVEL)
 
 typedef enum {
   TILE_NONE,

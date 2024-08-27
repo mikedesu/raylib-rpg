@@ -29,7 +29,7 @@
     - [ ] slime
     - [ ] cat
     - [ ] eyeball
-- [ ] a dynamic camera that follows the player
+- [x] a dynamic camera that follows the player
 - [ ] a dynamic sprite system that allows for a humanoid body and equipping individual weapons/armor
     - [ ] left arm
     - [ ] right arm
@@ -43,8 +43,8 @@
     - [ ] right ring
 - [ ] have enemies move randomly
 - [ ] have enemies move towards the player
-- [ ] torches / item placement on tiles
-- [ ] dynamic lighting via torches
+- [x] torches / item placement on tiles
+- [x] dynamic lighting via torches
 - [ ] be able to pick-up items and have them in your inventory
 - [x] re-do how we manage entities in the dungeon
     - [x] currently, we are storing the dungeon x,y on each sprite
@@ -71,4 +71,8 @@
     - [x] laying a torch down is not increasing the lighting
     - [x] lighting increase needs to be done at the end of `spawn_torch`
 - [x] need to wrap-up the code to remove torches in the same way as `spawn_torch`
+- [ ] might be a good time to migrate all of the Vector2 code related to dungeon position to an integer-based data structure
+
+
+
 

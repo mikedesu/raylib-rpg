@@ -261,44 +261,34 @@ void GameplayScene::increase_lighting_at(const Vector2 loc,
   }
 
   const int gridsize = dungeon_floor.get_gridsize();
-  const int x = loc.x;
-  const int y = loc.y;
-
   for (int j = 0; j < light_level; j++) {
-    const int x0 = x - j;
-    const int x1 = x + j;
+    const int x0 = loc.x - j;
+    const int x1 = loc.x + j;
     for (int i = 0; i < light_level - j; i++) {
       const int light_incr = light_level - j - i;
-      const int y0 = y - i;
-      const int y1 = y + i;
-      if (light_incr <= 0) {
-        break;
-      }
-
-      if (i == 0 && j == 0) {
+      const int y0 = loc.y - i;
+      const int y1 = loc.y + i;
+      if (x0 >= 0 && x0 < gridsize && y0 >= 0 && y0 < gridsize) {
         dungeon_floor.get_tile_by_col_row(x0, y0).increase_light_level_by(
             light_incr);
       }
 
-      else {
-        // we need to guarantee we hit each tile only once
-        // there's possibility here that we are doing it multiple times
-        if (x0 > 0 && y0 > 0) {
-          dungeon_floor.get_tile_by_col_row(x0, y0).increase_light_level_by(
-              light_incr);
-        } else if (y1 < gridsize && x0 > 0) {
+      if (y0 != y1) {
+        if (x0 >= 0 && x0 < gridsize && y1 >= 0 && y1 < gridsize) {
           dungeon_floor.get_tile_by_col_row(x0, y1).increase_light_level_by(
               light_incr);
         }
-
-        else if (y0 > 0 && x1 < gridsize) {
+      }
+      if (x0 != x1) {
+        if (x1 >= 0 && x1 < gridsize && y0 >= 0 && y0 < gridsize) {
           dungeon_floor.get_tile_by_col_row(x1, y0).increase_light_level_by(
               light_incr);
         }
-
-        else if (y1 < gridsize && x1 < gridsize) {
-          dungeon_floor.get_tile_by_col_row(x1, y1).increase_light_level_by(
-              light_incr);
+        if (y0 != y1) {
+          if (x1 >= 0 && x1 < gridsize && y1 >= 0 && y1 < gridsize) {
+            dungeon_floor.get_tile_by_col_row(x1, y1).increase_light_level_by(
+                light_incr);
+          }
         }
       }
     }
@@ -317,43 +307,34 @@ void GameplayScene::decrease_lighting_at(const Vector2 loc,
   }
 
   const int gridsize = dungeon_floor.get_gridsize();
-  const int x = loc.x;
-  const int y = loc.y;
-
   for (int j = 0; j < light_level; j++) {
-    const int x0 = x - j;
-    const int x1 = x + j;
+    const int x0 = loc.x - j;
+    const int x1 = loc.x + j;
     for (int i = 0; i < light_level - j; i++) {
       const int light_incr = light_level - j - i;
-      const int y0 = y - i;
-      const int y1 = y + i;
-      if (light_incr <= 0) {
-        break;
-      }
-      if (i == 0 && j == 0) {
+      const int y0 = loc.y - i;
+      const int y1 = loc.y + i;
+      if (x0 >= 0 && x0 < gridsize && y0 >= 0 && y0 < gridsize) {
         dungeon_floor.get_tile_by_col_row(x0, y0).decrease_light_level_by(
             light_incr);
       }
 
-      else {
-        if (x0 > 0 && y0 > 0) {
-          dungeon_floor.get_tile_by_col_row(x0, y0).decrease_light_level_by(
-              light_incr);
-        }
-
-        else if (y1 < gridsize && x0 > 0) {
+      if (y0 != y1) {
+        if (x0 >= 0 && x0 < gridsize && y1 >= 0 && y1 < gridsize) {
           dungeon_floor.get_tile_by_col_row(x0, y1).decrease_light_level_by(
               light_incr);
         }
-
-        else if (y0 > 0 && x1 < gridsize) {
+      }
+      if (x0 != x1) {
+        if (x1 >= 0 && x1 < gridsize && y0 >= 0 && y0 < gridsize) {
           dungeon_floor.get_tile_by_col_row(x1, y0).decrease_light_level_by(
               light_incr);
         }
-
-        else if (y1 < gridsize && x1 < gridsize) {
-          dungeon_floor.get_tile_by_col_row(x1, y1).decrease_light_level_by(
-              light_incr);
+        if (y0 != y1) {
+          if (x1 >= 0 && x1 < gridsize && y1 >= 0 && y1 < gridsize) {
+            dungeon_floor.get_tile_by_col_row(x1, y1).decrease_light_level_by(
+                light_incr);
+          }
         }
       }
     }
@@ -531,7 +512,7 @@ inline void GameplayScene::draw_debug_panel() {
   const Color c2 = GRAY;
   const int fontsize = get_global_font().baseSize;
   const float alpha = 0.5f;
-  const Vector2 loc = (Vector2){x, y};
+  const Vector2 loc = (Vector2){x + pad, y + pad};
   DrawRectangle(x, y, w, h, c0);
   DrawTextEx(get_global_font(), camera_info_str.c_str(), loc, fontsize, alpha,
              c1);
