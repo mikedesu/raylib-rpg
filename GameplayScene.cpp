@@ -221,29 +221,7 @@ inline void GameplayScene::handle_player_mouse_click() {
 inline void GameplayScene::handle_player_input() {
   handle_player_mouse_click();
   if (IsKeyPressed(KEY_R)) {
-
-    // a lot of this code can be pulled into spawn_torch itself...
-
-    if (Vector2Equals(last_tile_click_pos, (Vector2){-1, -1}))
-      return;
-    // get the tile at the last clicked tile and get its entities
-    vector<entity_id> entities = dungeon_floor.get_entities(
-        last_tile_click_pos.x, last_tile_click_pos.y);
-    bool can_place = true;
-
-    for (auto entity_id : entities) {
-      if (get_sprite(entity_id)->get_type() == SPRITETYPE_WALL) {
-        can_place = false;
-      }
-    }
-
-    if (can_place) {
-      spawn_torch(last_tile_click_pos);
-      // update the lighting for that tile as well as the surrounding tiles
-      // this will require a method that takes in the vector2 position of the
-      // tile and then dynamically modify the surrounding tile lighting
-      increase_lighting_at(last_tile_click_pos, 3);
-    }
+    spawn_torch(last_tile_click_pos);
   }
 
   if (IsKeyPressed(KEY_T)) {
@@ -504,9 +482,29 @@ const entity_id GameplayScene::spawn_column(const Vector2 pos) {
 }
 
 const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
+
+  if (Vector2Equals(last_tile_click_pos, (Vector2){-1, -1}))
+    return -1;
+  // get the tile at the last clicked tile and get its entities
+  vector<entity_id> entities =
+      dungeon_floor.get_entities(last_tile_click_pos.x, last_tile_click_pos.y);
+  bool can_place = true;
+  for (auto entity_id : entities) {
+    if (get_sprite(entity_id)->get_type() == SPRITETYPE_WALL) {
+      can_place = false;
+    }
+  }
+
+  if (!can_place) {
+    return -1;
+  }
+
   entity_id id =
       spawn_entity("torch", 0, 0, SPRITETYPE_ITEM, true, get_global_scale());
   dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_TORCH, pos);
+
+  increase_lighting_at(pos, 3);
+
   return id;
 }
 
