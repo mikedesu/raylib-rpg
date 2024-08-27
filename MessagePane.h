@@ -14,7 +14,7 @@ public:
   void draw();
 
 private:
-  vector<DungeonEvent> &dungeon_events;
   Font &font;
   int font_size;
+  vector<DungeonEvent> &dungeon_events;
 };
