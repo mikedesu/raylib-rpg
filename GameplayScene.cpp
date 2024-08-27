@@ -34,17 +34,18 @@ void GameplayScene::update() {
 }
 
 inline void GameplayScene::handle_camera_input_move() {
+  const int cam_move = 10;
   if (IsKeyDown(KEY_UP)) {
-    get_camera2d().target.y -= 10;
+    get_camera2d().target.y -= cam_move;
   }
   if (IsKeyDown(KEY_DOWN)) {
-    get_camera2d().target.y += 10;
+    get_camera2d().target.y += cam_move;
   }
   if (IsKeyDown(KEY_LEFT)) {
-    get_camera2d().target.x -= 10;
+    get_camera2d().target.x -= cam_move;
   }
   if (IsKeyDown(KEY_RIGHT)) {
-    get_camera2d().target.x += 10;
+    get_camera2d().target.x += cam_move;
   }
 }
 
@@ -558,45 +559,6 @@ inline void GameplayScene::draw_hud() {
              (Vector2){(float)x + 10, (float)y + 10}, fontsize, 0.5f, WHITE);
 }
 
-inline void GameplayScene::draw_message_log() {
-  const int max_messages = 14;
-  const int pad = 10;
-  const int w = 500;
-  const int h = 500;
-  const float x = GetScreenWidth() - w - 10;
-  const float y = h + 3 * pad;
-  const int fontsize = get_global_font().baseSize;
-  const Color c0 = Fade(BLACK, 0.5f);
-  string s = "Messages:\n\n";
-  DrawRectangle(x, y, w, h, c0);
-  int count = 0;
-  for (int i = dungeon_events.size() - 1; i >= 0 && count < max_messages; i--) {
-    s += dungeon_events[i].get_message();
-    count++;
-  }
-  DrawRectangleLines(x, y, w, h, GRAY);
-  DrawTextEx(get_global_font(), s.c_str(), (Vector2){x + 10, y + 10}, fontsize,
-             0.5f, WHITE);
-}
-
-// const string
-// GameplayScene::get_dungeon_event_str(const DungeonEvent &dungeon_event) {
-//   string s = "";
-//   switch (dungeon_event.get_type()) {
-//   case EVENT_ENTITY_MOVE_SUCCESS:
-//     s = "Moved to ";
-//     break;
-//   case EVENT_ENTITY_MOVE_FAIL:
-//     s = "Cannot move to ";
-//     break;
-//   default:
-//     s = "Unknown action";
-//     break;
-//   }
-//   s += "\n";
-//   return s;
-// }
-
 void GameplayScene::cleanup() {
   for (int i = 0; i < (int)get_entity_ids().size(); i++) {
     entity_id id = get_entity_ids()[i];
@@ -636,7 +598,6 @@ inline void GameplayScene::draw() {
   }
 
   if (display_message_log) {
-    // draw_message_log();
     message_pane->draw();
   }
 
