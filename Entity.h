@@ -9,15 +9,18 @@ using std::string;
 class Entity {
 
 public:
-  Entity();
-  Entity(entity_id e_id, EntityType t, string n);
+  Entity(const entity_id e_id, EntityType t, string n)
+      : id(e_id), type(t), name(n) {}
   ~Entity();
 
-  void set_name(string n);
-  const string get_name() const;
+  const entity_id get_id() const { return id; }
+  const EntityType get_type() const { return type; }
+  const string get_name() const { return name; }
+
+  void set_name(const string n) { name = n; }
 
 private:
+  const entity_id id;
+  const EntityType type;
   string name = "Unnamed";
-  entity_id id;
-  EntityType type;
 };
