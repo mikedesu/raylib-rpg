@@ -83,5 +83,5 @@
 - [ ] camera position needs an offset update on zoom in order to keep the player centered
     - [ ] need a function "center cam on player"
 - [ ] when we enter "cursor" mode, we want the cursor to default to the player's location
-
+- [ ] tile entities need to be unique to a set. vector allows for duplicates.
 
