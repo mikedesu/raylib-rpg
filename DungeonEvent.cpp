@@ -21,6 +21,9 @@ const string DungeonEvent::get_message() const {
   case EVENT_ENTITY_MOVE_FAIL:
     s = "Cannot move to ";
     break;
+  case EVENT_ENTITY_MOVE_WAIT:
+    s = "Waiting in place ";
+    break;
   default:
     s = "Unknown action";
     break;

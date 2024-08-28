@@ -11,6 +11,7 @@ typedef enum {
   EVENT_NONE = 0,
   EVENT_ENTITY_MOVE_SUCCESS,
   EVENT_ENTITY_MOVE_FAIL,
+  EVENT_ENTITY_MOVE_WAIT,
 } DungeonEventType;
 
 class DungeonEvent {

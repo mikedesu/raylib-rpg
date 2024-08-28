@@ -155,6 +155,11 @@ bool GameplayScene::handle_dungeon_move_pos(const entity_id id,
       retval = false;
       break;
     }
+    // else its a wait
+  } else {
+    dungeon_events.push_back(DungeonEvent(id, EVENT_ENTITY_MOVE_WAIT, t_pos));
+    get_popup_manager()->render("Wait");
+    retval = true;
   }
   return retval;
 }
@@ -180,32 +185,28 @@ Vector2 GameplayScene::handle_dungeon_move_dir(const entity_id id,
 inline void GameplayScene::handle_player_move_direction() {
   const int tilesize = 20;
   Vector2 move_dir = (Vector2){0, 0};
-  // unsigned int context = get_sprite(player_id)->get_context();
-  bool is_flipped = false;
   if (IsKeyPressed(KEY_UP)) {
     player_attempted_move = true;
     // set the player sprite's context
     move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, -1});
-    // get_sprite(player_id)->set_context(1);
-    // get_sprite(player_id)->set_is_flipped(is_flipped);
+    get_sprite(player_id)->set_context(1);
   } else if (IsKeyPressed(KEY_DOWN)) {
     player_attempted_move = true;
     move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, 1});
-    // get_sprite(player_id)->set_context(0);
-    // get_sprite(player_id)->set_is_flipped(is_flipped);
+    get_sprite(player_id)->set_context(1);
   } else if (IsKeyPressed(KEY_LEFT)) {
     player_attempted_move = true;
-    is_flipped = true;
     move_dir = handle_dungeon_move_dir(player_id, (Vector2){-1, 0});
-    // get_sprite(player_id)->set_context(2);
-    // get_sprite(player_id)->set_is_flipped(is_flipped);
+    get_sprite(player_id)->set_context(1);
   } else if (IsKeyPressed(KEY_RIGHT)) {
     player_attempted_move = true;
     move_dir = handle_dungeon_move_dir(player_id, (Vector2){1, 0});
-    // get_sprite(player_id)->set_context(2);
-    // get_sprite(player_id)->set_is_flipped(is_flipped);
+    get_sprite(player_id)->set_context(1);
+  } else if (IsKeyPressed(KEY_PERIOD)) {
+    player_attempted_move = true;
+    move_dir = handle_dungeon_move_dir(player_id, (Vector2){0, 0});
+    get_sprite(player_id)->set_context(1);
   }
-  // get_sprite(player_id)->set_context(context);
   //  update the camera
   get_camera2d().target.x += move_dir.x * tilesize * get_global_scale();
   get_camera2d().target.y += move_dir.y * tilesize * get_global_scale();
