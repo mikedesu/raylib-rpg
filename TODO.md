@@ -79,5 +79,6 @@
     - [ ] we should be able to figure out how to properly shade/shadow/darken sprites when on an unlit tile or have no light source themselves
 - [ ] separate out the logic for "light_level" and "lighting distance" because they are currently bound together
 - [ ] add player name to the log messages
-
+- [ ] camera position needs an offset update on zoom in order to keep the player centered
+    - [ ] need a function "center cam on player"
 
