@@ -10,4 +10,3 @@ test
 unit_tests.c
 *.zip
 *.csv
-*.sh
