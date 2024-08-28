@@ -1,6 +1,10 @@
 #include "DungeonFloor.h"
 #include "EntityType.h"
 
+#include <algorithm>
+
+using std::find_if;
+
 DungeonFloor::DungeonFloor() {
   set_tile_type_all(TILE_FLOOR_BASIC);
   for (int i = 0; i < gridsize; i++) {
@@ -54,6 +58,9 @@ void DungeonFloor::add_entity_at(shared_ptr<Entity> entity,
 }
 
 const Vector2 DungeonFloor::get_entity_position(const entity_id id) {
+  if (entity_positions.find(id) == entity_positions.end()) {
+    return Vector2{-1, -1};
+  }
   return entity_positions[id];
 }
 
@@ -96,7 +103,6 @@ void DungeonFloor::remove_entity_from_tile(const entity_id id,
                                            const Vector2 position) {
   grid[(int)position.x][(int)position.y].remove_entity(id);
   entity_positions.erase(id);
-  // entity_types.erase(id);
   entities.erase(id);
 }
 
@@ -105,4 +111,13 @@ const EntityType DungeonFloor::get_entity_type(const entity_id id) const {
     return ENTITY_NONE;
   }
   return entities.at(id)->get_type();
+}
+
+const bool DungeonFloor::loc_contains_entity_type(const Vector2 loc,
+                                                  const EntityType type) const {
+  const vector<entity_id> &entities = get_entities(loc.x, loc.y);
+  auto pred = [this, type](entity_id id) {
+    return get_entity_type(id) == type;
+  };
+  return find_if(entities.begin(), entities.end(), pred) != entities.end();
 }

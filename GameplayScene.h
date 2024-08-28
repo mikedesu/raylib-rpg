@@ -55,9 +55,9 @@ public:
   const entity_id spawn_player(const Vector2 pos);
   const entity_id spawn_column(const Vector2 pos);
   const entity_id spawn_torch(const Vector2 pos);
-  void remove_torch(const Vector2 pos);
 
-  // const string get_dungeon_event_str(const DungeonEvent &dungeon_event);
+  void remove_torch(const Vector2 pos);
+  void handle_spawn_column(const Vector2 p);
 
 private:
   bool show_test_popup = true;
@@ -81,6 +81,5 @@ private:
   Vector2 last_mouse_click_pos;
   Vector2 last_tile_click_pos;
 
-  // shared_ptr<MessagePane> message_pane;
   shared_ptr<MessagePane> message_pane;
 };

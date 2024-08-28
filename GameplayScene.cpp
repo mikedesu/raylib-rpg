@@ -415,16 +415,20 @@ void GameplayScene::init_dungeon_floor() {
   // these are hardcoded values, but we would prefer to do this
   // algorithmically and intelligently the columns, for now, represent walls
   // that sit on top of tiles
-  spawn_column((Vector2){2, 2});
-  spawn_column((Vector2){2, 3});
-  spawn_column((Vector2){2, 4});
-  spawn_column((Vector2){2, 5});
+  handle_spawn_column((Vector2){2, 2});
+  handle_spawn_column((Vector2){2, 3});
+  handle_spawn_column((Vector2){2, 4});
+  handle_spawn_column((Vector2){2, 5});
 
-  spawn_column((Vector2){3, 2});
+  handle_spawn_column((Vector2){3, 2});
 
-  spawn_column((Vector2){4, 2});
-  spawn_column((Vector2){4, 3});
-  spawn_column((Vector2){4, 5});
+  handle_spawn_column((Vector2){4, 2});
+  handle_spawn_column((Vector2){4, 3});
+  handle_spawn_column((Vector2){4, 5});
+
+  // attempt to handle_spawn a second column at the same location and look for
+  // an error message
+  handle_spawn_column((Vector2){4, 5});
 }
 
 const Vector2 GameplayScene::get_start_location() const {
@@ -446,7 +450,14 @@ bool GameplayScene::init() {
     init_dungeon_floor();
     mPrint("Spawning player...");
     Vector2 start_loc = get_start_location();
-    spawn_player(start_loc);
+    entity_id spawn_player_result = spawn_player(start_loc);
+    if (spawn_player_result < 0) {
+      mPrint("Error spawning player...");
+      mPrint("Location: " + to_string(start_loc.x) + ", " +
+             to_string(start_loc.y));
+      mPrint("Exiting...");
+      return false;
+    }
     // set the player's dungeon position
     mPrint("Setting camera target...");
     // we want to lock the camera to the player in the center of the screen
@@ -471,27 +482,43 @@ bool GameplayScene::init() {
 }
 
 const entity_id GameplayScene::spawn_player(const Vector2 pos) {
+  // make sure we spawn only 1 player
+  if (player_id >= 0) {
+    return player_id;
+  }
+
+  if (Vector2Equals(pos, (Vector2){-1, -1}))
+    return -1;
+
   entity_id id =
       spawn_entity("player", 0, 0, SPRITETYPE_PLAYER, true, get_global_scale());
   player_id = id;
 
-  // dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_PLAYER, pos);
-
   shared_ptr<Entity> player = make_shared<Entity>(id, ENTITY_PLAYER, "player");
   dungeon_floor.add_entity_at(player, pos);
-
   return id;
 }
 
 const entity_id GameplayScene::spawn_column(const Vector2 pos) {
+  if (Vector2Equals(pos, (Vector2){-1, -1}))
+    return -1;
+  if (dungeon_floor.loc_contains_entity_type(pos, ENTITY_WALL))
+    return -1;
+
   entity_id id =
       spawn_entity("column", 0, 0, SPRITETYPE_WALL, true, get_global_scale());
-  // dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_WALL, pos);
 
   shared_ptr<Entity> column = make_shared<Entity>(id, ENTITY_WALL, "wall");
   dungeon_floor.add_entity_at(column, pos);
 
   return id;
+}
+
+void GameplayScene::handle_spawn_column(const Vector2 p) {
+  if (spawn_column(p) < 0) {
+    mPrint("Error spawning column at " + to_string(p.x) + ", " +
+           to_string(p.y));
+  }
 }
 
 const entity_id GameplayScene::spawn_torch(const Vector2 pos) {

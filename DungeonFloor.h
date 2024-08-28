@@ -44,6 +44,9 @@ public:
 
   const EntityType get_entity_type(const entity_id id) const;
 
+  const bool loc_contains_entity_type(const Vector2 loc,
+                                      const EntityType type) const;
+
   const string get_entity_name(const entity_id id) const {
     return entities.at(id)->get_name();
   }
