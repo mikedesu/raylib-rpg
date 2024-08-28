@@ -1,4 +1,5 @@
 #include "GameplayScene.h"
+#include "Entity.h"
 #include "EntityType.h"
 #include "mPrint.h"
 #include "raymath.h"
@@ -457,9 +458,10 @@ bool GameplayScene::init() {
     prev_tile_click_zoom_level = get_global_scale();
     tile_click_zoom_level = get_global_scale();
 
-    message_pane = make_shared<MessagePane>(
-        get_global_font(), get_global_font().baseSize, 14,
-        GetScreenWidth() - 500 - 10, 500 + 30, 500, 500, dungeon_events);
+    message_pane =
+        make_shared<MessagePane>(get_global_font(), get_global_font().baseSize,
+                                 14, GetScreenWidth() - 500 - 10, 500 + 30, 500,
+                                 500, dungeon_events, dungeon_floor);
 
     mPrint("Loading sound effects...");
     set_has_been_initialized(true);
@@ -472,14 +474,23 @@ const entity_id GameplayScene::spawn_player(const Vector2 pos) {
   entity_id id =
       spawn_entity("player", 0, 0, SPRITETYPE_PLAYER, true, get_global_scale());
   player_id = id;
-  dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_PLAYER, pos);
+
+  // dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_PLAYER, pos);
+
+  shared_ptr<Entity> player = make_shared<Entity>(id, ENTITY_PLAYER, "player");
+  dungeon_floor.add_entity_at(player, pos);
+
   return id;
 }
 
 const entity_id GameplayScene::spawn_column(const Vector2 pos) {
   entity_id id =
       spawn_entity("column", 0, 0, SPRITETYPE_WALL, true, get_global_scale());
-  dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_WALL, pos);
+  // dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_WALL, pos);
+
+  shared_ptr<Entity> column = make_shared<Entity>(id, ENTITY_WALL, "wall");
+  dungeon_floor.add_entity_at(column, pos);
+
   return id;
 }
 
@@ -502,7 +513,9 @@ const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
 
   entity_id id =
       spawn_entity("torch", 0, 0, SPRITETYPE_ITEM, true, get_global_scale());
-  dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_TORCH, pos);
+  // dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_TORCH, pos);
+  shared_ptr<Entity> torch = make_shared<Entity>(id, ENTITY_TORCH, "torch");
+  dungeon_floor.add_entity_at(torch, pos);
 
   // increase_lighting_at(pos, 2);
   increase_lighting_at(pos, 3, 3);
@@ -515,7 +528,7 @@ inline void GameplayScene::draw_debug_panel() {
       "Current Frame: " + to_string(get_current_frame()) + "\n" +
       "Control mode: " + to_string(get_control_mode()) + "\n" +
       "Camera target: " + to_string(get_camera2d().target.x) + ", " +
-      to_string(get_camera2d().target.y) + "\n" + "GameplayScene" +
+      to_string(get_camera2d().target.y) + "\n" +
       "Sprites: " + to_string(get_sprites().size()) + "\n" +
       "Textures: " + to_string(get_textures().size()) + "\n" +
       "IsPaused: " + to_string(get_paused()) + "\n" +

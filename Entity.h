@@ -11,7 +11,7 @@ class Entity {
 public:
   Entity(const entity_id e_id, EntityType t, string n)
       : id(e_id), type(t), name(n) {}
-  ~Entity();
+  ~Entity() {}
 
   const entity_id get_id() const { return id; }
   const EntityType get_type() const { return type; }

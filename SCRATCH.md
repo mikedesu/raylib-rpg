@@ -91,7 +91,17 @@ we can pull out distance and pass it as a parameter to start with, and then we w
 we also want some guarantee on the order of items returned when iterating over tile entities
 
 
+----------
 
+taking a piss but writing this down before i forget...
+
+currently generating event messages in dungeonevent....
+passing the dungeonevent vector ref to messagepane...
+messagepane has no knowledge of entity names nor does dungeonevent
+but
+dungeonfloor does!
+so
+we need to attach a reference to messagepane so it can access the names
 
 
 

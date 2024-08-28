@@ -16,21 +16,37 @@ typedef enum {
 
 class DungeonEvent {
 
-public:
-  // DungeonEvent(const DungeonEventType t, const entity_id a_id) {
-  DungeonEvent(const entity_id a_id, const DungeonEventType t,
-               const Vector2 loc);
-  ~DungeonEvent();
-
-  const DungeonEventType get_type() const;
-  const entity_id get_actor_id() const;
-  const Vector2 get_target() const;
-
-  const string get_message() const;
-
 private:
-  DungeonEventType type;
   entity_id actor_id;
+  DungeonEventType type;
   Vector2 target;
-  string message;
+
+public:
+  DungeonEvent(const entity_id a_id, const DungeonEventType t,
+               const Vector2 loc)
+      : actor_id(a_id), type(t), target(loc) {}
+  ~DungeonEvent() {}
+
+  const DungeonEventType get_type() const { return type; }
+  const entity_id get_actor_id() const { return actor_id; }
+  const Vector2 get_target() const { return target; }
+
+  const string get_message() const {
+    string s = "";
+    switch (type) {
+    case EVENT_ENTITY_MOVE_SUCCESS:
+      s = "moved to";
+      break;
+    case EVENT_ENTITY_MOVE_FAIL:
+      s = "cannot move to";
+      break;
+    case EVENT_ENTITY_MOVE_WAIT:
+      s = "is waiting at";
+      break;
+    default:
+      s = "did an unknown action at";
+      break;
+    }
+    return s;
+  }
 };
