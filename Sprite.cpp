@@ -1,6 +1,4 @@
 #include "Sprite.h"
-// #include "rlgl.h"
-// #include <cstring>
 #include "mPrint.h"
 
 Sprite::Sprite(Texture2D &t, const unsigned int frames, const unsigned int c,

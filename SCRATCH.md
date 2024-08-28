@@ -66,7 +66,7 @@ gonna take a break for tonight :D
 
 ----------
 
-fixed the main lighting problem
+fixed the main lighting problem kind of...
 
 1. increasing/decreasing light of surrounding tiles requires specific position-checks to make sure we dont double-increment the same tiles
 2. have to have a relatively high maximum lighting so that the increment is rather small
@@ -79,6 +79,14 @@ we'd also like to have a light source follow entities on screen
     - does the player have any light-increasing items in their inventory?
     - etc
 
+we must also separate the light_level from the light distance
+
+currently, we are joining the two values together
+so, if you lay a torch down and ive set it to update with light level 3, then it updates the 3 surrounding tiles
+we can pull out distance and pass it as a parameter to start with, and then we will move on to formalizing entities such that
+
+1. player is an entity subclass called `Humanoid`
+2. torch is an entity subclass called `Item`
 
 
 
