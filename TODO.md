@@ -72,6 +72,7 @@
     - [x] lighting increase needs to be done at the end of `spawn_torch`
 - [x] need to wrap-up the code to remove torches in the same way as `spawn_torch`
 - [ ] might be a good time to migrate all of the Vector2 code related to dungeon position to an integer-based data structure
+- [ ] eliminate dependencies on `sprite_type` 
 - [ ] remove the dependencies on `sprite_type` in favor of `entity_type`
 - [ ] type-naming should be re-done, e.g. `entity_type` would become `EntityType` to better integrate with raylib struct naming
 - [ ] considering re-sizing tiles for higher-resolution sprites
@@ -81,4 +82,6 @@
 - [ ] add player name to the log messages
 - [ ] camera position needs an offset update on zoom in order to keep the player centered
     - [ ] need a function "center cam on player"
+- [ ] when we enter "cursor" mode, we want the cursor to default to the player's location
+
 
