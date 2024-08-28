@@ -20,8 +20,11 @@ public:
                                     const Vector2 position);
 
   const int get_gridsize() const;
+
   const tile_type get_tile_type(const int col, const int row) const;
+
   const Vector2 get_entity_position(const entity_id id);
+
   const bool move_entity_to_tile(entity_id id, const Vector2 position);
 
   Tile &get_tile_by_col_row(const int col, const int row);
@@ -37,6 +40,7 @@ public:
 
 private:
   const int gridsize = 16;
+
   Tile grid[16][16];
 
   unordered_map<entity_id, Vector2> entity_positions;

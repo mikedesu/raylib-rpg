@@ -229,7 +229,7 @@ void GameplayScene::remove_torch(const Vector2 pos) {
   for (auto entity_id : entities) {
     if (dungeon_floor.get_entity_type(entity_id) == ENTITY_TORCH) {
       dungeon_floor.remove_entity(entity_id);
-      decrease_lighting_at(pos, 3);
+      decrease_lighting_at(pos, 3, 3);
       // decrease_lighting_at(pos, 2);
       break;
     }
@@ -251,7 +251,8 @@ inline void GameplayScene::handle_player_input() {
 }
 
 void GameplayScene::increase_lighting_at(const Vector2 loc,
-                                         const int light_level) {
+                                         const int light_level,
+                                         const int dist) {
   if (loc.x < 0 || loc.y < 0 || loc.x >= dungeon_floor.get_gridsize() ||
       loc.y >= dungeon_floor.get_gridsize()) {
     return;
@@ -261,11 +262,21 @@ void GameplayScene::increase_lighting_at(const Vector2 loc,
     return;
   }
 
+  if (dist <= 0) {
+    return;
+  }
+
+  if (light_level < dist) {
+    return;
+  }
+
   const int gridsize = dungeon_floor.get_gridsize();
-  for (int j = 0; j < light_level; j++) {
+  // for (int j = 0; j < light_level; j++) {
+  for (int j = 0; j < dist; j++) {
     const int x0 = loc.x - j;
     const int x1 = loc.x + j;
-    for (int i = 0; i < light_level - j; i++) {
+    // for (int i = 0; i < light_level - j; i++) {
+    for (int i = 0; i < dist - j; i++) {
       const int light_incr = light_level - j - i;
       const int y0 = loc.y - i;
       const int y1 = loc.y + i;
@@ -297,7 +308,8 @@ void GameplayScene::increase_lighting_at(const Vector2 loc,
 }
 
 void GameplayScene::decrease_lighting_at(const Vector2 loc,
-                                         const int light_level) {
+                                         const int light_level,
+                                         const int dist) {
   if (loc.x < 0 || loc.y < 0 || loc.x >= dungeon_floor.get_gridsize() ||
       loc.y >= dungeon_floor.get_gridsize()) {
     return;
@@ -307,11 +319,19 @@ void GameplayScene::decrease_lighting_at(const Vector2 loc,
     return;
   }
 
+  if (dist <= 0) {
+    return;
+  }
+
+  if (light_level < dist) {
+    return;
+  }
+
   const int gridsize = dungeon_floor.get_gridsize();
-  for (int j = 0; j < light_level; j++) {
+  for (int j = 0; j < dist; j++) {
     const int x0 = loc.x - j;
     const int x1 = loc.x + j;
-    for (int i = 0; i < light_level - j; i++) {
+    for (int i = 0; i < dist - j; i++) {
       const int light_incr = light_level - j - i;
       const int y0 = loc.y - i;
       const int y1 = loc.y + i;
@@ -485,7 +505,7 @@ const entity_id GameplayScene::spawn_torch(const Vector2 pos) {
   dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_TORCH, pos);
 
   // increase_lighting_at(pos, 2);
-  increase_lighting_at(pos, 3);
+  increase_lighting_at(pos, 3, 3);
 
   return id;
 }

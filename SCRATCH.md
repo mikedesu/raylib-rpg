@@ -88,6 +88,8 @@ we can pull out distance and pass it as a parameter to start with, and then we w
 1. player is an entity subclass called `Humanoid`
 2. torch is an entity subclass called `Item`
 
+we also want some guarantee on the order of items returned when iterating over tile entities
+
 
 
 

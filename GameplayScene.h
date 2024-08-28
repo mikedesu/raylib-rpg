@@ -24,8 +24,10 @@ public:
   void gameover();
   void init_dungeon_floor();
   void set_scale(const float f);
-  void increase_lighting_at(const Vector2 loc, const int light_level);
-  void decrease_lighting_at(const Vector2 loc, const int light_level);
+  void increase_lighting_at(const Vector2 loc, const int light_level,
+                            const int dist);
+  void decrease_lighting_at(const Vector2 loc, const int light_level,
+                            const int dist);
 
   inline void handle_player_input();
   inline void handle_player_move_direction();
