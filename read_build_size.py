@@ -15,7 +15,7 @@ def main():
 
     for index, row in df.iterrows():
         # df.at[index, "timestamp"] = pd.to_datetime(row["timestamp"], unit="s")
-        df.at[index, "bytes"] = row["bytes"] / 1000000
+        df.at[index, "kb"] = row["bytes"] // 1024
         # if we are at the first index, we cant calculate an LOC/s
         # however, every index past 0, we can subtract the timestamps to get how long between logs
         # then we can divide the loc by the time to get the loc/s
