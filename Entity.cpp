@@ -7,7 +7,7 @@ Entity::Entity() {
   type = ENTITY_NONE;
 }
 
-Entity::Entity(entity_id e_id, entity_type t, string n) {
+Entity::Entity(entity_id e_id, EntityType t, string n) {
   // Constructor
   name = n;
   id = e_id;

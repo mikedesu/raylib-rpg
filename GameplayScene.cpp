@@ -1,5 +1,5 @@
 #include "GameplayScene.h"
-#include "entity_type.h"
+#include "EntityType.h"
 #include "mPrint.h"
 #include "raymath.h"
 

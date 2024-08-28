@@ -1,8 +1,8 @@
 #pragma once
 
+#include "EntityType.h"
 #include "Tile.h"
 #include "entity_id.h"
-#include "entity_type.h"
 #include "raylib.h"
 #include <unordered_map>
 
@@ -16,7 +16,7 @@ public:
 
   void set_tile_type(const int col, const int row, const tile_type value);
   void set_tile_type_all(const tile_type value);
-  void set_entity_on_tile_with_type(const entity_id id, const entity_type type,
+  void set_entity_on_tile_with_type(const entity_id id, const EntityType type,
                                     const Vector2 position);
 
   const int get_gridsize() const;
@@ -36,7 +36,7 @@ public:
   void remove_entity(const entity_id id);
   void remove_entity_from_tile(const entity_id id, const Vector2 position);
 
-  const entity_type get_entity_type(const entity_id id) const;
+  const EntityType get_entity_type(const entity_id id) const;
 
 private:
   const int gridsize = 16;
@@ -44,5 +44,5 @@ private:
   Tile grid[16][16];
 
   unordered_map<entity_id, Vector2> entity_positions;
-  unordered_map<entity_id, entity_type> entity_types;
+  unordered_map<entity_id, EntityType> entity_types;
 };

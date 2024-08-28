@@ -9,4 +9,4 @@ typedef enum {
   ENTITY_DOOR,
   ENTITY_WALL,
 
-} entity_type;
+} EntityType;

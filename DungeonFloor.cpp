@@ -1,4 +1,5 @@
 #include "DungeonFloor.h"
+#include "EntityType.h"
 
 DungeonFloor::DungeonFloor() {
   set_tile_type_all(TILE_FLOOR_BASIC);
@@ -43,7 +44,7 @@ const tile_type DungeonFloor::get_tile_type(const int col,
 }
 
 void DungeonFloor::set_entity_on_tile_with_type(const entity_id id,
-                                                const entity_type type,
+                                                const EntityType type,
                                                 const Vector2 position) {
 
   // if the entity is not in the map, add it
@@ -121,7 +122,7 @@ void DungeonFloor::remove_entity_from_tile(const entity_id id,
   entity_types.erase(id);
 }
 
-const entity_type DungeonFloor::get_entity_type(const entity_id id) const {
+const EntityType DungeonFloor::get_entity_type(const entity_id id) const {
   if (entity_types.find(id) == entity_types.end()) {
     return ENTITY_NONE;
   }
