@@ -13,9 +13,7 @@ if i stick to a specific rule:
 
 - if the method is small then header
 
-im working on the Sprite class right now
-while doing this off-stream i accidentally
-messed up a function and caused the sprite
-to not draw with the proper scale
-so im going to be slow and methodical about
-this
+im working on the Scene class right now
+its a rather small class and another good
+test case for this reduction method
+
