@@ -1,19 +1,5 @@
 #include "DungeonFloor.h"
 
-void DungeonFloor::add_entity_at(shared_ptr<Entity> entity,
-                                 const Vector2 position) {
-  entity_id id = entity->get_id();
-  int x = (int)position.x;
-  int y = (int)position.y;
-  if (entity_positions.find(id) == entity_positions.end()) {
-    entity_positions[id] = position;
-    entities[id] = entity;
-    grid[x][y].add_entity(id);
-  } else {
-    move_entity_to_tile(id, position);
-  }
-}
-
 const bool DungeonFloor::move_entity_to_tile(entity_id id,
                                              const Vector2 t_pos) {
   // can only move under certain conditions:

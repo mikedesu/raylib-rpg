@@ -44,13 +44,8 @@ void Sprite::init_rects(const float w, const float h) {
   hitbox = (Rectangle){dest.x, dest.y, dest.width, dest.height};
 }
 
-Sprite::~Sprite() {}
-
 void Sprite::draw() {
-  // const Color color = BLACK;
   const Color color = WHITE;
-  // const float alpha = 1.0f;
-  // const Color color = Fade(BLACK, alpha);
   const float angle = 0.0f;
   //  rlPushMatrix();
   //  rlTranslatef(dest.x + dest.width / 2, dest.y + dest.height / 2, 0);
@@ -71,14 +66,8 @@ void Sprite::draw() {
 }
 
 void Sprite::draw_hitbox() {
-  // rlPushMatrix();
-  // rlTranslatef(dest.x + dest.width / 2, dest.y + dest.height / 2, 0);
-  // rlRotatef(rotation_angle, 0, 0, 1);
-  // rlTranslatef(-dest.x - dest.width / 2, -dest.y - dest.height / 2, 0);
   //  draw the dest box
   DrawRectangleLines(dest.x, dest.y, dest.width, dest.height, GREEN);
-  // rlPopMatrix();
-  //  DrawRectangleLines(dest.x, dest.y, dest.width, dest.height, BLUE);
 }
 
 void Sprite::move(const float x, const float y) {
@@ -161,34 +150,6 @@ void Sprite::set_is_spinning(const bool is) { is_spinning = is; }
 void Sprite::set_is_animating(const bool is) { is_animating = is; }
 void Sprite::set_is_flipped(const bool f) { is_flipped = f; }
 void Sprite::set_alpha(const unsigned int a) { alpha = a; }
-
-const unsigned int Sprite::get_alpha() const { return alpha; }
-const float Sprite::get_vx() const { return velocity.x; }
-const float Sprite::get_vy() const { return velocity.y; }
-const float Sprite::get_scale() const { return scale; }
-const bool Sprite::get_is_flipped() const { return is_flipped; }
-const sprite_type Sprite::get_type() const { return type; }
-const Vector2 Sprite::get_velocity() const { return velocity; }
-const Vector2 Sprite::get_acceleration() const { return acceleration; }
-const float Sprite::get_x() const { return dest.x; }
-const float Sprite::get_y() const { return dest.y; };
-const Rectangle Sprite::get_dest() const { return dest; }
-const int Sprite::get_width() const { return src.width * scale; }
-const int Sprite::get_height() const { return src.height * scale; }
-const int Sprite::get_anim_frames() const { return anim_frames; }
-const int Sprite::get_current_frame() const { return current_frame; }
-const int Sprite::get_context() const { return context; }
-const int Sprite::get_contexts() const { return contexts; }
-const bool Sprite::get_is_animating() const { return is_animating; }
-const float Sprite::get_ax() const { return acceleration.x; }
-const float Sprite::get_ay() const { return acceleration.y; }
-const float Sprite::get_rotation_angle() const { return rotation_angle; }
-const bool Sprite::get_is_spinning() const { return is_spinning; }
-const Rectangle Sprite::get_hitbox() const { return hitbox; }
-const float Sprite::get_rotation_speed() const { return rotation_speed; }
-const bool Sprite::get_is_marked_for_deletion() const {
-  return is_marked_for_deletion;
-}
 
 void Sprite::set_context(const int n) {
   if (n >= contexts) {

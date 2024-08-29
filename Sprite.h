@@ -16,13 +16,39 @@ typedef enum {
 } sprite_type;
 
 class Sprite {
+private:
+  Texture2D texture;
+  Rectangle src;
+  Rectangle flipped_src;
+  Rectangle dest;
+  Rectangle hitbox = {0, 0, 0, 0};
+  unsigned int alpha;
+  int width = 0;
+  int height = 0;
+  int context = 0;
+  int contexts = 0;
+  unsigned int anim_frames;
+  unsigned int current_frame;
+  unsigned int frame_counter;
+  float scale = 1.0f;
+  float rotation_angle = 0.0f;
+  float rotation_speed = 1.0f;
+  Vector2 origin;
+  Vector2 velocity;
+  Vector2 acceleration;
+  bool is_marked_for_deletion = false;
+  bool is_animating = false;
+  bool is_flipped = false;
+  bool is_spinning = false;
+  sprite_type type = SPRITETYPE_NONE;
+  movement_type movement = MOVEMENT_TYPE_NONE;
 
 public:
   Sprite(Texture2D &texture, const unsigned int anim_frames,
          const unsigned int contexts, const float x, const float y, const int w,
          const int h, sprite_type t);
 
-  ~Sprite();
+  ~Sprite() {}
 
   void draw();
   void draw_hitbox();
@@ -56,65 +82,33 @@ public:
   void set_movement_type(const movement_type m);
   void set_alpha(const unsigned int alpha);
 
-  const Rectangle get_dest() const;
-  const Rectangle get_hitbox() const;
-  const unsigned int get_alpha() const;
-  const int get_width() const;
-  const int get_height() const;
-  const int get_anim_frames() const;
-  const int get_current_frame() const;
-  const int get_context() const;
-  const int get_contexts() const;
-  const float get_vx() const;
-  const float get_vy() const;
-  const float get_ax() const;
-  const float get_ay() const;
-  const float get_x() const;
-  const float get_y() const;
-  const float get_scale() const;
-  const float get_rotation_angle() const;
-  const float get_rotation_speed() const;
-  const Vector2 get_velocity() const;
-  const Vector2 get_acceleration() const;
-  const bool get_is_marked_for_deletion() const;
-  const bool get_is_animating() const;
-  const bool get_is_flipped() const;
-  const sprite_type get_type() const;
-  const bool get_is_spinning() const;
-
-private:
-  Texture2D texture;
-
-  Rectangle src;
-  Rectangle flipped_src;
-  Rectangle dest;
-  Rectangle hitbox = {0, 0, 0, 0};
-
-  unsigned int alpha;
-  int width = 0;
-  int height = 0;
-  int context = 0;
-  int contexts = 0;
-
-  unsigned int anim_frames;
-  unsigned int current_frame;
-  unsigned int frame_counter;
-
-  float scale = 1.0f;
-  float rotation_angle = 0.0f;
-  float rotation_speed = 1.0f;
-
-  Vector2 origin;
-  Vector2 velocity;
-  Vector2 acceleration;
-
-  bool is_marked_for_deletion = false;
-  bool is_animating = false;
-  bool is_flipped = false;
-  bool is_spinning = false;
-
-  sprite_type type = SPRITETYPE_NONE;
-  movement_type movement = MOVEMENT_TYPE_NONE;
+  const Rectangle get_dest() const { return dest; }
+  const Rectangle get_hitbox() const { return hitbox; }
+  const unsigned int get_alpha() const { return alpha; }
+  const int get_width() const { return width; }
+  const int get_height() const { return height; }
+  const int get_anim_frames() const { return anim_frames; }
+  const int get_current_frame() const { return current_frame; }
+  const int get_context() const { return context; }
+  const int get_contexts() const { return contexts; }
+  const float get_vx() const { return velocity.x; }
+  const float get_vy() const { return velocity.y; }
+  const float get_ax() const { return acceleration.x; }
+  const float get_ay() const { return acceleration.y; }
+  const float get_x() const { return dest.x; }
+  const float get_y() const { return dest.y; }
+  const float get_scale() const { return scale; }
+  const float get_rotation_angle() const { return rotation_angle; }
+  const float get_rotation_speed() const { return rotation_speed; }
+  const Vector2 get_velocity() const { return velocity; }
+  const Vector2 get_acceleration() const { return acceleration; }
+  const bool get_is_marked_for_deletion() const {
+    return is_marked_for_deletion;
+  }
+  const bool get_is_animating() const { return is_animating; }
+  const bool get_is_flipped() const { return is_flipped; }
+  const sprite_type get_type() const { return type; }
+  const bool get_is_spinning() const { return is_spinning; }
 
   void init_rects();
   void init_rects(const float w, const float h);
