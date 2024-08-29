@@ -14,3 +14,5 @@ is a big deal)
 - convert class methods into functions
     - put the `smart_ptr` to the struct 
     as the first argument
+
+doing Game class first

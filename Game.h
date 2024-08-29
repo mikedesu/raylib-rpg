@@ -39,30 +39,30 @@ using namespace std;
 //    Rectangle screen_rect;
 //} Game;
 
-//void Game_create(Game &game);
-//void Game_destroy(Game &game);
-//inline void Game_update( Game& game);
-//inline void Game_handle_input(Game& game);
-//inline void Game_cleanup(Game& game);
-//inline void Game_draw(Game& game);
-//void Game_run(Game& game);
-//void Game_handle_transition_in(Game& game);
-//void Game_handle_transition_out(Game& game);
-//void Game_draw_debug_panel(Game& game);
-//void Game_load_fonts(Game& game);
+//void Game_create(Game &g);
+//void Game_destroy(Game &g);
+//inline void Game_update( Game& g);
+//inline void Game_handle_input(Game& g);
+//inline void Game_cleanup(Game& g);
+//inline void Game_draw(Game& g);
+//void Game_run(Game& g);
+//void Game_handle_transition_in(Game& g);
+//void Game_handle_transition_out(Game& g);
+//void Game_draw_debug_panel(Game& g);
+//void Game_load_fonts(Game& g);
 //void Game_set_global_scale(Game& game, float s);
 //void Game_set_debug_panel(Game& game, bool b);
 //void Game_set_screen_width(Game& game, int w);
 //void Game_set_screen_height(Game& game, int h);
 //void Game_set_window_title(Game& game, const char* t);
-//void Game_set_camera_default_values(Game& game);
+//void Game_set_camera_default_values(Game& g);
 //void Game_set_has_been_initialized(Game& game, bool b);
-//void Game_close(Game& game);
-//void Game_spawn_scenes(Game& game);
-//bool Game_get_has_been_initialized(Game& game);
-//bool Game_init(Game& game);
-//bool Game_init_audio(Game& game);
-//string Game_get_window_title(Game& game);
+//void Game_close(Game& g);
+//void Game_spawn_scenes(Game& g);
+//bool Game_get_has_been_initialized(Game& g);
+//bool Game_init(Game& g);
+//bool Game_init_audio(Game& g);
+//string Game_get_window_title(Game& g);
 
 class Game {
 
