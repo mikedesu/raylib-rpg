@@ -3,27 +3,14 @@ refactoring in progress...
 
 ---------------------------------------
 
-lets do some re-factoring
-ive been going thru each object moving code 
-into their header files and in some cases
-im able to eliminate a .cpp file entirely
-this is resulting in a smaller binary and
-less LOC so potentially overall good
-if i stick to a specific rule:
+implementing code hot swapping
 
-- if the method is small then header
+- want to start converting existing classes
+into structs so that I can start using 
+code hot-swapping (the class mangling
+is a big deal)
 
-we've achieved some binary size reduction
-and reduction of total line count
-as a result of these methods
-we've also sped up compilation time
-as some .o files have been eliminated
-due to moving all the code into the .h
-
----------------------------------------
-
-more than once ive had the thought:
-"i dont like how my autoformat is formatting my stuff"
-so i will look at that during my off-time
-it is getting late so lets call it a night 
-after we make sure the build is good
+- convert class into struct
+- convert class methods into functions
+    - put the `smart_ptr` to the struct 
+    as the first argument

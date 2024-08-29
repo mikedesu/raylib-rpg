@@ -10,3 +10,4 @@ test
 unit_tests.c
 *.zip
 *.csv
+.clang-format
