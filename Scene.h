@@ -11,7 +11,6 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #include <memory>
-#include <string>
 #include <unordered_map>
 #include <vector>
 
@@ -37,9 +36,9 @@ class Scene {
 private:
   unordered_map<string, shared_ptr<texture_info>> textures;
   unordered_map<entity_id, shared_ptr<Sprite>> sprites;
+  unordered_map<entity_id, shared_ptr<Entity>> entities;
 
   vector<entity_id> entity_ids;
-  unordered_map<entity_id, shared_ptr<Entity>> entities;
 
   Font global_font;
 
@@ -78,17 +77,11 @@ public:
   ~Scene() {}
 
   virtual void update() {}
-
   virtual bool init() { return true; }
-
   virtual void handle_input() {}
-
   virtual void draw_debug_panel() {}
-
   virtual void cleanup() {}
-
   virtual void draw_hud() {}
-
   virtual void draw() {}
 
   virtual void close() {
@@ -224,11 +217,8 @@ public:
   }
 
   void set_debug_panel_on(bool b) { debug_panel_on = b; }
-
   void set_global_scale(float s) { global_scale = s; }
-
   void set_control_mode(control_mode cm) { controlmode = cm; }
-
   void flip_debug_panel() { debug_panel_on = !debug_panel_on; }
 
   void load_fonts() {
@@ -240,17 +230,11 @@ public:
   }
 
   void set_has_been_initialized(bool b) { has_been_initialized = b; }
-
   void set_scene_transition(scene_transition st) { transition = st; }
-
   void set_alpha(float a) { alpha = a; }
-
   void set_id(scene_id i) { id = i; }
-
   void set_scene_type(scene_type st) { scenetype = st; }
-
   void pause() { is_paused = true; }
-
   void unpause() { is_paused = false; }
 
   void load_music(const char *path) {
@@ -263,66 +247,41 @@ public:
   }
 
   void set_music_path(const char *path) { music_path = path; }
-
   void incr_current_frame() { current_frame++; }
-
   void set_hud_on(const bool b) { hud_on = b; }
-
   void set_popup_manager(shared_ptr<PopupManager> pm) { popup_manager = pm; }
 
   unordered_map<string, shared_ptr<texture_info>> &get_textures() {
     return textures;
   }
-
   unordered_map<entity_id, shared_ptr<Entity>> &get_entities() {
     return entities;
   }
-
   unordered_map<entity_id, shared_ptr<Sprite>> &get_sprites() {
     return sprites;
   }
 
   shared_ptr<Sprite> get_sprite(entity_id id) { return sprites[id]; }
-
   unsigned int get_current_frame() { return current_frame; }
-
   control_mode get_control_mode() { return controlmode; }
-
   vector<entity_id> &get_entity_ids() { return entity_ids; }
-
   shared_ptr<PopupManager> get_popup_manager() { return popup_manager; }
-
   scene_transition get_scene_transition() { return transition; }
-
   scene_id get_id() { return id; }
-
   scene_type get_scene_type() { return scenetype; }
-
   Camera2D &get_camera2d() { return camera2d; }
-
   Font &get_global_font() { return global_font; }
-
   const bool get_has_been_initialized() const { return has_been_initialized; }
-
   const bool get_paused() const { return is_paused; }
-
   const float get_alpha() const { return alpha; }
-
   const bool get_debug_panel_on() const { return debug_panel_on; }
-
   const string get_music_path() const { return music_path; }
-
   const bool get_hud_on() const { return hud_on; }
-
   Mix_Music *get_music() { return music; }
-
   const unsigned int get_global_font_size() const { return global_font_size; }
-
   void set_global_font_size(const unsigned int size) {
     global_font_size = size;
   }
-
   shared_ptr<Entity> get_entity(entity_id id) { return entities[id]; }
-
   float get_global_scale() { return global_scale; }
 };
