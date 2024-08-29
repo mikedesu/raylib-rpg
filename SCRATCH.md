@@ -3,19 +3,14 @@ refactoring in progress...
 
 ---------------------------------------
 
-i can update this file so that my 
-thoughts appear on-screen while 
-streaming or making videos
-this way the viewer can be informed 
-as to what im doing at certain points 
-if it isnt clear
+first things first
+lets do some re-factoring
+ive been going thru each object moving code 
+into their header files and in some cases
+im able to eliminate a .cpp file entirely
+this is resulting in a smaller binary and
+less LOC so potentially overall good
+if i stick to a specific rule:
 
-it would also help me keep organized
-in case i get distracted or rabbit-hole
-down some innocuous detail
-
-there is a limit to how much i can
-fit on the screen realistically
-and when updating this file
-i should turn copilot off
+- if the method is small then header
 
