@@ -1,5 +1,5 @@
 CC=g++
-OBJ_FILES=Game.o Scene.o Sprite.o TitleScene.o GameplayScene.o GameoverScene.o DungeonFloor.o 
+OBJ_FILES=Game.o Sprite.o Scene.o TitleScene.o GameplayScene.o GameoverScene.o DungeonFloor.o 
 OBJ_FILES_WITH_MAIN=main.o $(OBJ_FILES)
 FLAGS=-Wall
 LIBS=-lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -lSDL2 -lSDL2_mixer
@@ -17,9 +17,9 @@ GameplayScene.o: GameplayScene.cpp
 	$(CC) $^ $(FLAGS) -c -o $@
 Scene.o: Scene.cpp
 	$(CC) $^ $(FLAGS) -c -o $@
-Sprite.o: Sprite.cpp
-	$(CC) $^ $(FLAGS) -c -o $@
 DungeonFloor.o: DungeonFloor.cpp
+	$(CC) $^ $(FLAGS) -c -o $@
+Sprite.o: Sprite.cpp
 	$(CC) $^ $(FLAGS) -c -o $@
 main.o: main.cpp
 	$(CC) $^ $(FLAGS) -c -o $@

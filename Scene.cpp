@@ -135,7 +135,10 @@ entity_id Scene::spawn_entity(const char *texture_key, float x, float y,
   const int contexts = textures[texture_key]->contexts;
   mPrint("Spawning entity: " + string(texture_key) + " at (" + to_string(x) +
          ", " + to_string(y) + ") with width: " + to_string(w) +
-         " and height: " + to_string(h));
+         " and height: " + to_string(h) + " and num_frames: " +
+         to_string(num_frames) + " and contexts: " + to_string(contexts) +
+         " and type: " + to_string(type) + " and is_anim: " +
+         to_string(is_anim) + " and scale: " + to_string(scale));
   shared_ptr<Sprite> s = make_shared<Sprite>(
       textures[texture_key]->texture, num_frames, contexts, x, y, w, h, type);
   if (s == nullptr) {
