@@ -245,16 +245,10 @@ void Game::close() {
     mPrint("Unloading render texture...");
     UnloadRenderTexture(target);
   }
-  // if (IsAudioStreamPlaying(get_music())) {
-  //   mPrint("Stopping music...");
-  // StopMusicStream(get_music());
-  //}
-  // CloseAudioDevice();
   mPrint("Closing SDL2 audio...");
   Mix_CloseAudio();
   mPrint("Quitting SDL2 audio...");
   SDL_Quit();
-
   if (IsWindowReady()) {
     mPrint("Closing window...");
     CloseWindow();

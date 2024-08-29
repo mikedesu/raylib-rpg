@@ -5,7 +5,8 @@
 
 #include <string>
 
-using std::string;
+// using std::string;
+using namespace std;
 
 typedef enum {
   EVENT_NONE = 0,

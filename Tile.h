@@ -8,9 +8,11 @@
 #include <string>
 #include <vector>
 
-using std::shared_ptr;
-using std::string;
-using std::vector;
+// using std::shared_ptr;
+// using std::string;
+// using std::vector;
+
+using namespace std;
 
 #define TILE_DEFAULT_LIGHT_LEVEL 50
 #define TILE_DEFAULT_MAX_LIGHT_LEVEL 100

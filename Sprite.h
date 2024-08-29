@@ -18,8 +18,6 @@ typedef enum {
 class Sprite {
 
 public:
-  // Sprite(const char *filepath, const unsigned int anim_frames, const float x,
-  //        const float y, sprite_type t);
   Sprite(Texture2D &texture, const unsigned int anim_frames,
          const unsigned int contexts, const float x, const float y, const int w,
          const int h, sprite_type t);

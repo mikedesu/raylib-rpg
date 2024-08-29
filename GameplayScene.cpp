@@ -272,11 +272,9 @@ void GameplayScene::increase_lighting_at(const Vector2 loc,
   }
 
   const int gridsize = dungeon_floor.get_gridsize();
-  // for (int j = 0; j < light_level; j++) {
   for (int j = 0; j < dist; j++) {
     const int x0 = loc.x - j;
     const int x1 = loc.x + j;
-    // for (int i = 0; i < light_level - j; i++) {
     for (int i = 0; i < dist - j; i++) {
       const int light_incr = light_level - j - i;
       const int y0 = loc.y - i;
@@ -381,9 +379,9 @@ void GameplayScene::handle_input() {
     flip_debug_panel();
   }
 
-  if (IsKeyPressed(KEY_F)) {
-    ToggleFullscreen();
-  }
+  // if (IsKeyPressed(KEY_F)) {
+  //   ToggleFullscreen();
+  // }
 
   handle_control_mode_switch();
   control_mode mode = get_control_mode();

@@ -1,5 +1,5 @@
 CC=g++
-OBJ_FILES=Game.o Sprite.o Scene.o TitleScene.o GameplayScene.o GameoverScene.o Dungeon.o DungeonFloor.o 
+OBJ_FILES=Game.o Scene.o Sprite.o TitleScene.o GameplayScene.o GameoverScene.o Dungeon.o DungeonFloor.o 
 OBJ_FILES_WITH_MAIN=main.o $(OBJ_FILES)
 
 FLAGS=-Wall

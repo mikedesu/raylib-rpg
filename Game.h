@@ -9,18 +9,12 @@
 #include "entity_id.h"
 #include "texture_info.h"
 
-#include <functional>
 #include <memory>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
-using std::function;
-using std::make_shared;
-using std::shared_ptr;
-using std::string;
-using std::unordered_map;
-using std::vector;
+using namespace std;
 
 class Game {
 public:
