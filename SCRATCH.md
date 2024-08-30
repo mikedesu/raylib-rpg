@@ -12,7 +12,6 @@ is a big deal)
 
 - convert class into struct
 - convert class methods into functions
-    - put the `smart_ptr` to the struct 
-    as the first argument
+    - put the reference -OR- `smart_ptr` 
+    to the struct as the first argument
 
-doing Game class first
