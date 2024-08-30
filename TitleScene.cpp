@@ -118,6 +118,7 @@ void TitleScene_handle_input(TitleScene& t) {
     if(IsKeyPressed(KEY_D)) {
         TitleScene_flip_debug_panel(t);
     } else if(IsKeyPressed(KEY_SPACE)) {
+        mPrint("Space key pressed.");
         TitleScene_set_scene_transition(t, SCENE_TRANSITION_OUT);
     }
 }
@@ -137,6 +138,7 @@ void TitleScene_draw_debug_panel(TitleScene& t) {
 }
 
 void TitleScene_close(TitleScene& t) {
+    mPrint("TitleScene_close");
     for(auto& a : t.textures)
         UnloadTexture(a.second->texture);
     t.textures.clear();
@@ -149,6 +151,7 @@ void TitleScene_close(TitleScene& t) {
     }
     t.has_been_initialized = false;
     UnloadRenderTexture(t.prerendered_texture);
+    mPrint("End of TitleScene_close");
 }
 
 void TitleScene_cleanup(TitleScene& t) { }

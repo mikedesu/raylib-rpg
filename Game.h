@@ -3,7 +3,6 @@
 #include "CurrentScene.h"
 #include "GameplayScene.h"
 #include "PopupManager.h"
-#include "Scene.h"
 #include "Sprite.h"
 #include "TitleScene.h"
 #include "control_mode.h"
@@ -42,8 +41,8 @@ typedef struct {
     Rectangle screen_rect;
 
     TitleScene title_scene;
-    //GameplayScene gameplay_scene;
-    shared_ptr<GameplayScene> gameplay_scene;
+    GameplayScene gameplay_scene;
+    //shared_ptr<GameplayScene> gameplay_scene;
 
     CurrentScene current_scene = SCENE_TITLE;
 
