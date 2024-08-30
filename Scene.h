@@ -27,37 +27,24 @@ private:
     unordered_map<string, shared_ptr<texture_info>> textures;
     unordered_map<entity_id, shared_ptr<Sprite>> sprites;
     unordered_map<entity_id, shared_ptr<Entity>> entities;
-
     vector<entity_id> entity_ids;
-
     Font global_font;
-
     Camera2D camera2d = {0};
-
     Mix_Music* music = NULL;
-
     float global_scale = 1.0f;
     float alpha = 1.0f;
-
     string texture_filepath;
     string music_path;
-
     bool has_been_initialized = false;
     bool debug_panel_on = true;
     bool is_paused = false;
     bool hud_on = true;
-
     control_mode controlmode = CONTROL_MODE_PLAYER;
-
     unsigned int current_frame = 0;
     unsigned int global_font_size = 20;
-
     SceneTransition transition = SCENE_TRANSITION_NONE;
-
     Scene_id id;
-
     SceneType scenetype;
-
     shared_ptr<PopupManager> popup_manager;
 
 public:

@@ -41,23 +41,10 @@ bool Game_init(Game& g) {
         Game_set_camera_default_values(g);
         SetTargetFPS(60); // Set our game to run at 60 frames-per-second
         g.popup_manager = make_shared<PopupManager>();
+
         Game_spawn_scenes(g);
-        for(auto& scene : g.scenes) {
-            mPrint("Initializing scenes...");
-            bool result = scene.second->init();
-            if(!result) {
-                mPrint("Error loading scene. Exiting...");
-                return false;
-            }
-        }
-        // set the current scene
-        string key = "title";
-        // string key = "gameplay";
-        if(g.scene_keys.find(key) == g.scene_keys.end()) {
-            mPrint("Error: " + key + " scene not found.");
-            return false;
-        }
-        g.current_scene_id = g.scene_keys[key];
+
+        g.current_scene = SCENE_TITLE;
         g.target = LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
         SetExitKey(KEY_Q);
         SetRandomSeed(GetTime());
@@ -67,23 +54,18 @@ bool Game_init(Game& g) {
 }
 
 void Game_spawn_scenes(Game& g) {
-    shared_ptr<Scene> title_scene = make_shared<TitleScene>();
-    title_scene->set_id(next_scene_id++);
-    title_scene->set_popup_manager(g.popup_manager);
-    g.scenes[title_scene->get_id()] = title_scene;
-    g.scene_keys["title"] = title_scene->get_id();
+    mPrint("Spawning scenes...");
+    TitleScene_init(g.title_scene);
+    TitleScene_set_id(g.title_scene, next_scene_id++);
+    TitleScene_set_popup_manager(g.title_scene, g.popup_manager);
 
-    shared_ptr<Scene> gameplay_scene = make_shared<GameplayScene>();
-    gameplay_scene->set_id(next_scene_id++);
-    gameplay_scene->set_popup_manager(g.popup_manager);
-    g.scenes[gameplay_scene->get_id()] = gameplay_scene;
-    g.scene_keys["gameplay"] = gameplay_scene->get_id();
+    g.scene_keys["title"] = g.title_scene.id;
 
-    //shared_ptr<Scene> gameover_scene = make_shared<GameoverScene>();
-    //gameover_scene->set_id(next_scene_id++);
-    //gameover_scene->set_popup_manager(g.popup_manager);
-    //g.scenes[gameover_scene->get_id()] = gameover_scene;
-    //g.scene_keys["gameover"] = gameover_scene->get_id();
+    g.gameplay_scene = make_shared<GameplayScene>();
+    g.gameplay_scene->init();
+    g.gameplay_scene->set_id(next_scene_id++);
+    g.gameplay_scene->set_popup_manager(g.popup_manager);
+    g.scene_keys["gameplay"] = g.gameplay_scene->get_id();
 }
 
 void Game_set_camera_default_values(Game& g) {
@@ -128,15 +110,44 @@ bool Game_get_has_been_initialized(Game& g) {
 }
 
 inline void Game_handle_input(Game& g) {
-    g.scenes[g.current_scene_id]->handle_input();
+    switch(g.current_scene) {
+    case SCENE_TITLE:
+        TitleScene_handle_input(g.title_scene);
+        break;
+    case SCENE_GAMEPLAY:
+        g.gameplay_scene->handle_input();
+        break;
+    default:
+        break;
+    }
 }
 
 inline void Game_update(Game& g) {
-    g.scenes[g.current_scene_id]->update();
+    switch(g.current_scene) {
+    case SCENE_TITLE:
+        TitleScene_update(g.title_scene);
+        break;
+    case SCENE_GAMEPLAY:
+        g.gameplay_scene->update();
+        break;
+    default:
+        break;
+    }
 }
 
 inline void Game_cleanup(Game& g) {
-    g.scenes[g.current_scene_id]->cleanup();
+    //g.scenes[g.current_scene_id]->cleanup();
+
+    switch(g.current_scene) {
+    case SCENE_TITLE:
+        TitleScene_cleanup(g.title_scene);
+        break;
+    case SCENE_GAMEPLAY:
+        g.gameplay_scene->cleanup();
+        break;
+    default:
+        break;
+    }
 }
 
 void Game_set_global_scale(Game& g, float s) {
@@ -152,54 +163,84 @@ void Game_load_fonts(Game& g) {
 
 void Game_handle_transition_out(Game& g) {
     const Color c = (Color){0x66, 0x66, 0x66};
-    const float a = g.scenes[g.current_scene_id]->get_alpha();
+
+    float a = 0;
     const int w = GetScreenWidth();
     const int h = GetScreenHeight();
-    // const float transition_speed = 0.020f;
     const float transition_speed = 0.040f;
 
+    switch(g.current_scene) {
+    case SCENE_TITLE:
+        a = TitleScene_get_alpha(g.title_scene);
+        break;
+    case SCENE_GAMEPLAY:
+        a = g.gameplay_scene->get_alpha();
+        break;
+    default:
+        break;
+    }
+
+    DrawRectangle(0, 0, w, h, Fade(c, a));
+
     if(a < 1.0f) {
-        DrawRectangle(0, 0, w, h, Fade(c, a));
-        g.scenes[g.current_scene_id]->set_alpha(g.scenes[g.current_scene_id]->get_alpha() +
-                                                transition_speed);
+        //g.scenes[g.current_scene_id]->set_alpha(g.scenes[g.current_scene_id]->get_alpha() +
+        //                                        transition_speed);
+
+        switch(g.current_scene) {
+        case SCENE_TITLE:
+            TitleScene_set_alpha(g.title_scene,
+                                 TitleScene_get_alpha(g.title_scene) + transition_speed);
+            break;
+        case SCENE_GAMEPLAY:
+            g.gameplay_scene->set_alpha(g.gameplay_scene->get_alpha() + transition_speed);
+            break;
+        default:
+            break;
+        }
+
     } else {
-        DrawRectangle(0, 0, w, h, Fade(c, a));
+        //g.scenes[g.current_scene_id]->close();
 
-        g.scenes[g.current_scene_id]->close();
+        if(g.current_scene == SCENE_TITLE) {
+            TitleScene_close(g.title_scene);
+            g.gameplay_scene->set_scene_transition(SCENE_TRANSITION_IN);
+            g.current_scene = SCENE_GAMEPLAY;
 
-        // this makes the assumption that we will ALWAYS transition into the
-        // gameplay scene and that we are on the title scene this is untrue!
-
-        const Scene_id title_scene_id = g.scene_keys["title"];
-        const Scene_id gameplay_scene_id = g.scene_keys["gameplay"];
-        const Scene_id gameover_scene_id = g.scene_keys["gameover"];
-
-        if(g.scenes[title_scene_id]->get_has_been_initialized() == false) {
-            g.scenes[title_scene_id]->init();
-        }
-        if(g.scenes[gameover_scene_id]->get_has_been_initialized() == false) {
-            g.scenes[gameover_scene_id]->init();
-        }
-        if(g.scenes[gameplay_scene_id]->get_has_been_initialized() == false) {
-            g.scenes[gameplay_scene_id]->init();
+        } else if(g.current_scene == SCENE_GAMEPLAY) {
+            g.gameplay_scene->close();
+            TitleScene_set_scene_transition(g.title_scene, SCENE_TRANSITION_IN);
+            g.current_scene = SCENE_TITLE;
         }
 
-        if(g.current_scene_id == title_scene_id) {
-            g.scenes[gameplay_scene_id]->set_scene_transition(SCENE_TRANSITION_IN);
-            g.current_scene_id = gameplay_scene_id;
-        } else if(g.current_scene_id == gameplay_scene_id) {
-            g.scenes[gameover_scene_id]->set_scene_transition(SCENE_TRANSITION_IN);
-            g.current_scene_id = gameover_scene_id;
-        } else if(g.current_scene_id == gameover_scene_id) {
-            g.scenes[title_scene_id]->set_scene_transition(SCENE_TRANSITION_IN);
-            g.current_scene_id = title_scene_id;
-        }
+        //if(g.current_scene_id == title_scene_id) {
+        //    g.scenes[gameplay_scene_id]->set_scene_transition(SCENE_TRANSITION_IN);
+        //    g.current_scene_id = gameplay_scene_id;
+        //} else if(g.current_scene_id == gameplay_scene_id) {
+        //    g.scenes[gameover_scene_id]->set_scene_transition(SCENE_TRANSITION_IN);
+        //    g.current_scene_id = gameover_scene_id;
+        //} else if(g.current_scene_id == gameover_scene_id) {
+        //    g.scenes[title_scene_id]->set_scene_transition(SCENE_TRANSITION_IN);
+        //    g.current_scene_id = title_scene_id;
+        //}
     }
 }
 
 void Game_handle_transition_in(Game& g) {
     const Color c = (Color){0x66, 0x66, 0x66};
-    const float a = g.scenes[g.current_scene_id]->get_alpha();
+
+    float a = 0;
+    switch(g.current_scene) {
+    case SCENE_TITLE:
+        a = TitleScene_get_alpha(g.title_scene);
+        break;
+    case SCENE_GAMEPLAY:
+        a = g.gameplay_scene->get_alpha();
+        break;
+    default:
+        break;
+    }
+
+    //const float a = g.scenes[g.current_scene_id]->get_alpha();
     const int w = GetScreenWidth();
     const int h = GetScreenHeight();
     const float transition_speed = 0.040f;
@@ -207,10 +248,40 @@ void Game_handle_transition_in(Game& g) {
 
     if(a > 0.0f) {
         DrawRectangle(0, 0, w, h, Fade(c, a));
-        g.scenes[g.current_scene_id]->set_alpha(g.scenes[g.current_scene_id]->get_alpha() -
-                                                transition_speed);
+        //g.scenes[g.current_scene_id]->set_alpha(g.scenes[g.current_scene_id]->get_alpha() -
+        //                                        transition_speed);
+
+        switch(g.current_scene) {
+        case SCENE_TITLE:
+            TitleScene_set_alpha(g.title_scene,
+                                 TitleScene_get_alpha(g.title_scene) - transition_speed);
+            break;
+        case SCENE_GAMEPLAY:
+            g.gameplay_scene->set_alpha(g.gameplay_scene->get_alpha() - transition_speed);
+            break;
+        default:
+            break;
+        }
+
     } else {
-        g.scenes[g.current_scene_id]->set_scene_transition(SCENE_TRANSITION_NONE);
+        //g.scenes[g.current_scene_id]->set_scene_transition(SCENE_TRANSITION_NONE);
+
+        if(g.current_scene == SCENE_TITLE) {
+            TitleScene_set_scene_transition(g.title_scene, SCENE_TRANSITION_NONE);
+        } else if(g.current_scene == SCENE_GAMEPLAY) {
+            g.gameplay_scene->set_scene_transition(SCENE_TRANSITION_NONE);
+        }
+    }
+}
+
+SceneTransition Game_get_current_scene_transition(Game& g) {
+    switch(g.current_scene) {
+    case SCENE_TITLE:
+        return g.title_scene.transition;
+    case SCENE_GAMEPLAY:
+        return g.gameplay_scene->get_scene_transition();
+    default:
+        return SCENE_TRANSITION_NONE;
     }
 }
 
@@ -218,10 +289,20 @@ inline void Game_draw(Game& g) {
     BeginDrawing();
     BeginTextureMode(g.target);
     ClearBackground(BLACK);
-    g.scenes[g.current_scene_id]->draw();
+
+    switch(g.current_scene) {
+    case SCENE_TITLE:
+        TitleScene_draw(g.title_scene);
+        break;
+    case SCENE_GAMEPLAY:
+        g.gameplay_scene->draw();
+        break;
+    }
+
     EndTextureMode();
     DrawTextureRec(g.target.texture, g.screen_rect, (Vector2){0, 0}, WHITE);
-    switch(g.scenes[g.current_scene_id]->get_scene_transition()) {
+
+    switch(Game_get_current_scene_transition(g)) {
     case SCENE_TRANSITION_NONE:
         break;
     case SCENE_TRANSITION_IN:
@@ -255,15 +336,35 @@ void Game_close(Game& g) {
     mPrint("Closing game...");
     // have to close the scene first otherwise it crashes
     // CloseWindow() must be the LAST raylib call before exiting
-    g.scenes[g.current_scene_id]->close();
+    //g.scenes[g.current_scene_id]->close();
+
+    switch(g.current_scene) {
+    case SCENE_TITLE:
+        TitleScene_close(g.title_scene);
+        break;
+    case SCENE_GAMEPLAY:
+        g.gameplay_scene->close();
+        break;
+    default:
+        break;
+    }
+
+    mPrint("Unloading fonts...");
+    UnloadFont(g.global_font);
+
     if(IsRenderTextureReady(g.target)) {
         mPrint("Unloading render texture...");
         UnloadRenderTexture(g.target);
     }
+
     mPrint("Closing SDL2 audio...");
+
     Mix_CloseAudio();
+
     mPrint("Quitting SDL2 audio...");
+
     SDL_Quit();
+
     if(IsWindowReady()) {
         mPrint("Closing window...");
         CloseWindow();

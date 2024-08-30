@@ -1,90 +1,100 @@
 #pragma once
 
-#include "Scene.h"
+#include "Entity.h"
+#include "PopupManager.h"
+#include "SceneTransition.h"
+#include "SceneType.h"
+#include "Scene_id.h"
+#include "Sprite.h"
+#include "control_mode.h"
+#include "mPrint.h"
+#include "texture_info.h"
+
+#include "raylib.h"
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 using namespace std;
 
-class TitleScene : public Scene {
+typedef struct {
+    RenderTexture prerendered_texture;
+    Rectangle src_rect;
+    Rectangle dst_rect;
+    Vector2 origin = (Vector2){0, 0};
+    unordered_map<string, shared_ptr<texture_info>> textures;
+    unordered_map<entity_id, shared_ptr<Sprite>> sprites;
+    unordered_map<entity_id, shared_ptr<Entity>> entities;
+    vector<entity_id> entity_ids;
+    Font global_font;
+    Camera2D camera2d = {0};
+    Mix_Music* music = NULL;
+    float global_scale = 1.0f;
+    float alpha = 1.0f;
+    string texture_filepath;
+    string music_path;
+    bool has_been_initialized = false;
+    bool debug_panel_on = true;
+    bool is_paused = false;
+    bool hud_on = true;
+    control_mode controlmode = CONTROL_MODE_PLAYER;
+    unsigned int current_frame = 0;
+    unsigned int global_font_size = 20;
+    SceneTransition transition = SCENE_TRANSITION_NONE;
+    Scene_id id;
+    SceneType scenetype;
+    shared_ptr<PopupManager> popup_manager;
 
-private:
-  // Music music;
-  RenderTexture prerendered_texture;
-  Rectangle src_rect;
-  Rectangle dst_rect;
-  Vector2 origin = (Vector2){0, 0};
+} TitleScene;
 
-public:
-  TitleScene() {
-    set_control_mode(CONTROL_MODE_PLAYER);
-    set_texture_filepath("title_textures.txt");
-    set_scene_transition(SCENE_TRANSITION_IN);
-    set_scene_type(SCENE_TYPE_TITLE);
-  }
-  ~TitleScene() {}
+void TitleScene_create(TitleScene& t);
+void TitleScene_set_control_mode(TitleScene& t, control_mode mode);
+void TitleScene_set_texture_filepath(TitleScene& t, string filepath);
+void TitleScene_set_scene_transition(TitleScene& t, SceneTransition transition);
+void TitleScene_set_scene_type(TitleScene& t, SceneType type);
+void TitleScene_destroy(TitleScene& t);
+bool TitleScene_init(TitleScene& t);
+void TitleScene_draw(TitleScene& t);
+void TitleScene_handle_input(TitleScene& t);
+void TitleScene_draw_debug_panel(TitleScene& t);
+void TitleScene_close(TitleScene& t);
+void TitleScene_cleanup(TitleScene& t);
+void TitleScene_update(TitleScene& t);
+void TitleScene_prerender_texture(TitleScene& t);
+bool TitleScene_get_has_been_initialized(TitleScene& t);
+bool TitleScene_get_debug_panel_on(TitleScene& t);
+void TitleScene_set_has_been_initialized(TitleScene& t, bool value);
+void TitleScene_flip_debug_panel(TitleScene& t);
+void TitleScene_set_camera_default_values(TitleScene& t);
 
-  bool init() {
-    if (!get_has_been_initialized()) {
-      set_camera_default_values();
-      load_fonts();
-      bool result = load_textures();
-      if (!result) {
-        mPrint("Error loading textures. Exiting...");
-        return false;
-      }
-      prerendered_texture =
-          LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
-      src_rect = {0, 0, (float)prerendered_texture.texture.width,
-                  (float)-prerendered_texture.texture.height};
-      dst_rect = {0, 0, (float)prerendered_texture.texture.width,
-                  (float)prerendered_texture.texture.height};
-      prerender_texture();
-      set_has_been_initialized(true);
-    }
-    return true;
-  }
+control_mode TitleScene_get_control_mode(TitleScene& t);
+string TitleScene_get_texture_filepath(TitleScene& t);
+SceneTransition TitleScene_get_scene_transition(TitleScene& t);
+SceneType TitleScene_get_scene_type(TitleScene& t);
 
-  void draw() {
-    BeginMode2D(get_camera2d());
-    Color clear_color = BLACK;
-    ClearBackground(clear_color);
-    DrawTexturePro(prerendered_texture.texture, src_rect, dst_rect, origin,
-                   0.0f, WHITE);
-    EndMode2D();
-    if (get_debug_panel_on()) {
-      DrawFPS(GetScreenWidth() - 80, 10);
-      draw_debug_panel();
-    }
-    incr_current_frame();
-  }
+bool TitleScene_load_texture(TitleScene& t,
+                             const char* asset_name,
+                             const char* asset_path,
+                             const int num_frames,
+                             const int contexts,
+                             const int is_player,
+                             const int width,
+                             const int height);
 
-  void handle_input() {
-    if (IsKeyPressed(KEY_D)) {
-      flip_debug_panel();
-    } else if (IsKeyPressed(KEY_SPACE)) {
-      set_scene_transition(SCENE_TRANSITION_OUT);
-    } else if (IsKeyPressed(KEY_F)) {
-      ToggleFullscreen();
-    }
-  }
+bool TitleScene_load_textures(TitleScene& t);
 
-  void draw_debug_panel() {
-    string camera_info_str =
-        "Current Frame: " + to_string(get_current_frame()) + "\n" +
-        "Control mode: " + to_string(get_control_mode()) + "\n" +
-        "Camera target: " + to_string(get_camera2d().target.x) + ", " +
-        to_string(get_camera2d().target.y) + "\n" + "TitleScene";
-    const int fontsize = get_global_font().baseSize;
-    DrawTextEx(get_global_font(), camera_info_str.c_str(), (Vector2){10, 10},
-               fontsize, 0.5f, WHITE);
-  }
+void TitleScene_incr_current_frame(TitleScene& t);
 
-  void close() {
-    Scene::close();
-    UnloadRenderTexture(prerendered_texture);
-  }
+Font& TitleScene_get_global_font(TitleScene& t);
+void TitleScene_set_popup_manager(TitleScene& t, shared_ptr<PopupManager> pm);
 
-  void cleanup() {}
-  void update() {}
+void TitleScene_set_id(TitleScene& t, Scene_id id);
+Scene_id TitleScene_get_id(TitleScene& t);
 
-  void prerender_texture();
-};
+float TitleScene_get_alpha(TitleScene& t);
+void TitleScene_set_alpha(TitleScene& t, float a);
+
+void TitleScene_set_scene_transition(TitleScene& t, SceneTransition transition);
