@@ -5,7 +5,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <cassert>
 
-static scene_id next_scene_id = 0;
+static Scene_id next_scene_id = 0;
 
 using namespace std;
 
@@ -170,9 +170,9 @@ void Game_handle_transition_out(Game& g) {
         // this makes the assumption that we will ALWAYS transition into the
         // gameplay scene and that we are on the title scene this is untrue!
 
-        const scene_id title_scene_id = g.scene_keys["title"];
-        const scene_id gameplay_scene_id = g.scene_keys["gameplay"];
-        const scene_id gameover_scene_id = g.scene_keys["gameover"];
+        const Scene_id title_scene_id = g.scene_keys["title"];
+        const Scene_id gameplay_scene_id = g.scene_keys["gameplay"];
+        const Scene_id gameover_scene_id = g.scene_keys["gameover"];
 
         if(g.scenes[title_scene_id]->get_has_been_initialized() == false) {
             g.scenes[title_scene_id]->init();

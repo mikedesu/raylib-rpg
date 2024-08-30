@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "PopupManager.h"
 #include "SceneTransition.h"
+#include "SceneType.h"
 #include "Sprite.h"
 #include "control_mode.h"
 #include "entity_id.h"
@@ -17,14 +18,8 @@
 
 using namespace std;
 
-typedef int scene_id;
+typedef int Scene_id;
 static entity_id next_entity_id = 0;
-
-typedef enum {
-    SCENE_TYPE_TITLE,
-    SCENE_TYPE_GAMEPLAY,
-    SCENE_TYPE_GAMEOVER,
-} scene_type;
 
 class Scene {
 
@@ -59,9 +54,9 @@ private:
 
     SceneTransition transition = SCENE_TRANSITION_NONE;
 
-    scene_id id;
+    Scene_id id;
 
-    scene_type scenetype;
+    SceneType scenetype;
 
     shared_ptr<PopupManager> popup_manager;
 
@@ -257,10 +252,10 @@ public:
     void set_alpha(float a) {
         alpha = a;
     }
-    void set_id(scene_id i) {
+    void set_id(Scene_id i) {
         id = i;
     }
-    void set_scene_type(scene_type st) {
+    void set_scene_type(SceneType st) {
         scenetype = st;
     }
     void pause() {
@@ -320,10 +315,10 @@ public:
     SceneTransition get_scene_transition() {
         return transition;
     }
-    scene_id get_id() {
+    Scene_id get_id() {
         return id;
     }
-    scene_type get_scene_type() {
+    SceneType get_scene_type() {
         return scenetype;
     }
     Camera2D& get_camera2d() {

@@ -2,6 +2,7 @@
 
 #include "GameplayScene.h"
 #include "PopupManager.h"
+#include "Scene.h"
 #include "Sprite.h"
 #include "TitleScene.h"
 #include "control_mode.h"
@@ -19,13 +20,13 @@ typedef struct {
     unordered_map<string, texture_info> textures;
     unordered_map<entity_id, shared_ptr<Sprite>> sprites;
     unordered_map<entity_id, bool> gravity;
-    unordered_map<scene_id, shared_ptr<Scene>> scenes;
-    unordered_map<string, scene_id> scene_keys;
+    unordered_map<Scene_id, shared_ptr<Scene>> scenes;
+    unordered_map<string, Scene_id> scene_keys;
     vector<entity_id> entity_ids;
     shared_ptr<Scene> current_scene;
     shared_ptr<PopupManager> popup_manager;
     entity_id player_id;
-    scene_id current_scene_id;
+    Scene_id current_scene_id;
     bool has_been_initialized;
     bool debug_panel_on;
     float global_scale;
