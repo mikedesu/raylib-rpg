@@ -7,6 +7,8 @@
 
 static scene_id next_scene_id = 0;
 
+using namespace std;
+
 void Game_create(Game& g) {
     g.global_scale = 1.0f;
     g.screen_rect = (Rectangle){0, 0, 1920, -1080};
@@ -77,11 +79,11 @@ void Game_spawn_scenes(Game& g) {
     g.scenes[gameplay_scene->get_id()] = gameplay_scene;
     g.scene_keys["gameplay"] = gameplay_scene->get_id();
 
-    shared_ptr<Scene> gameover_scene = make_shared<GameoverScene>();
-    gameover_scene->set_id(next_scene_id++);
-    gameover_scene->set_popup_manager(g.popup_manager);
-    g.scenes[gameover_scene->get_id()] = gameover_scene;
-    g.scene_keys["gameover"] = gameover_scene->get_id();
+    //shared_ptr<Scene> gameover_scene = make_shared<GameoverScene>();
+    //gameover_scene->set_id(next_scene_id++);
+    //gameover_scene->set_popup_manager(g.popup_manager);
+    //g.scenes[gameover_scene->get_id()] = gameover_scene;
+    //g.scene_keys["gameover"] = gameover_scene->get_id();
 }
 
 void Game_set_camera_default_values(Game& g) {
