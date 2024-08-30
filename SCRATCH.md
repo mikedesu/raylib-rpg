@@ -15,19 +15,13 @@ is a big deal)
     - put the reference -OR- `smart_ptr` 
     to the struct as the first argument
 
-For the `Scene` class, because it is a 
-parent class, we will need to do:
+### BEFORE CONTINUING TO NEXT CLASS
 
-- `GameplayScene`
-    - Copy the methods over into a `.cpp`
-    - `Scene`
-    - `GameplayScene`
+- fix the bug with drawing and scale
+    - default scale looks okay but
+    zooming in the sprites are
+    drawing at the old size
+    the tiles are correct tho
 
-The game will be unplayable/unbuildable
-during this period, but once we get it
-in place, we will make sure we can 
-build and run again once we transition
-`Scene` over. 
-
-Once GameplayScene is completed, we will be
-able to build and run the game again.
+Taking a break for tonight!
+Thank you for watching <3
