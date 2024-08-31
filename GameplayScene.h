@@ -133,5 +133,6 @@ EntityId GameplayScene_spawn_entity(GameplayScene& g,
                                     const bool is_anim);
 
 void GameplayScene_set_id(GameplayScene& g, SceneId id);
+void GameplayScene_center_camera_on_player(GameplayScene& g);
 
 //void GameplayScene_set_popup_manager(GameplayScene& t, shared_ptr<PopupManager> pm);

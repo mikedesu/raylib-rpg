@@ -61,28 +61,44 @@ inline void GameplayScene_handle_camera_input_move(GameplayScene& g) {
 inline void GameplayScene_handle_camera_input_zoom(GameplayScene& g) {
     const float zoom_incr = 1;
     if(IsKeyDown(KEY_RIGHT_SHIFT) && IsKeyPressed(KEY_Z)) {
-
-        //set_scale(get_global_scale() - zoom_incr);
-        g.global_scale -= zoom_incr;
-
+        GameplayScene_set_scale(g, g.global_scale - zoom_incr);
+        GameplayScene_center_camera_on_player(g);
         g.prev_tile_click_zoom_level = g.tile_click_zoom_level;
         g.tile_click_zoom_level = g.global_scale;
         g.last_mouse_click_pos = (Vector2){-1, -1};
     } else if(IsKeyDown(KEY_LEFT_SHIFT) && IsKeyPressed(KEY_Z)) {
-        //set_scale(get_global_scale() - zoom_incr);
-        g.global_scale -= zoom_incr;
-
+        GameplayScene_set_scale(g, g.global_scale - zoom_incr);
+        GameplayScene_center_camera_on_player(g);
         g.prev_tile_click_zoom_level = g.tile_click_zoom_level;
         g.tile_click_zoom_level = g.global_scale;
         g.last_mouse_click_pos = (Vector2){-1, -1};
     } else if(IsKeyPressed(KEY_Z)) {
-        //set_scale(get_global_scale() + zoom_incr);
-        g.global_scale += zoom_incr;
+        GameplayScene_set_scale(g, g.global_scale + zoom_incr);
+        GameplayScene_center_camera_on_player(g);
 
         g.prev_tile_click_zoom_level = g.tile_click_zoom_level;
         g.tile_click_zoom_level = g.global_scale;
         g.last_mouse_click_pos = (Vector2){-1, -1};
     }
+}
+
+void GameplayScene_center_camera_on_player(GameplayScene& g) {
+    Rectangle pos = g.sprites[g.player_id]->get_dest();
+
+    // the update isnt smooth
+    // we need to try and smooth it out
+    const int targetx = pos.x - (GetScreenWidth() / 2.0f);
+    const int targety = pos.y - (GetScreenHeight() / 2.0f);
+    const int cx = g.camera2d.target.x;
+    const int cy = g.camera2d.target.y;
+    const int dx = targetx - cx;
+    const int dy = targety - cy;
+
+    g.camera2d.target.x += dx;
+    g.camera2d.target.y += dy;
+
+    //g.camera2d.target.x = pos.x - (GetScreenWidth() / 2.0f);
+    //g.camera2d.target.y = pos.y - (GetScreenHeight() / 2.0f);
 }
 
 inline void GameplayScene_handle_camera_input(GameplayScene& g) {
@@ -231,19 +247,10 @@ inline void GameplayScene_handle_player_move_direction(GameplayScene& g) {
         g.sprites[g.player_id]->set_context(1);
     }
     //  update the camera
+    //GameplayScene_center_camera_on_player(g);
     g.camera2d.target.x += move_dir.x * tilesize * g.global_scale;
     g.camera2d.target.y += move_dir.y * tilesize * g.global_scale;
 }
-
-//inline void GameplayScene::handle_player_mouse_click() {
-// select a tile on screen
-//    if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-//        Vector2 mouse_pos = GetMousePosition();
-//        Vector2 world_pos = GetScreenToWorld2D(mouse_pos, get_camera2d());
-//        last_mouse_click_pos = world_pos;
-//        tile_is_selected = true;
-//    }
-//}
 
 void GameplayScene_remove_torch(GameplayScene& g, const Vector2 pos) {
     if(Vector2Equals(pos, (Vector2){-1, -1}))

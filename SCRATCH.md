@@ -23,5 +23,7 @@ is a big deal)
     drawing at the old size
     the tiles are correct tho
 
-Taking a break for tonight!
-Thank you for watching <3
+### NEXT CLASS
+
+- Tile
+- DungeonFloor
