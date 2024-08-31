@@ -1,5 +1,5 @@
 CC=g++
-OBJ_FILES=Game.o TitleScene.o GameplayScene.o DungeonFloor.o PopupManager.o Tile.o
+OBJ_FILES=Game.o TitleScene.o GameplayScene.o DungeonFloor.o PopupManager.o Tile.o Sprite.o
 OBJ_FILES_WITH_MAIN=main.o $(OBJ_FILES)
 FLAGS=-Wall
 LIBS=-lraylib -lGL -lm -lpthread -ldl -lrt -lX11 -lSDL2 -lSDL2_mixer
@@ -18,6 +18,8 @@ DungeonFloor.o: DungeonFloor.cpp
 PopupManager.o: PopupManager.cpp
 	$(CC) $^ $(FLAGS) -c -o $@
 Tile.o: Tile.cpp
+	$(CC) $^ $(FLAGS) -c -o $@
+Sprite.o: Sprite.cpp
 	$(CC) $^ $(FLAGS) -c -o $@
 main.o: main.cpp
 	$(CC) $^ $(FLAGS) -c -o $@
