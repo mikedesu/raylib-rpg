@@ -1,0 +1,14 @@
+#pragma once
+
+typedef enum {
+    TILE_NONE,
+    TILE_VOID,
+    TILE_FLOOR_BASIC,
+    TILE_FLOOR_STONE,
+    TILE_FLOOR_WOOD,
+    TILE_FLOOR_DIRT,
+    TILE_FLOOR_UPSTAIRS,
+    TILE_FLOOR_DOWNSTAIRS,
+    TILE_COUNT
+
+} TileType;
