@@ -1,12 +1,12 @@
 #pragma once
 
 #include "CurrentScene.h"
+#include "EntityId.h"
 #include "GameplayScene.h"
 #include "PopupManager.h"
 #include "Sprite.h"
 #include "TitleScene.h"
 #include "control_mode.h"
-#include "entity_id.h"
 #include "texture_info.h"
 
 #include <memory>
@@ -18,11 +18,11 @@ using namespace std;
 
 typedef struct {
     unordered_map<string, Scene_id> scene_keys;
-    vector<entity_id> entity_ids;
+    vector<EntityId> entity_ids;
 
     PopupManager popup_manager;
 
-    entity_id player_id;
+    EntityId player_id;
     Scene_id current_scene_id;
     bool has_been_initialized;
     bool debug_panel_on;
@@ -72,8 +72,8 @@ string Game_get_window_title(Game& g);
 //class Game {
 //private:
 //    unordered_map<string, texture_info> textures;
-//    unordered_map<entity_id, shared_ptr<Sprite>> sprites;
-//    unordered_map<entity_id, bool> gravity;
+//    unordered_map< EntityId, shared_ptr<Sprite>> sprites;
+//    unordered_map< EntityId, bool> gravity;
 //    unordered_map<scene_id, shared_ptr<Scene>> scenes;
 //    unordered_map<string, scene_id> scene_keys;
 //    vector<entity_id> entity_ids;

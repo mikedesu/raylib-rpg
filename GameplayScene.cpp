@@ -5,7 +5,7 @@
 #include "raymath.h"
 #include <cstring>
 
-static entity_id next_entity_id = 0;
+static EntityId next_entity_id = 0;
 
 void GameplayScene_create(GameplayScene& g) {
     mPrint("GameplayScene constructor");
@@ -139,7 +139,7 @@ inline void GameplayScene_handle_tile_selection_input(GameplayScene& g) {
 }
 
 bool GameplayScene_handle_dungeon_move_pos(GameplayScene& g,
-                                           const entity_id id,
+                                           const EntityId id,
                                            const Vector2 c_pos,
                                            const Vector2 t_pos) {
     bool retval = false;
@@ -187,7 +187,7 @@ bool GameplayScene_handle_dungeon_move_pos(GameplayScene& g,
 }
 
 Vector2 GameplayScene_handle_dungeon_move_dir(GameplayScene& g,
-                                              const entity_id id,
+                                              const EntityId id,
                                               const Vector2 direction) {
     // we have to check the dungeon position of the sprite
     // if the target tile is a location we cant move to, like none, void, or wall,
@@ -248,7 +248,7 @@ inline void GameplayScene_handle_player_move_direction(GameplayScene& g) {
 void GameplayScene_remove_torch(GameplayScene& g, const Vector2 pos) {
     if(Vector2Equals(pos, (Vector2){-1, -1}))
         return;
-    const vector<entity_id>& entities = g.dungeon_floor.get_entities(pos.x, pos.y);
+    const vector<EntityId>& entities = g.dungeon_floor.get_entities(pos.x, pos.y);
     for(auto entity_id : entities) {
         if(g.dungeon_floor.get_entity_type(entity_id) == ENTITY_TORCH) {
             g.dungeon_floor.remove_entity(entity_id);
@@ -469,7 +469,7 @@ bool GameplayScene_init(GameplayScene& g) {
         GameplayScene_init_dungeon_floor(g);
         mPrint("Spawning player...");
         Vector2 start_loc = GameplayScene_get_start_location(g);
-        entity_id spawn_player_result = GameplayScene_spawn_player(g, start_loc);
+        EntityId spawn_player_result = GameplayScene_spawn_player(g, start_loc);
         if(spawn_player_result < 0) {
             mPrint("Error spawning player...");
             mPrint("Location: " + to_string(start_loc.x) + ", " + to_string(start_loc.y));
@@ -504,7 +504,7 @@ bool GameplayScene_init(GameplayScene& g) {
     return true;
 }
 
-const entity_id GameplayScene_spawn_player(GameplayScene& g, const Vector2 pos) {
+const EntityId GameplayScene_spawn_player(GameplayScene& g, const Vector2 pos) {
     // make sure we spawn only 1 player
     if(g.player_id >= 0) {
         return g.player_id;
@@ -513,7 +513,7 @@ const entity_id GameplayScene_spawn_player(GameplayScene& g, const Vector2 pos) 
     if(Vector2Equals(pos, (Vector2){-1, -1}))
         return -1;
 
-    entity_id id =
+    EntityId id =
         GameplayScene_spawn_entity(g, "player", 0, 0, SPRITETYPE_PLAYER, true, g.global_scale);
     g.player_id = id;
 
@@ -522,13 +522,13 @@ const entity_id GameplayScene_spawn_player(GameplayScene& g, const Vector2 pos) 
     return id;
 }
 
-const entity_id GameplayScene_spawn_column(GameplayScene& g, const Vector2 pos) {
+const EntityId GameplayScene_spawn_column(GameplayScene& g, const Vector2 pos) {
     if(Vector2Equals(pos, (Vector2){-1, -1}))
         return -1;
     if(g.dungeon_floor.loc_contains_entity_type(pos, ENTITY_WALL))
         return -1;
 
-    entity_id id =
+    EntityId id =
         GameplayScene_spawn_entity(g, "column", 0, 0, SPRITETYPE_WALL, true, g.global_scale);
 
     shared_ptr<Entity> column = make_shared<Entity>(id, ENTITY_WALL, "wall");
@@ -543,12 +543,12 @@ void GameplayScene_handle_spawn_column(GameplayScene& g, const Vector2 p) {
     }
 }
 
-const entity_id GameplayScene_spawn_torch(GameplayScene& g, const Vector2 pos) {
+const EntityId GameplayScene_spawn_torch(GameplayScene& g, const Vector2 pos) {
 
     if(Vector2Equals(pos, (Vector2){-1, -1}))
         return -1;
     // get the tile at the last clicked tile and get its entities
-    vector<entity_id> entities = g.dungeon_floor.get_entities(pos.x, pos.y);
+    vector<EntityId> entities = g.dungeon_floor.get_entities(pos.x, pos.y);
     bool can_place = true;
     for(auto entity_id : entities) {
         if(g.sprites[entity_id]->get_type() == SPRITETYPE_WALL) {
@@ -560,7 +560,7 @@ const entity_id GameplayScene_spawn_torch(GameplayScene& g, const Vector2 pos) {
         return -1;
     }
 
-    entity_id id =
+    EntityId id =
         GameplayScene_spawn_entity(g, "torch", 0, 0, SPRITETYPE_ITEM, true, g.global_scale);
     // dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_TORCH, pos);
     shared_ptr<Entity> torch = make_shared<Entity>(id, ENTITY_TORCH, "torch");
@@ -669,7 +669,7 @@ inline void GameplayScene_draw_hud(GameplayScene& g) {
 
 void GameplayScene_cleanup(GameplayScene& g) {
     for(int i = 0; i < (int)g.entity_ids.size(); i++) {
-        entity_id id = g.entity_ids[i];
+        EntityId id = g.entity_ids[i];
         if(g.sprites[id]->get_is_marked_for_deletion()) {
             g.sprites.erase(id);
             // also need to erase from entity_ids
@@ -762,7 +762,7 @@ GameplayScene_draw_tile(GameplayScene& g, const string tile_key, const int i, co
     // now, for an upgrade, we want to draw the entities on the tile before we
     // draw the shade box this way, the entities will be drawn below the shade box
     // draw the entities on the tile
-    const vector<entity_id>& entities = g.dungeon_floor.get_entities(i, j);
+    const vector<EntityId>& entities = g.dungeon_floor.get_entities(i, j);
     for(auto& e : entities) {
         g.sprites[e]->draw();
     }
@@ -920,13 +920,13 @@ bool GameplayScene_load_texture(GameplayScene& g,
     return true;
 }
 
-entity_id GameplayScene_spawn_entity(GameplayScene& g,
-                                     const char* key,
-                                     const float x,
-                                     const float y,
-                                     const sprite_type type,
-                                     const bool is_anim,
-                                     const float scale) {
+EntityId GameplayScene_spawn_entity(GameplayScene& g,
+                                    const char* key,
+                                    const float x,
+                                    const float y,
+                                    const sprite_type type,
+                                    const bool is_anim,
+                                    const float scale) {
 
     if(g.textures.find(key) == g.textures.end()) {
         mPrint("Error: texture not found: " + string(key));
@@ -952,12 +952,12 @@ entity_id GameplayScene_spawn_entity(GameplayScene& g,
     return next_entity_id++;
 }
 
-entity_id GameplayScene_spawn_entity(GameplayScene& g,
-                                     const char* key,
-                                     const float x,
-                                     const float y,
-                                     const sprite_type type,
-                                     const bool is_anim) {
+EntityId GameplayScene_spawn_entity(GameplayScene& g,
+                                    const char* key,
+                                    const float x,
+                                    const float y,
+                                    const sprite_type type,
+                                    const bool is_anim) {
     return GameplayScene_spawn_entity(g, key, x, y, type, is_anim, g.global_scale);
 }
 

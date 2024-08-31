@@ -14,7 +14,7 @@
 
 typedef struct {
     bool show_test_popup = true;
-    entity_id player_id = -1;
+    EntityId player_id = -1;
     unsigned int turn_count = 0;
     float prev_tile_click_zoom_level = 1.0f;
     float tile_click_zoom_level = 1.0f;
@@ -33,7 +33,7 @@ typedef struct {
     float global_scale = 1.0f;
     SceneTransition transition = SCENE_TRANSITION_NONE;
     SceneType scenetype;
-    unordered_map<entity_id, shared_ptr<Sprite>> sprites;
+    unordered_map<EntityId, shared_ptr<Sprite>> sprites;
     unordered_map<string, shared_ptr<texture_info>> textures;
     Camera2D camera2d = {0};
     PopupManager popup_manager;
@@ -42,7 +42,7 @@ typedef struct {
     Font global_font;
     bool is_paused = false;
     unsigned int current_frame = 0;
-    vector<entity_id> entity_ids;
+    vector<EntityId> entity_ids;
     bool hud_on = true;
     float alpha = 0.0f;
     unsigned int global_font_size = 20;
@@ -54,7 +54,7 @@ void GameplayScene_create(GameplayScene& g);
 void GameplayScene_destroy(GameplayScene& g);
 bool GameplayScene_init(GameplayScene& g);
 bool GameplayScene_handle_dungeon_move_pos(GameplayScene& g,
-                                           const entity_id id,
+                                           const EntityId id,
                                            const Vector2 c_pos,
                                            const Vector2 t_pos);
 void GameplayScene_update(GameplayScene& g);
@@ -90,15 +90,14 @@ GameplayScene_draw_tile(GameplayScene& g, const string tile_key, const int i, co
 inline void GameplayScene_handle_popup_manager(GameplayScene& g);
 inline void
 GameplayScene_handle_tile_click(GameplayScene& g, const Rectangle dest, const int i, const int j);
-Vector2 GameplayScene_handle_dungeon_move_dir(GameplayScene& g,
-                                              const entity_id id,
-                                              const Vector2 direction);
+Vector2
+GameplayScene_handle_dungeon_move_dir(GameplayScene& g, const EntityId id, const Vector2 direction);
 const string GameplayScene_tile_key_for_type(GameplayScene& g, const TileType t);
 const Vector2 GameplayScene_get_start_location(GameplayScene& g);
 
-const entity_id GameplayScene_spawn_player(GameplayScene& g, const Vector2 pos);
-const entity_id GameplayScene_spawn_column(GameplayScene& g, const Vector2 pos);
-const entity_id GameplayScene_spawn_torch(GameplayScene& g, const Vector2 pos);
+const EntityId GameplayScene_spawn_player(GameplayScene& g, const Vector2 pos);
+const EntityId GameplayScene_spawn_column(GameplayScene& g, const Vector2 pos);
+const EntityId GameplayScene_spawn_torch(GameplayScene& g, const Vector2 pos);
 
 void GameplayScene_remove_torch(GameplayScene& g, const Vector2 pos);
 void GameplayScene_handle_spawn_column(GameplayScene& g, const Vector2 p);
@@ -118,20 +117,20 @@ bool GameplayScene_load_texture(GameplayScene& g,
                                 const int width,
                                 const int height);
 
-entity_id GameplayScene_spawn_entity(GameplayScene& g,
-                                     const char* key,
-                                     const float x,
-                                     const float y,
-                                     const sprite_type type,
-                                     const bool is_anim,
-                                     const float scale);
+EntityId GameplayScene_spawn_entity(GameplayScene& g,
+                                    const char* key,
+                                    const float x,
+                                    const float y,
+                                    const sprite_type type,
+                                    const bool is_anim,
+                                    const float scale);
 
-entity_id GameplayScene_spawn_entity(GameplayScene& g,
-                                     const char* key,
-                                     const float x,
-                                     const float y,
-                                     const sprite_type type,
-                                     const bool is_anim);
+EntityId GameplayScene_spawn_entity(GameplayScene& g,
+                                    const char* key,
+                                    const float x,
+                                    const float y,
+                                    const sprite_type type,
+                                    const bool is_anim);
 
 void GameplayScene_set_id(GameplayScene& g, Scene_id id);
 

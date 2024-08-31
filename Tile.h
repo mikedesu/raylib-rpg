@@ -1,7 +1,7 @@
 #pragma once
 
+#include "EntityId.h"
 #include "Sprite.h"
-#include "entity_id.h"
 #include "mPrint.h"
 
 #include <memory>
@@ -32,7 +32,7 @@ class Tile {
 
 private:
     TileType type = TILE_VOID;
-    vector<entity_id> entities;
+    vector<EntityId> entities;
     int light_level = TILE_DEFAULT_LIGHT_LEVEL;
     const float light_incr = TILE_DEFAULT_LIGHT_INCR;
     const int max_light_level = TILE_DEFAULT_MAX_LIGHT_LEVEL;
@@ -53,7 +53,7 @@ public:
     const TileType get_type() const {
         return type;
     }
-    const vector<entity_id>& get_entities() const {
+    const vector<EntityId>& get_entities() const {
         return entities;
     }
     const string get_type_str() const {
@@ -98,7 +98,7 @@ public:
     void set_type(const TileType t) {
         type = t;
     }
-    void add_entity(const entity_id id) {
+    void add_entity(const EntityId id) {
         entities.push_back(id);
     }
     void increase_light_level() {
@@ -108,7 +108,7 @@ public:
         decrease_light_level_by(1);
     }
 
-    void remove_entity(const entity_id id) {
+    void remove_entity(const EntityId id) {
         for(auto it = entities.begin(); it != entities.end(); it++) {
             if(*it == id) {
                 entities.erase(it);

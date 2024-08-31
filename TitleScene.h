@@ -26,9 +26,9 @@ typedef struct {
     Rectangle dst_rect;
     Vector2 origin = (Vector2){0, 0};
     unordered_map<string, shared_ptr<texture_info>> textures;
-    unordered_map<entity_id, shared_ptr<Sprite>> sprites;
-    unordered_map<entity_id, shared_ptr<Entity>> entities;
-    vector<entity_id> entity_ids;
+    unordered_map<EntityId, shared_ptr<Sprite>> sprites;
+    unordered_map<EntityId, shared_ptr<Entity>> entities;
+    vector<EntityId> entity_ids;
     Font global_font;
     Camera2D camera2d = {0};
     Mix_Music* music = NULL;

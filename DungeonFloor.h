@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Entity.h"
+#include "EntityId.h"
 #include "Tile.h"
-#include "entity_id.h"
 #include "raylib.h"
 #include <algorithm>
 #include <memory>
@@ -14,8 +14,8 @@ class DungeonFloor {
 private:
     const int gridsize = 16;
     Tile grid[16][16];
-    unordered_map<entity_id, Vector2> entity_positions;
-    unordered_map<entity_id, shared_ptr<Entity>> entities;
+    unordered_map<EntityId, Vector2> entity_positions;
+    unordered_map<EntityId, shared_ptr<Entity>> entities;
 
 public:
     DungeonFloor() {
@@ -53,7 +53,7 @@ public:
         }
         return grid[col][row].get_type();
     }
-    const Vector2 get_entity_position(const entity_id id) {
+    const Vector2 get_entity_position(const EntityId id) {
         if(entity_positions.find(id) == entity_positions.end()) {
             return Vector2{-1, -1};
         }
@@ -67,21 +67,21 @@ public:
         return grid[(int)position.x][(int)position.y];
     }
 
-    const vector<entity_id>& get_entities(const int col, const int row) const {
+    const vector<EntityId>& get_entities(const int col, const int row) const {
         return grid[col][row].get_entities();
     }
 
-    void remove_entity(const entity_id id) {
+    void remove_entity(const EntityId id) {
         remove_entity_from_tile(id, get_entity_position(id));
     }
 
-    void remove_entity_from_tile(const entity_id id, const Vector2 position) {
+    void remove_entity_from_tile(const EntityId id, const Vector2 position) {
         grid[(int)position.x][(int)position.y].remove_entity(id);
         entity_positions.erase(id);
         entities.erase(id);
     }
 
-    const EntityType get_entity_type(const entity_id id) const {
+    const EntityType get_entity_type(const EntityId id) const {
 
         if(entities.find(id) == entities.end()) {
             return ENTITY_NONE;
@@ -90,17 +90,17 @@ public:
     }
 
     const bool loc_contains_entity_type(const Vector2 loc, const EntityType type) const {
-        const vector<entity_id>& entities = get_entities(loc.x, loc.y);
-        auto pred = [this, type](entity_id id) { return get_entity_type(id) == type; };
+        const vector<EntityId>& entities = get_entities(loc.x, loc.y);
+        auto pred = [this, type](EntityId id) { return get_entity_type(id) == type; };
         return find_if(entities.begin(), entities.end(), pred) != entities.end();
     }
 
-    const string get_entity_name(const entity_id id) const {
+    const string get_entity_name(const EntityId id) const {
         return entities.at(id)->get_name();
     }
 
     void add_entity_at(shared_ptr<Entity> entity, const Vector2 position) {
-        entity_id id = entity->get_id();
+        EntityId id = entity->get_id();
         int x = (int)position.x;
         int y = (int)position.y;
         if(entity_positions.find(id) == entity_positions.end()) {
@@ -112,5 +112,5 @@ public:
         }
     }
 
-    const bool move_entity_to_tile(entity_id id, const Vector2 position);
+    const bool move_entity_to_tile(EntityId id, const Vector2 position);
 };
