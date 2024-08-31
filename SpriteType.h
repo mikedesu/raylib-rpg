@@ -1,0 +1,11 @@
+#pragma once
+
+typedef enum {
+    SPRITETYPE_NONE,
+    SPRITETYPE_TITLE,
+    SPRITETYPE_PLAYER,
+    SPRITETYPE_ENEMY,
+    SPRITETYPE_ITEM,
+    SPRITETYPE_WALL,
+    SPRITETYPE_COUNT
+} SpriteType;

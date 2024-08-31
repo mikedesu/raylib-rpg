@@ -1,18 +1,9 @@
 #pragma once
 
 #include "MovementType.h"
+#include "SpriteType.h"
 #include "mPrint.h"
 #include "raylib.h"
-
-typedef enum {
-    SPRITETYPE_NONE,
-    SPRITETYPE_TITLE,
-    SPRITETYPE_PLAYER,
-    SPRITETYPE_ENEMY,
-    SPRITETYPE_ITEM,
-    SPRITETYPE_WALL,
-    SPRITETYPE_COUNT
-} sprite_type;
 
 class Sprite {
 private:
@@ -39,7 +30,7 @@ private:
     bool is_animating = false;
     bool is_flipped = false;
     bool is_spinning = false;
-    sprite_type type = SPRITETYPE_NONE;
+    SpriteType type = SPRITETYPE_NONE;
     MovementType movement = MOVEMENT_TYPE_NONE;
 
 public:
@@ -50,7 +41,7 @@ public:
            const float y,
            const int w,
            const int h,
-           sprite_type spritetype) {
+           SpriteType spritetype) {
 
         texture = t;
         anim_frames = frames;
@@ -172,7 +163,7 @@ public:
     void set_is_flipped(const bool is_flipped) {
         this->is_flipped = is_flipped;
     }
-    void set_type(const sprite_type t) {
+    void set_type(const SpriteType t) {
         type = t;
     }
     void set_ax(const float ax) {
@@ -290,7 +281,7 @@ public:
     const bool get_is_flipped() const {
         return is_flipped;
     }
-    const sprite_type get_type() const {
+    const SpriteType get_type() const {
         return type;
     }
     const bool get_is_spinning() const {

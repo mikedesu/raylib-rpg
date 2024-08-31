@@ -121,7 +121,7 @@ EntityId GameplayScene_spawn_entity(GameplayScene& g,
                                     const char* key,
                                     const float x,
                                     const float y,
-                                    const sprite_type type,
+                                    const SpriteType type,
                                     const bool is_anim,
                                     const float scale);
 
@@ -129,7 +129,7 @@ EntityId GameplayScene_spawn_entity(GameplayScene& g,
                                     const char* key,
                                     const float x,
                                     const float y,
-                                    const sprite_type type,
+                                    const SpriteType type,
                                     const bool is_anim);
 
 void GameplayScene_set_id(GameplayScene& g, SceneId id);
