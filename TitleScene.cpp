@@ -298,11 +298,11 @@ Font& TitleScene_get_global_font(TitleScene& t) {
 //    t.popup_manager = pm;
 //}
 
-void TitleScene_set_id(TitleScene& t, Scene_id id) {
+void TitleScene_set_id(TitleScene& t, SceneId id) {
     t.id = id;
 }
 
-Scene_id TitleScene_get_id(TitleScene& t) {
+SceneId TitleScene_get_id(TitleScene& t) {
     return t.id;
 }
 

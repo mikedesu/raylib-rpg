@@ -961,7 +961,7 @@ EntityId GameplayScene_spawn_entity(GameplayScene& g,
     return GameplayScene_spawn_entity(g, key, x, y, type, is_anim, g.global_scale);
 }
 
-void GameplayScene_set_id(GameplayScene& g, Scene_id id) {
+void GameplayScene_set_id(GameplayScene& g, SceneId id) {
     g.id = id;
 }
 

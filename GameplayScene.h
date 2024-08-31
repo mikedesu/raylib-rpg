@@ -5,9 +5,9 @@
 //#include "MessagePane.h"
 #include "ControlMode.h"
 #include "PopupManager.h"
+#include "SceneId.h"
 #include "SceneTransition.h"
 #include "SceneType.h"
-#include "Scene_id.h"
 #include "TextureInfo.h"
 
 #include <vector>
@@ -46,7 +46,7 @@ typedef struct {
     bool hud_on = true;
     float alpha = 0.0f;
     unsigned int global_font_size = 20;
-    Scene_id id;
+    SceneId id;
 
 } GameplayScene;
 
@@ -132,6 +132,6 @@ EntityId GameplayScene_spawn_entity(GameplayScene& g,
                                     const sprite_type type,
                                     const bool is_anim);
 
-void GameplayScene_set_id(GameplayScene& g, Scene_id id);
+void GameplayScene_set_id(GameplayScene& g, SceneId id);
 
 //void GameplayScene_set_popup_manager(GameplayScene& t, shared_ptr<PopupManager> pm);

@@ -17,13 +17,13 @@
 using namespace std;
 
 typedef struct {
-    unordered_map<string, Scene_id> scene_keys;
+    unordered_map<string, SceneId> scene_keys;
     vector<EntityId> entity_ids;
 
     PopupManager popup_manager;
 
     EntityId player_id;
-    Scene_id current_scene_id;
+    SceneId current_scene_id;
     bool has_been_initialized;
     bool debug_panel_on;
     float global_scale;

@@ -6,7 +6,7 @@
 #include <SDL2/SDL_mixer.h>
 #include <cassert>
 
-static Scene_id next_scene_id = 0;
+static SceneId next_scene_id = 0;
 
 using namespace std;
 

@@ -3,9 +3,9 @@
 #include "ControlMode.h"
 #include "Entity.h"
 #include "PopupManager.h"
+#include "SceneId.h"
 #include "SceneTransition.h"
 #include "SceneType.h"
-#include "Scene_id.h"
 #include "Sprite.h"
 #include "TextureInfo.h"
 #include "mPrint.h"
@@ -44,7 +44,7 @@ typedef struct {
     unsigned int current_frame = 0;
     unsigned int global_font_size = 20;
     SceneTransition transition = SCENE_TRANSITION_NONE;
-    Scene_id id;
+    SceneId id;
     SceneType scenetype;
     //shared_ptr<PopupManager> popup_manager;
     PopupManager popup_manager;
@@ -93,8 +93,8 @@ Font& TitleScene_get_global_font(TitleScene& t);
 //void TitleScene_set_popup_manager(TitleScene& t, shared_ptr<PopupManager> pm);
 //void TitleScene_set_popup_manager(TitleScene& t, PopupManager& pm);
 
-void TitleScene_set_id(TitleScene& t, Scene_id id);
-Scene_id TitleScene_get_id(TitleScene& t);
+void TitleScene_set_id(TitleScene& t, SceneId id);
+SceneId TitleScene_get_id(TitleScene& t);
 
 float TitleScene_get_alpha(TitleScene& t);
 void TitleScene_set_alpha(TitleScene& t, float a);
