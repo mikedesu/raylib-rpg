@@ -93,7 +93,7 @@ GameplayScene_handle_tile_click(GameplayScene& g, const Rectangle dest, const in
 Vector2 GameplayScene_handle_dungeon_move_dir(GameplayScene& g,
                                               const entity_id id,
                                               const Vector2 direction);
-const string GameplayScene_tile_key_for_type(GameplayScene& g, const tile_type t);
+const string GameplayScene_tile_key_for_type(GameplayScene& g, const TileType t);
 const Vector2 GameplayScene_get_start_location(GameplayScene& g);
 
 const entity_id GameplayScene_spawn_player(GameplayScene& g, const Vector2 pos);

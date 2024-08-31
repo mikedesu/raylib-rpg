@@ -145,7 +145,7 @@ bool GameplayScene_handle_dungeon_move_pos(GameplayScene& g,
     bool retval = false;
     //  if they are different tiles...
     if(!Vector2Equals(c_pos, t_pos)) {
-        tile_type t = g.dungeon_floor.get_tile_type(t_pos.x, t_pos.y);
+        TileType t = g.dungeon_floor.get_tile_type(t_pos.x, t_pos.y);
         switch(t) {
         case TILE_FLOOR_BASIC:
         case TILE_FLOOR_STONE:
@@ -688,7 +688,7 @@ void GameplayScene_draw(GameplayScene& g) {
     //   entities existing on tiles will get drawn
     for(int i = 0; i < g.dungeon_floor.get_gridsize(); i++) {
         for(int j = 0; j < g.dungeon_floor.get_gridsize(); j++) {
-            const tile_type t = g.dungeon_floor.get_tile_type(i, j);
+            const TileType t = g.dungeon_floor.get_tile_type(i, j);
             const string s = GameplayScene_tile_key_for_type(g, t);
             GameplayScene_draw_tile(g, s, i, j);
         }
@@ -714,7 +714,7 @@ void GameplayScene_draw(GameplayScene& g) {
     g.current_frame++;
 }
 
-const string GameplayScene_tile_key_for_type(GameplayScene& g, const tile_type t) {
+const string GameplayScene_tile_key_for_type(GameplayScene& g, const TileType t) {
     string tile_key = "tile-";
     switch(t) {
     case TILE_FLOOR_BASIC:

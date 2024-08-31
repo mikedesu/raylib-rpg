@@ -26,12 +26,12 @@ typedef enum {
     TILE_FLOOR_DOWNSTAIRS,
     TILE_COUNT
 
-} tile_type;
+} TileType;
 
 class Tile {
 
 private:
-    tile_type type = TILE_VOID;
+    TileType type = TILE_VOID;
     vector<entity_id> entities;
     int light_level = TILE_DEFAULT_LIGHT_LEVEL;
     const float light_incr = TILE_DEFAULT_LIGHT_INCR;
@@ -44,13 +44,13 @@ public:
         set_light_level(TILE_DEFAULT_LIGHT_LEVEL);
     }
 
-    Tile(const tile_type t)
+    Tile(const TileType t)
         : type(t) {
         set_light_level(TILE_DEFAULT_LIGHT_LEVEL);
     }
     ~Tile() { }
 
-    const tile_type get_type() const {
+    const TileType get_type() const {
         return type;
     }
     const vector<entity_id>& get_entities() const {
@@ -95,7 +95,7 @@ public:
     const int get_max_light_level() const {
         return max_light_level;
     }
-    void set_type(const tile_type t) {
+    void set_type(const TileType t) {
         type = t;
     }
     void add_entity(const entity_id id) {
