@@ -6,9 +6,9 @@
 #include "SceneType.h"
 #include "Scene_id.h"
 #include "Sprite.h"
+#include "TextureInfo.h"
 #include "control_mode.h"
 #include "mPrint.h"
-#include "texture_info.h"
 
 #include "raylib.h"
 #include <SDL2/SDL.h>
@@ -25,7 +25,7 @@ typedef struct {
     Rectangle src_rect;
     Rectangle dst_rect;
     Vector2 origin = (Vector2){0, 0};
-    unordered_map<string, shared_ptr<texture_info>> textures;
+    unordered_map<string, shared_ptr<TextureInfo>> textures;
     unordered_map<EntityId, shared_ptr<Sprite>> sprites;
     unordered_map<EntityId, shared_ptr<Entity>> entities;
     vector<EntityId> entity_ids;

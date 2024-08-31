@@ -744,7 +744,7 @@ const string GameplayScene_tile_key_for_type(GameplayScene& g, const TileType t)
 
 inline void
 GameplayScene_draw_tile(GameplayScene& g, const string tile_key, const int i, const int j) {
-    shared_ptr<texture_info> t = g.textures[tile_key];
+    shared_ptr<TextureInfo> t = g.textures[tile_key];
     const int t_sz = t->texture.width;
     const float scale = g.global_scale;
     Rectangle src = {0, 0, (float)t->texture.width, (float)t->texture.height};
@@ -896,7 +896,7 @@ bool GameplayScene_load_texture(GameplayScene& g,
                                 const int height) {
     string asset_name_str = string(asset_name);
     Texture2D t = LoadTexture(asset_path);
-    texture_info tx;
+    TextureInfo tx;
     if(t.id == 0) {
         mPrint("Error loading texture: " + string(asset_path));
         return false;
@@ -916,7 +916,7 @@ bool GameplayScene_load_texture(GameplayScene& g,
     tx.asset_path = asset_path;
     tx.width = width;
     tx.height = height;
-    g.textures[asset_name] = make_shared<texture_info>(tx);
+    g.textures[asset_name] = make_shared<TextureInfo>(tx);
     return true;
 }
 

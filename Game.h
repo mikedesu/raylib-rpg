@@ -7,7 +7,7 @@
 #include "Sprite.h"
 #include "TitleScene.h"
 #include "control_mode.h"
-#include "texture_info.h"
+//#include "TextureInfo.h"
 
 #include <memory>
 #include <string>

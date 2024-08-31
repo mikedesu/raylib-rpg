@@ -7,8 +7,8 @@
 #include "SceneTransition.h"
 #include "SceneType.h"
 #include "Scene_id.h"
+#include "TextureInfo.h"
 #include "control_mode.h"
-#include "texture_info.h"
 
 #include <vector>
 
@@ -34,7 +34,7 @@ typedef struct {
     SceneTransition transition = SCENE_TRANSITION_NONE;
     SceneType scenetype;
     unordered_map<EntityId, shared_ptr<Sprite>> sprites;
-    unordered_map<string, shared_ptr<texture_info>> textures;
+    unordered_map<string, shared_ptr<TextureInfo>> textures;
     Camera2D camera2d = {0};
     PopupManager popup_manager;
     bool debug_panel_on = true;

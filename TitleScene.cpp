@@ -162,8 +162,8 @@ void TitleScene_prerender_texture(TitleScene& t) {
     float x = 0, y = 0;
     Vector2 origin = (Vector2){0, 0};
     Color clear_color = BLACK;
-    shared_ptr<texture_info> title_info = t.textures["title"];
-    shared_ptr<texture_info> presents_info = t.textures["presents"];
+    shared_ptr<TextureInfo> title_info = t.textures["title"];
+    shared_ptr<TextureInfo> presents_info = t.textures["presents"];
     float w_src = title_info->texture.width, h_src = title_info->texture.height;
     float w_dst = w_src, h_dst = h_src;
     Rectangle src_rect = {0, 0, w_src, h_src}, dst_rect = {0, 0, w_dst, h_dst};
@@ -216,7 +216,7 @@ bool TitleScene_load_texture(TitleScene& t,
 
     string asset_name_str = string(asset_name);
     Texture2D tt = LoadTexture(asset_path);
-    texture_info tx;
+    TextureInfo tx;
     if(tt.id == 0) {
         mPrint("Error loading texture: " + string(asset_path));
         return false;
@@ -236,7 +236,7 @@ bool TitleScene_load_texture(TitleScene& t,
     tx.asset_path = asset_path;
     tx.width = width;
     tx.height = height;
-    t.textures[asset_name] = make_shared<texture_info>(tx);
+    t.textures[asset_name] = make_shared<TextureInfo>(tx);
     return true;
 }
 
