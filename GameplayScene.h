@@ -3,12 +3,12 @@
 #include "DungeonEvent.h"
 #include "DungeonFloor.h"
 //#include "MessagePane.h"
+#include "ControlMode.h"
 #include "PopupManager.h"
 #include "SceneTransition.h"
 #include "SceneType.h"
 #include "Scene_id.h"
 #include "TextureInfo.h"
-#include "control_mode.h"
 
 #include <vector>
 
@@ -28,7 +28,7 @@ typedef struct {
     Vector2 last_tile_click_pos;
     //shared_ptr<MessagePane> message_pane;
     // common to titlescene and gameplayscene
-    control_mode controlmode = CONTROL_MODE_PLAYER;
+    ControlMode controlmode = CONTROL_MODE_PLAYER;
     string texture_filepath;
     float global_scale = 1.0f;
     SceneTransition transition = SCENE_TRANSITION_NONE;

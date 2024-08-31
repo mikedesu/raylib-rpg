@@ -12,10 +12,10 @@ void TitleScene_create(TitleScene& t) {
     TitleScene_set_scene_type(t, SCENE_TYPE_TITLE);
 }
 
-void TitleScene_set_control_mode(TitleScene& t, control_mode mode) {
+void TitleScene_set_control_mode(TitleScene& t, ControlMode mode) {
     t.controlmode = mode;
 }
-control_mode TitleScene_get_control_mode(TitleScene& t) {
+ControlMode TitleScene_get_control_mode(TitleScene& t) {
     return t.controlmode;
 }
 

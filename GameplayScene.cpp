@@ -381,7 +381,7 @@ void GameplayScene_decrease_lighting_at(GameplayScene& g,
 
 inline void GameplayScene_handle_control_mode_switch(GameplayScene& g) {
     //control_mode mode = get_control_mode();
-    control_mode mode = g.controlmode;
+    ControlMode mode = g.controlmode;
     if(IsKeyPressed(KEY_C)) {
         if(mode == CONTROL_MODE_PLAYER) {
             //set_control_mode(CONTROL_MODE_CAMERA);
@@ -403,7 +403,7 @@ void GameplayScene_handle_input(GameplayScene& g) {
     }
 
     GameplayScene_handle_control_mode_switch(g);
-    control_mode mode = g.controlmode;
+    ControlMode mode = g.controlmode;
     switch(mode) {
     case CONTROL_MODE_CAMERA:
         GameplayScene_handle_camera_input(g);

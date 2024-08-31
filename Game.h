@@ -1,12 +1,12 @@
 #pragma once
 
+#include "ControlMode.h"
 #include "CurrentScene.h"
 #include "EntityId.h"
 #include "GameplayScene.h"
 #include "PopupManager.h"
 #include "Sprite.h"
 #include "TitleScene.h"
-#include "control_mode.h"
 //#include "TextureInfo.h"
 
 #include <memory>
@@ -28,7 +28,7 @@ typedef struct {
     bool debug_panel_on;
     float global_scale;
     unsigned int current_frame;
-    control_mode controlmode;
+    ControlMode controlmode;
     string window_title;
     Font global_font;
     Camera2D camera2d;

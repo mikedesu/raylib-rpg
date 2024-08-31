@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ControlMode.h"
 #include "Entity.h"
 #include "PopupManager.h"
 #include "SceneTransition.h"
@@ -7,7 +8,6 @@
 #include "Scene_id.h"
 #include "Sprite.h"
 #include "TextureInfo.h"
-#include "control_mode.h"
 #include "mPrint.h"
 
 #include "raylib.h"
@@ -40,7 +40,7 @@ typedef struct {
     bool debug_panel_on = true;
     bool is_paused = false;
     bool hud_on = true;
-    control_mode controlmode = CONTROL_MODE_PLAYER;
+    ControlMode controlmode = CONTROL_MODE_PLAYER;
     unsigned int current_frame = 0;
     unsigned int global_font_size = 20;
     SceneTransition transition = SCENE_TRANSITION_NONE;
@@ -52,7 +52,7 @@ typedef struct {
 } TitleScene;
 
 void TitleScene_create(TitleScene& t);
-void TitleScene_set_control_mode(TitleScene& t, control_mode mode);
+void TitleScene_set_control_mode(TitleScene& t, ControlMode mode);
 void TitleScene_set_texture_filepath(TitleScene& t, string filepath);
 void TitleScene_set_scene_transition(TitleScene& t, SceneTransition transition);
 void TitleScene_set_scene_type(TitleScene& t, SceneType type);
@@ -71,7 +71,7 @@ void TitleScene_set_has_been_initialized(TitleScene& t, bool value);
 void TitleScene_flip_debug_panel(TitleScene& t);
 void TitleScene_set_camera_default_values(TitleScene& t);
 
-control_mode TitleScene_get_control_mode(TitleScene& t);
+ControlMode TitleScene_get_control_mode(TitleScene& t);
 string TitleScene_get_texture_filepath(TitleScene& t);
 SceneTransition TitleScene_get_scene_transition(TitleScene& t);
 SceneType TitleScene_get_scene_type(TitleScene& t);
