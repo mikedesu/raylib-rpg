@@ -171,7 +171,7 @@ void Game_load_fonts(Game& g) {
 
 void Game_handle_transition_out(Game& g) {
 
-    mPrint("Handling transition out...");
+    //mPrint("Handling transition out...");
 
     const Color c = (Color){0x66, 0x66, 0x66};
 
@@ -180,7 +180,7 @@ void Game_handle_transition_out(Game& g) {
     const int h = GetScreenHeight();
     const float transition_speed = 0.040f;
 
-    mPrint("switch...");
+    //mPrint("switch...");
 
     switch(g.current_scene) {
     case SCENE_TITLE:
@@ -194,10 +194,10 @@ void Game_handle_transition_out(Game& g) {
         break;
     }
 
-    mPrint("drawing rectangle...");
+    //mPrint("drawing rectangle...");
     DrawRectangle(0, 0, w, h, Fade(c, a));
 
-    mPrint("if alpha is less than 1.0f...");
+    //mPrint("if alpha is less than 1.0f...");
     if(a < 1.0f) {
         if(g.current_scene == SCENE_TITLE) {
             g.title_scene.alpha += transition_speed;
@@ -218,11 +218,11 @@ void Game_handle_transition_out(Game& g) {
         }
     }
 
-    mPrint("End of Handling transition out...");
+    //mPrint("End of Handling transition out...");
 }
 
 void Game_handle_transition_in(Game& g) {
-    mPrint("Handling transition in...");
+    //mPrint("Handling transition in...");
 
     const Color c = (Color){0x66, 0x66, 0x66};
     float a = 0;
@@ -265,7 +265,7 @@ void Game_handle_transition_in(Game& g) {
             g.gameplay_scene.transition = SCENE_TRANSITION_NONE;
         }
     }
-    mPrint("End of Handling transition in...");
+    //mPrint("End of Handling transition in...");
 }
 
 SceneTransition Game_get_current_scene_transition(Game& g) {

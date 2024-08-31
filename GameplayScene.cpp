@@ -487,15 +487,15 @@ bool GameplayScene_init(GameplayScene& g) {
         g.prev_tile_click_zoom_level = g.global_scale;
         g.tile_click_zoom_level = g.global_scale;
 
-        g.message_pane = make_shared<MessagePane>(g.global_font,
-                                                  g.global_font.baseSize,
-                                                  14,
-                                                  GetScreenWidth() - 500 - 10,
-                                                  500 + 30,
-                                                  500,
-                                                  500,
-                                                  g.dungeon_events,
-                                                  g.dungeon_floor);
+        //g.message_pane = make_shared<MessagePane>(g.global_font,
+        //                                          g.global_font.baseSize,
+        //                                          14,
+        //                                          GetScreenWidth() - 500 - 10,
+        //                                          500 + 30,
+        //                                          500,
+        //                                          500,
+        //                                          g.dungeon_events,
+        //                                          g.dungeon_floor);
 
         mPrint("Loading sound effects...");
         g.has_been_initialized = true;
@@ -705,9 +705,9 @@ void GameplayScene_draw(GameplayScene& g) {
         GameplayScene_draw_debug_panel(g);
     }
 
-    if(g.display_message_log) {
-        g.message_pane->draw();
-    }
+    //if(g.display_message_log) {
+    //    g.message_pane->draw();
+    //}
 
     GameplayScene_draw_controls(g);
     GameplayScene_handle_popup_manager(g);
