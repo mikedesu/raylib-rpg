@@ -293,9 +293,10 @@ Font& TitleScene_get_global_font(TitleScene& t) {
     return t.global_font;
 }
 
-void TitleScene_set_popup_manager(TitleScene& t, shared_ptr<PopupManager> pm) {
-    t.popup_manager = pm;
-}
+//void TitleScene_set_popup_manager(TitleScene& t, shared_ptr<PopupManager> pm) {
+//void TitleScene_set_popup_manager(TitleScene& t, PopupManager& pm) {
+//    t.popup_manager = pm;
+//}
 
 void TitleScene_set_id(TitleScene& t, Scene_id id) {
     t.id = id;

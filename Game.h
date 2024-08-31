@@ -17,16 +17,11 @@
 using namespace std;
 
 typedef struct {
-    //unordered_map<string, texture_info> textures;
-    //unordered_map<entity_id, shared_ptr<Sprite>> sprites;
-    //unordered_map<entity_id, bool> gravity;
-
-    //unordered_map<Scene_id, shared_ptr<Scene>> scenes;
-
     unordered_map<string, Scene_id> scene_keys;
     vector<entity_id> entity_ids;
-    //shared_ptr<Scene> current_scene;
-    shared_ptr<PopupManager> popup_manager;
+
+    PopupManager popup_manager;
+
     entity_id player_id;
     Scene_id current_scene_id;
     bool has_been_initialized;
@@ -42,7 +37,6 @@ typedef struct {
 
     TitleScene title_scene;
     GameplayScene gameplay_scene;
-    //shared_ptr<GameplayScene> gameplay_scene;
 
     CurrentScene current_scene = SCENE_TITLE;
 

@@ -46,7 +46,8 @@ typedef struct {
     SceneTransition transition = SCENE_TRANSITION_NONE;
     Scene_id id;
     SceneType scenetype;
-    shared_ptr<PopupManager> popup_manager;
+    //shared_ptr<PopupManager> popup_manager;
+    PopupManager popup_manager;
 
 } TitleScene;
 
@@ -89,7 +90,8 @@ bool TitleScene_load_textures(TitleScene& t);
 void TitleScene_incr_current_frame(TitleScene& t);
 
 Font& TitleScene_get_global_font(TitleScene& t);
-void TitleScene_set_popup_manager(TitleScene& t, shared_ptr<PopupManager> pm);
+//void TitleScene_set_popup_manager(TitleScene& t, shared_ptr<PopupManager> pm);
+//void TitleScene_set_popup_manager(TitleScene& t, PopupManager& pm);
 
 void TitleScene_set_id(TitleScene& t, Scene_id id);
 Scene_id TitleScene_get_id(TitleScene& t);

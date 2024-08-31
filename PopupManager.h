@@ -5,38 +5,19 @@
 
 using std::string;
 
-class PopupManager {
-private:
-  RenderTexture target;
-  float alpha = 1.0f;
-  int fontsize = 24;
+typedef struct {
 
-public:
-  PopupManager() { target = LoadRenderTexture(600, 400); }
+    RenderTexture target;
+    float alpha = 1.0f;
+    int fontsize = 24;
 
-  ~PopupManager() {}
+} PopupManager;
 
-  void draw(const float x, const float y) {
-    DrawTextureRec(
-        target.texture,
-        {0, 0, (float)target.texture.width, (float)-target.texture.height},
-        {x, y}, Fade(WHITE, alpha));
-    // DrawRectangleLines(x, y, target.texture.width, target.texture.height,
-    // WHITE);
-    alpha -= 0.01f;
-  }
+void PopupManager_create(PopupManager& p);
+void PopupManager_destroy(PopupManager& p);
+void PopupManager_draw(PopupManager& p, const float x, const float y);
+void PopupManager_render(PopupManager& p, string s);
 
-  void render(string s) {
-    BeginDrawing();
-    BeginTextureMode(target);
-    ClearBackground(BLANK);
-    DrawText(s.c_str(), 10, 10, fontsize, WHITE);
-    EndTextureMode();
-    EndDrawing();
-    alpha = 1.0f;
-  }
-
-  void zero_alpha() { alpha = 0; }
-  void set_fontsize(const int size) { fontsize = size; }
-  const int get_fontsize() const { return fontsize; }
-};
+//void PopupManager_zero_alpha() { alpha = 0; }
+//void PopupManager_set_fontsize(const int size) { fontsize = size; }
+//const int PopupManager_get_fontsize() const { return fontsize; }

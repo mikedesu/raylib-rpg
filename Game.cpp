@@ -41,7 +41,8 @@ bool Game_init(Game& g) {
         }
         Game_set_camera_default_values(g);
         SetTargetFPS(60); // Set our game to run at 60 frames-per-second
-        g.popup_manager = make_shared<PopupManager>();
+        //g.popup_manager = make_shared<PopupManager>();
+        PopupManager_create(g.popup_manager);
 
         Game_spawn_scenes(g);
 
@@ -59,7 +60,9 @@ void Game_spawn_scenes(Game& g) {
     TitleScene_create(g.title_scene);
     TitleScene_init(g.title_scene);
     TitleScene_set_id(g.title_scene, next_scene_id++);
-    TitleScene_set_popup_manager(g.title_scene, g.popup_manager);
+
+    //TitleScene_set_popup_manager(g.title_scene, g.popup_manager);
+    g.title_scene.popup_manager = g.popup_manager;
 
     g.scene_keys["title"] = g.title_scene.id;
 

@@ -158,25 +158,29 @@ bool GameplayScene_handle_dungeon_move_pos(GameplayScene& g,
                 g.dungeon_events.push_back(DungeonEvent(id, EVENT_ENTITY_MOVE_SUCCESS, t_pos));
 
                 // GameplayScene_get_popup_manager(g)->render("Moved");
-                g.popup_manager->render("Moved");
+                //g.popup_manager->render("Moved");
+                PopupManager_render(g.popup_manager, "Moved");
 
                 retval = true;
             } else {
                 g.dungeon_events.push_back(DungeonEvent(id, EVENT_ENTITY_MOVE_FAIL, t_pos));
-                g.popup_manager->render("Cannot move");
+                //g.popup_manager->render("Cannot move");
+                PopupManager_render(g.popup_manager, "Cannot move");
                 retval = false;
             }
         } break;
         default:
             g.dungeon_events.push_back(DungeonEvent(id, EVENT_ENTITY_MOVE_FAIL, t_pos));
-            g.popup_manager->render("Cannot move");
+            //g.popup_manager->render("Cannot move");
+            PopupManager_render(g.popup_manager, "Cannot move");
             retval = false;
             break;
         }
         // else its a wait
     } else {
         g.dungeon_events.push_back(DungeonEvent(id, EVENT_ENTITY_MOVE_WAIT, t_pos));
-        g.popup_manager->render("Wait");
+        //g.popup_manager->render("Wait");
+        PopupManager_render(g.popup_manager, "Wait");
         retval = true;
     }
     return retval;
@@ -785,14 +789,15 @@ GameplayScene_handle_tile_click(GameplayScene& g, const Rectangle dest, const in
 
 inline void GameplayScene_handle_popup_manager(GameplayScene& g) {
     if(g.show_test_popup) {
-        if(g.popup_manager != nullptr) {
-            const Vector2 dest_vector = (Vector2){g.sprites[g.player_id]->get_dest().x - 20,
-                                                  g.sprites[g.player_id]->get_dest().y - 40};
-            Vector2 s = GetWorldToScreen2D(dest_vector, g.camera2d);
-            // Get the screen space position for
-            // a 2d camera world space position
-            g.popup_manager->draw(s.x, s.y);
-        }
+        //if(g.popup_manager != nullptr) {
+        const Vector2 dest_vector = (Vector2){g.sprites[g.player_id]->get_dest().x - 20,
+                                              g.sprites[g.player_id]->get_dest().y - 40};
+        Vector2 s = GetWorldToScreen2D(dest_vector, g.camera2d);
+        // Get the screen space position for
+        // a 2d camera world space position
+        //g.popup_manager->draw(s.x, s.y);
+        PopupManager_draw(g.popup_manager, s.x, s.y);
+        //}
     }
 }
 
@@ -817,7 +822,7 @@ void GameplayScene_close(GameplayScene& g) {
     //}
     g.has_been_initialized = false;
     g.player_id = -1;
-    g.popup_manager->zero_alpha();
+    g.popup_manager.alpha = 0;
     mPrint("Scene closed.");
 }
 
@@ -960,6 +965,6 @@ void GameplayScene_set_id(GameplayScene& g, Scene_id id) {
     g.id = id;
 }
 
-void GameplayScene_set_popup_manager(GameplayScene& t, shared_ptr<PopupManager> pm) {
-    t.popup_manager = pm;
-}
+//void GameplayScene_set_popup_manager(GameplayScene& t, shared_ptr<PopupManager> pm) {
+//    t.popup_manager = pm;
+//}

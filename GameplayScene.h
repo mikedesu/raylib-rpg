@@ -27,7 +27,6 @@ typedef struct {
     Vector2 last_mouse_click_pos;
     Vector2 last_tile_click_pos;
     shared_ptr<MessagePane> message_pane;
-
     // common to titlescene and gameplayscene
     control_mode controlmode = CONTROL_MODE_PLAYER;
     string texture_filepath;
@@ -37,7 +36,7 @@ typedef struct {
     unordered_map<entity_id, shared_ptr<Sprite>> sprites;
     unordered_map<string, shared_ptr<texture_info>> textures;
     Camera2D camera2d = {0};
-    shared_ptr<PopupManager> popup_manager;
+    PopupManager popup_manager;
     bool debug_panel_on = true;
     bool has_been_initialized = false;
     Font global_font;
@@ -136,4 +135,4 @@ entity_id GameplayScene_spawn_entity(GameplayScene& g,
 
 void GameplayScene_set_id(GameplayScene& g, Scene_id id);
 
-void GameplayScene_set_popup_manager(GameplayScene& t, shared_ptr<PopupManager> pm);
+//void GameplayScene_set_popup_manager(GameplayScene& t, shared_ptr<PopupManager> pm);
