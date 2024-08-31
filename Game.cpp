@@ -12,7 +12,12 @@ using namespace std;
 
 void Game_create(Game& g) {
     g.global_scale = 1.0f;
-    g.screen_rect = (Rectangle){0, 0, 1920, -1080};
+    //const int w = 1280;
+    const int w = 1920;
+    //const int h = 720;
+    const int h = 1080;
+    g.screen_rect = (Rectangle){0, 0, w, -h};
+    //g.screen_rect = (Rectangle){0, 0, 1920, -1080};
     g.camera2d = {0};
     g.current_frame = 0;
     Game_set_camera_default_values(g);
