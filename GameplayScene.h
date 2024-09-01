@@ -33,7 +33,8 @@ typedef struct {
     float global_scale = 1.0f;
     SceneTransition transition = SCENE_TRANSITION_NONE;
     SceneType scenetype;
-    unordered_map<EntityId, shared_ptr<Sprite>> sprites;
+    //unordered_map<EntityId, shared_ptr<Sprite>> sprites;
+    unordered_map<EntityId, Sprite> sprites;
     unordered_map<string, shared_ptr<TextureInfo>> textures;
     Camera2D camera2d = {0};
     PopupManager popup_manager;

@@ -34,7 +34,8 @@ void GameplayScene_update(GameplayScene& g) {
     // 2. global scale
     for(auto& s : g.sprites) {
         Vector2 dungeon_pos = g.dungeon_floor.get_entity_position(s.first);
-        s.second->update(dungeon_pos);
+        //s.second->update(dungeon_pos);
+        Sprite_update(s.second, dungeon_pos);
     }
     if(g.player_attempted_move) {
         g.turn_count++;
@@ -83,7 +84,8 @@ inline void GameplayScene_handle_camera_input_zoom(GameplayScene& g) {
 }
 
 void GameplayScene_center_camera_on_player(GameplayScene& g) {
-    Rectangle pos = g.sprites[g.player_id]->get_dest();
+    //Rectangle pos = g.sprites[g.player_id]->get_dest();
+    Rectangle pos = Sprite_get_dest(g.sprites[g.player_id]);
 
     // the update isnt smooth
     // we need to try and smooth it out
@@ -228,23 +230,28 @@ inline void GameplayScene_handle_player_move_direction(GameplayScene& g) {
         g.player_attempted_move = true;
         // set the player sprite's context
         move_dir = GameplayScene_handle_dungeon_move_dir(g, g.player_id, (Vector2){0, -1});
-        g.sprites[g.player_id]->set_context(1);
+        //g.sprites[g.player_id]->set_context(1);
+        Sprite_set_context(g.sprites[g.player_id], 1);
     } else if(IsKeyPressed(KEY_DOWN)) {
         g.player_attempted_move = true;
         move_dir = GameplayScene_handle_dungeon_move_dir(g, g.player_id, (Vector2){0, 1});
-        g.sprites[g.player_id]->set_context(1);
+        //g.sprites[g.player_id]->set_context(1);
+        Sprite_set_context(g.sprites[g.player_id], 1);
     } else if(IsKeyPressed(KEY_LEFT)) {
         g.player_attempted_move = true;
         move_dir = GameplayScene_handle_dungeon_move_dir(g, g.player_id, (Vector2){-1, 0});
-        g.sprites[g.player_id]->set_context(1);
+        //g.sprites[g.player_id]->set_context(1);
+        Sprite_set_context(g.sprites[g.player_id], 1);
     } else if(IsKeyPressed(KEY_RIGHT)) {
         g.player_attempted_move = true;
         move_dir = GameplayScene_handle_dungeon_move_dir(g, g.player_id, (Vector2){1, 0});
-        g.sprites[g.player_id]->set_context(1);
+        //g.sprites[g.player_id]->set_context(1);
+        Sprite_set_context(g.sprites[g.player_id], 1);
     } else if(IsKeyPressed(KEY_PERIOD)) {
         g.player_attempted_move = true;
         move_dir = GameplayScene_handle_dungeon_move_dir(g, g.player_id, (Vector2){0, 0});
-        g.sprites[g.player_id]->set_context(1);
+        //g.sprites[g.player_id]->set_context(1);
+        Sprite_set_context(g.sprites[g.player_id], 1);
     }
     //  update the camera
     //GameplayScene_center_camera_on_player(g);
@@ -454,7 +461,8 @@ void GameplayScene_set_scale(GameplayScene& g, const float f) {
         //set_global_scale(f);
         g.global_scale = f;
         for(auto& s : g.sprites) {
-            s.second->set_scale(f);
+            //s.second->set_scale(f);
+            Sprite_set_scale(s.second, f);
         }
     }
 }
@@ -580,7 +588,8 @@ const EntityId GameplayScene_spawn_torch(GameplayScene& g, const Vector2 pos) {
     vector<EntityId> entities = g.dungeon_floor.get_entities(pos.x, pos.y);
     bool can_place = true;
     for(auto entity_id : entities) {
-        if(g.sprites[entity_id]->get_type() == SPRITETYPE_WALL) {
+        //if(g.sprites[entity_id]->get_type() == SPRITETYPE_WALL) {
+        if(Sprite_get_type(g.sprites[entity_id]) == SPRITETYPE_WALL) {
             can_place = false;
         }
     }
@@ -593,6 +602,7 @@ const EntityId GameplayScene_spawn_torch(GameplayScene& g, const Vector2 pos) {
         GameplayScene_spawn_entity(g, "torch", 0, 0, SPRITETYPE_ITEM, true, g.global_scale);
     // dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_TORCH, pos);
     shared_ptr<Entity> torch = make_shared<Entity>(id, ENTITY_TORCH, "torch");
+
     g.dungeon_floor.add_entity_at(torch, pos);
 
     GameplayScene_increase_lighting_at(g, pos, 3, 3);
@@ -705,7 +715,8 @@ inline void GameplayScene_draw_hud(GameplayScene& g) {
 void GameplayScene_cleanup(GameplayScene& g) {
     for(int i = 0; i < (int)g.entity_ids.size(); i++) {
         EntityId id = g.entity_ids[i];
-        if(g.sprites[id]->get_is_marked_for_deletion()) {
+        //if(g.sprites[id]->get_is_marked_for_deletion()) {
+        if(Sprite_get_is_marked_for_deletion(g.sprites[id])) {
             g.sprites.erase(id);
             // also need to erase from entity_ids
             g.entity_ids.erase(g.entity_ids.begin() + i);
@@ -801,7 +812,8 @@ GameplayScene_draw_tile(GameplayScene& g, const string tile_key, const int i, co
     // draw the entities on the tile
     const vector<EntityId>& entities = g.dungeon_floor.get_entities(i, j);
     for(auto& e : entities) {
-        g.sprites[e]->draw();
+        //g.sprites[e]->draw();
+        Sprite_draw(g.sprites[e]);
     }
 
     // shading for lighting
@@ -827,8 +839,12 @@ GameplayScene_handle_tile_click(GameplayScene& g, const Rectangle dest, const in
 inline void GameplayScene_handle_popup_manager(GameplayScene& g) {
     if(g.show_test_popup) {
         //if(g.popup_manager != nullptr) {
-        const Vector2 dest_vector = (Vector2){g.sprites[g.player_id]->get_dest().x - 20,
-                                              g.sprites[g.player_id]->get_dest().y - 40};
+        //const Vector2 dest_vector = (Vector2){g.sprites[g.player_id]->get_dest().x - 20,
+        //                                      g.sprites[g.player_id]->get_dest().y - 40};
+
+        const Vector2 dest_vector = (Vector2){Sprite_get_dest(g.sprites[g.player_id]).x - 20,
+                                              Sprite_get_dest(g.sprites[g.player_id]).y - 40};
+
         Vector2 s = GetWorldToScreen2D(dest_vector, g.camera2d);
         // Get the screen space position for
         // a 2d camera world space position
@@ -970,20 +986,34 @@ EntityId GameplayScene_spawn_entity(GameplayScene& g,
         return -1;
     }
 
-    shared_ptr<Sprite> s = make_shared<Sprite>(g.textures[key]->texture,
-                                               g.textures[key]->num_frames,
-                                               g.textures[key]->contexts,
-                                               x,
-                                               y,
-                                               g.textures[key]->width,
-                                               g.textures[key]->height,
-                                               type);
-    if(s == nullptr) {
-        mPrint("Error creating sprite.");
-        return -1;
-    }
-    s->set_scale(scale);
-    s->set_is_animating(is_anim);
+    //shared_ptr<Sprite> s = make_shared<Sprite>(g.textures[key]->texture,
+    //                                           g.textures[key]->num_frames,
+    //                                           g.textures[key]->contexts,
+    //                                           x,
+    //                                           y,
+    //                                           g.textures[key]->width,
+    //                                           g.textures[key]->height,
+    //                                           type);
+
+    Sprite s;
+    Sprite_create(s,
+                  g.textures[key]->texture,
+                  g.textures[key]->num_frames,
+                  g.textures[key]->contexts,
+                  x,
+                  y,
+                  g.textures[key]->width,
+                  g.textures[key]->height,
+                  type);
+
+    //if(s == nullptr) {
+    //    mPrint("Error creating sprite.");
+    //    return -1;
+    //}
+    //s->set_scale(scale);
+    Sprite_set_scale(s, scale);
+    //s->set_is_animating(is_anim);
+    Sprite_set_is_animating(s, is_anim);
     g.sprites[next_entity_id] = s;
     g.entity_ids.push_back(next_entity_id);
     return next_entity_id++;

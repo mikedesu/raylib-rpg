@@ -1,40 +1,41 @@
 #include "Sprite.h"
 
-Sprite::Sprite(Texture2D& t,
-               const unsigned int frames,
-               const unsigned int c,
-               const float x,
-               const float y,
-               const int w,
-               const int h,
-               SpriteType spritetype) {
+void Sprite_create(Sprite& sprite,
+                   Texture2D& t,
+                   const unsigned int frames,
+                   const unsigned int c,
+                   const float x,
+                   const float y,
+                   const int w,
+                   const int h,
+                   SpriteType spritetype) {
 
-    texture = t;
-    anim_frames = frames;
-    contexts = c;
-    width = w;
-    height = h;
-    set_scale(1.0f);
-    init_rects(w, h);
-    origin = (Vector2){0, 0};
-    dest.x = x;
-    dest.y = y;
-    current_frame = 0;
-    velocity = (Vector2){0, 0};
-    is_marked_for_deletion = false;
-    is_animating = false;
-    is_flipped = false;
-    type = spritetype;
-    is_spinning = false;
-    velocity.x = 0;
-    velocity.y = 0;
-    acceleration.x = 0;
-    acceleration.y = 0;
+    sprite.texture = t;
+    sprite.anim_frames = frames;
+    sprite.contexts = c;
+    sprite.width = w;
+    sprite.height = h;
+    Sprite_set_scale(sprite, 1.0f);
+    Sprite_init_rects(sprite, w, h);
+    sprite.origin = (Vector2){0, 0};
+    sprite.dest.x = x;
+    sprite.dest.y = y;
+    sprite.current_frame = 0;
+    sprite.velocity = (Vector2){0, 0};
+    sprite.is_marked_for_deletion = false;
+    sprite.is_animating = false;
+    sprite.is_flipped = false;
+    sprite.type = spritetype;
+    sprite.is_spinning = false;
+    sprite.velocity.x = 0;
+    sprite.velocity.y = 0;
+    sprite.acceleration.x = 0;
+    sprite.acceleration.y = 0;
 }
 
-Sprite::~Sprite() { }
+void Sprite_destroy(Sprite& sprite) { }
 
-void Sprite::draw() {
+void Sprite_draw(Sprite& sprite) {
     const Color color = WHITE;
     const float angle = 0.0f;
     //  rlPushMatrix();
@@ -42,232 +43,239 @@ void Sprite::draw() {
     //  rlRotatef(rotation_angle, 0, 0, 1);
     //   rlTranslatef(0, 0, 0);
     //  rlTranslatef(-dest.x - dest.width / 2, -dest.y - dest.height / 2, 0);
-    if(is_flipped) {
-        DrawTexturePro(texture, flipped_src, dest, origin, angle, color);
+    if(sprite.is_flipped) {
+        DrawTexturePro(
+            sprite.texture, sprite.flipped_src, sprite.dest, sprite.origin, angle, color);
     } else {
-        DrawTexturePro(texture, src, dest, origin, angle, color);
+        DrawTexturePro(sprite.texture, sprite.src, sprite.dest, sprite.origin, angle, color);
     }
     // rlPopMatrix();
     const int frame_freq = 10;
-    if(is_animating && frame_counter % frame_freq == 0) {
-        incr_frame();
+    if(sprite.is_animating && sprite.frame_counter % frame_freq == 0) {
+        //incr_frame();
+        Sprite_incr_frame(sprite);
     }
-    frame_counter++;
+    sprite.frame_counter++;
 }
 
-void Sprite::draw_hitbox() {
-    DrawRectangleLines(hitbox.x, hitbox.y, hitbox.width, hitbox.height, RED);
+void Sprite_draw_hitbox(Sprite& sprite) {
+    DrawRectangleLines(
+        sprite.hitbox.x, sprite.hitbox.y, sprite.hitbox.width, sprite.hitbox.height, RED);
 }
-void Sprite::move(const float x, const float y) {
-    dest.x += x * scale;
-    dest.y += y * scale;
+void Sprite_move(Sprite& sprite, const float x, const float y) {
+    sprite.dest.x += x * sprite.scale;
+    sprite.dest.y += y * sprite.scale;
 }
-void Sprite::move_rect(Rectangle& r) {
-    dest.x = r.x;
-    dest.y = r.y;
+void Sprite_move_rect(Sprite& sprite, Rectangle& r) {
+    sprite.dest.x = r.x;
+    sprite.dest.y = r.y;
 }
-void Sprite::mark_for_deletion() {
-    is_marked_for_deletion = true;
+void Sprite_mark_for_deletion(Sprite& sprite) {
+    sprite.is_marked_for_deletion = true;
 }
-void Sprite::incr_frame() {
-    current_frame++;
-    if(current_frame >= anim_frames) {
-        current_frame = 0;
+void Sprite_incr_frame(Sprite& sprite) {
+    sprite.current_frame++;
+    if(sprite.current_frame >= sprite.anim_frames) {
+        sprite.current_frame = 0;
     }
-    src.x = (float)current_frame * src.width;
-    flipped_src.x = src.x;
+    sprite.src.x = (float)sprite.current_frame * sprite.src.width;
+    sprite.flipped_src.x = sprite.src.x;
 }
-void Sprite::incr_ax(const float ax) {
-    acceleration.x += ax;
+void Sprite_incr_ax(Sprite& sprite, const float ax) {
+    sprite.acceleration.x += ax;
 }
-void Sprite::incr_ay(const float ay) {
-    acceleration.y += ay;
+void Sprite_incr_ay(Sprite& sprite, const float ay) {
+    sprite.acceleration.y += ay;
 }
-void Sprite::incr_vx(const float vx) {
-    velocity.x += vx;
+void Sprite_incr_vx(Sprite& sprite, const float vx) {
+    sprite.velocity.x += vx;
 }
-void Sprite::incr_vy(const float vy) {
-    velocity.y += vy;
+void Sprite_incr_vy(Sprite& sprite, const float vy) {
+    sprite.velocity.y += vy;
 }
-void Sprite::set_scale(const float s) {
-    scale = s;
-    dest.width = (float)width * scale;
-    dest.height = (float)height * scale;
-    // init_rects(width, height);
+void Sprite_set_scale(Sprite& sprite, const float s) {
+    sprite.scale = s;
+    sprite.dest.width = (float)sprite.width * sprite.scale;
+    sprite.dest.height = (float)sprite.height * sprite.scale;
+    Sprite_init_rects(sprite, sprite.dest.width, sprite.dest.height);
 }
-void Sprite::set_current_frame(const unsigned int frame) {
-    if(frame >= anim_frames) {
+void Sprite_set_current_frame(Sprite& sprite, const unsigned int frame) {
+    if(frame >= sprite.anim_frames) {
         return;
     }
-    current_frame = frame;
+    sprite.current_frame = frame;
     // update the src rectangle
-    src.x = (float)frame * src.width;
-    src.y = 0;
-    flipped_src.x = src.x;
+    sprite.src.x = (float)frame * sprite.src.width;
+    sprite.src.y = 0;
+    sprite.flipped_src.x = sprite.src.x;
 }
-void Sprite::set_x(const float x) {
-    dest.x = x;
+void Sprite_set_x(Sprite& sprite, const float x) {
+    sprite.dest.x = x;
 }
-void Sprite::set_y(const float y) {
-    dest.y = y;
+void Sprite_set_y(Sprite& sprite, const float y) {
+    sprite.dest.y = y;
 }
-void Sprite::set_vx(const float vx) {
-    velocity.x = vx;
+void Sprite_set_vx(Sprite& sprite, const float vx) {
+    sprite.velocity.x = vx;
 }
-void Sprite::set_vy(const float vy) {
-    velocity.y = vy;
+void Sprite_set_vy(Sprite& sprite, const float vy) {
+    sprite.velocity.y = vy;
 }
-void Sprite::set_velocity(const Vector2 v) {
-    velocity = v;
+void Sprite_set_velocity(Sprite& sprite, const Vector2 v) {
+    sprite.velocity = v;
 }
-void Sprite::set_acceleration(const Vector2 a) {
-    acceleration = a;
+void Sprite_set_acceleration(Sprite& sprite, const Vector2 a) {
+    sprite.acceleration = a;
 }
-void Sprite::set_is_animating(const bool is_animating) {
-    this->is_animating = is_animating;
+void Sprite_set_is_animating(Sprite& sprite, const bool is_animating) {
+    sprite.is_animating = is_animating;
 }
-void Sprite::set_is_flipped(const bool is_flipped) {
-    this->is_flipped = is_flipped;
+void Sprite_set_is_flipped(Sprite& sprite, const bool is_flipped) {
+    sprite.is_flipped = is_flipped;
 }
-void Sprite::set_type(const SpriteType t) {
-    type = t;
+void Sprite_set_type(Sprite& sprite, const SpriteType t) {
+    sprite.type = t;
 }
-void Sprite::set_ax(const float ax) {
-    acceleration.x = ax;
+void Sprite_set_ax(Sprite& sprite, const float ax) {
+    sprite.acceleration.x = ax;
 }
-void Sprite::set_ay(const float ay) {
-    acceleration.y = ay;
+void Sprite_set_ay(Sprite& sprite, const float ay) {
+    sprite.acceleration.y = ay;
 }
-void Sprite::set_context(const int n) {
-    if(n >= contexts) {
+void Sprite_set_context(Sprite& sprite, const int n) {
+    if(n >= sprite.contexts) {
         mPrint("Error: context out of bounds.");
-        context = 0;
+        sprite.context = 0;
     } else {
-        context = n;
+        sprite.context = n;
     }
     // whenever the context is updated, we have to re-initialize our rects
-    init_rects(width, height);
+    Sprite_init_rects(sprite, sprite.width, sprite.height);
 }
-void Sprite::flip() {
-    is_flipped = !is_flipped;
+void Sprite_flip(Sprite& sprite) {
+    sprite.is_flipped = !sprite.is_flipped;
 }
 
-void Sprite::update(const Vector2 dungeon_position) {
+void Sprite_update(Sprite& sprite, const Vector2 dungeon_position) {
     const int tilesize = 20;
-    set_x(dungeon_position.x * tilesize * scale);
-    set_y(dungeon_position.y * tilesize * scale);
-    if(is_spinning) {
-        rotation_angle += rotation_speed;
+    Sprite_set_x(sprite, dungeon_position.x * tilesize * sprite.scale);
+    Sprite_set_y(sprite, dungeon_position.y * tilesize * sprite.scale);
+    if(sprite.is_spinning) {
+        sprite.rotation_angle += sprite.rotation_speed;
     }
 }
 
-void Sprite::set_rotation_angle(const float angle) {
-    rotation_angle = angle;
+void Sprite_set_rotation_angle(Sprite& sprite, const float angle) {
+    sprite.rotation_angle = angle;
 }
 
-void Sprite::set_is_spinning(const bool is_spinning) {
-    this->is_spinning = is_spinning;
+void Sprite_set_is_spinning(Sprite& sprite, const bool is_spinning) {
+    sprite.is_spinning = is_spinning;
 }
-void Sprite::set_rotation_speed(const float speed) {
-    rotation_speed = speed;
+void Sprite_set_rotation_speed(Sprite& sprite, const float speed) {
+    sprite.rotation_speed = speed;
 }
-void Sprite::set_movement_type(const MovementType m) {
-    movement = m;
+void Sprite_set_movement_type(Sprite& sprite, const MovementType m) {
+    sprite.movement = m;
 }
-void Sprite::set_alpha(const unsigned int alpha) {
-    this->alpha = alpha;
-}
-
-const Rectangle Sprite::get_dest() const {
-    return dest;
-}
-const Rectangle Sprite::get_hitbox() const {
-    return hitbox;
-}
-const unsigned int Sprite::get_alpha() const {
-    return alpha;
-}
-const int Sprite::get_width() const {
-    return width;
-}
-const int Sprite::get_height() const {
-    return height;
-}
-const int Sprite::get_anim_frames() const {
-    return anim_frames;
-}
-const int Sprite::get_current_frame() const {
-    return current_frame;
-}
-const int Sprite::get_context() const {
-    return context;
-}
-const int Sprite::get_contexts() const {
-    return contexts;
-}
-const float Sprite::get_vx() const {
-    return velocity.x;
-}
-const float Sprite::get_vy() const {
-    return velocity.y;
-}
-const float Sprite::get_ax() const {
-    return acceleration.x;
-}
-const float Sprite::get_ay() const {
-    return acceleration.y;
-}
-const float Sprite::get_x() const {
-    return dest.x;
-}
-const float Sprite::get_y() const {
-    return dest.y;
-}
-const float Sprite::get_scale() const {
-    return scale;
-}
-const float Sprite::get_rotation_angle() const {
-    return rotation_angle;
-}
-const float Sprite::get_rotation_speed() const {
-    return rotation_speed;
-}
-const Vector2 Sprite::get_velocity() const {
-    return velocity;
-}
-const Vector2 Sprite::get_acceleration() const {
-    return acceleration;
-}
-const bool Sprite::get_is_marked_for_deletion() const {
-    return is_marked_for_deletion;
-}
-const bool Sprite::get_is_animating() const {
-    return is_animating;
-}
-const bool Sprite::get_is_flipped() const {
-    return is_flipped;
-}
-const SpriteType Sprite::get_type() const {
-    return type;
-}
-const bool Sprite::get_is_spinning() const {
-    return is_spinning;
+void Sprite_set_alpha(Sprite& sprite, const unsigned int alpha) {
+    sprite.alpha = alpha;
 }
 
-void Sprite::init_rects() {
-    src = (Rectangle){0, 0, (float)texture.width / anim_frames, (float)texture.height};
-    flipped_src = (Rectangle){src.x, src.y, src.width * -1.0f, src.height};
-    dest = (Rectangle){dest.x,
-                       dest.y,
-                       ((float)texture.width / anim_frames) * scale,
-                       (float)texture.height * scale};
-    hitbox = (Rectangle){dest.x, dest.y, dest.width, dest.height};
+const Rectangle Sprite_get_dest(Sprite& sprite) {
+    return sprite.dest;
+}
+const Rectangle Sprite_get_hitbox(Sprite& sprite) {
+    return sprite.hitbox;
+}
+const unsigned int Sprite_get_alpha(Sprite& sprite) {
+    return sprite.alpha;
+}
+const int Sprite_get_width(Sprite& sprite) {
+    return sprite.width;
+}
+const int Sprite_get_height(Sprite& sprite) {
+    return sprite.height;
+}
+const int Sprite_get_anim_frames(Sprite& sprite) {
+    return sprite.anim_frames;
+}
+const int Sprite_get_current_frame(Sprite& sprite) {
+    return sprite.current_frame;
+}
+const int Sprite_get_context(Sprite& sprite) {
+    return sprite.context;
+}
+const int Sprite_get_contexts(Sprite& sprite) {
+    return sprite.contexts;
+}
+const float Sprite_get_vx(Sprite& sprite) {
+    return sprite.velocity.x;
+}
+const float Sprite_get_vy(Sprite& sprite) {
+    return sprite.velocity.y;
+}
+const float Sprite_get_ax(Sprite& sprite) {
+    return sprite.acceleration.x;
+}
+const float Sprite_get_ay(Sprite& sprite) {
+    return sprite.acceleration.y;
+}
+const float Sprite_get_x(Sprite& sprite) {
+    return sprite.dest.x;
+}
+const float Sprite_get_y(Sprite& sprite) {
+    return sprite.dest.y;
+}
+const float Sprite_get_scale(Sprite& sprite) {
+    return sprite.scale;
+}
+const float Sprite_get_rotation_angle(Sprite& sprite) {
+    return sprite.rotation_angle;
+}
+const float Sprite_get_rotation_speed(Sprite& sprite) {
+    return sprite.rotation_speed;
+}
+const Vector2 Sprite_get_velocity(Sprite& sprite) {
+    return sprite.velocity;
+}
+const Vector2 Sprite_get_acceleration(Sprite& sprite) {
+    return sprite.acceleration;
+}
+const bool Sprite_get_is_marked_for_deletion(Sprite& sprite) {
+    return sprite.is_marked_for_deletion;
+}
+const bool Sprite_get_is_animating(Sprite& sprite) {
+    return sprite.is_animating;
+}
+const bool Sprite_get_is_flipped(Sprite& sprite) {
+    return sprite.is_flipped;
+}
+const SpriteType Sprite_get_type(Sprite& sprite) {
+    return sprite.type;
+}
+const bool Sprite_get_is_spinning(Sprite& sprite) {
+    return sprite.is_spinning;
 }
 
-void Sprite::init_rects(const float w, const float h) {
+void Sprite_init_rects(Sprite& sprite, const int w, const int h) {
+    sprite.src = (Rectangle){
+        0, 0, (float)sprite.texture.width / sprite.anim_frames, (float)sprite.texture.height};
+    sprite.flipped_src =
+        (Rectangle){sprite.src.x, sprite.src.y, sprite.src.width * -1.0f, sprite.src.height};
+    sprite.dest = (Rectangle){sprite.dest.x,
+                              sprite.dest.y,
+                              ((float)sprite.texture.width / sprite.anim_frames) * sprite.scale,
+                              (float)sprite.texture.height * sprite.scale};
+    sprite.hitbox =
+        (Rectangle){sprite.dest.x, sprite.dest.y, sprite.dest.width, sprite.dest.height};
+}
 
-    src = (Rectangle){0, h * context, w, h};
-    flipped_src = (Rectangle){src.x, src.y, w * -1.0f, h};
-    dest = (Rectangle){dest.x, dest.y, w * scale, h * scale};
-    hitbox = (Rectangle){dest.x, dest.y, dest.width, dest.height};
+void Sprite_init_rects(Sprite& sprite, const float w, const float h) {
+
+    sprite.src = (Rectangle){0, h * sprite.context, w, h};
+    sprite.flipped_src = (Rectangle){sprite.src.x, sprite.src.y, w * -1.0f, h};
+    sprite.dest = (Rectangle){sprite.dest.x, sprite.dest.y, w * sprite.scale, h * sprite.scale};
+    sprite.hitbox =
+        (Rectangle){sprite.dest.x, sprite.dest.y, sprite.dest.width, sprite.dest.height};
 }

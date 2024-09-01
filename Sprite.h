@@ -5,8 +5,8 @@
 #include "mPrint.h"
 #include "raylib.h"
 
-class Sprite {
-private:
+typedef struct {
+
     Texture2D texture;
     Rectangle src;
     Rectangle flipped_src;
@@ -33,72 +33,73 @@ private:
     SpriteType type = SPRITETYPE_NONE;
     MovementType movement = MOVEMENT_TYPE_NONE;
 
-public:
-    Sprite(Texture2D& t,
-           const unsigned int frames,
-           const unsigned int c,
-           const float x,
-           const float y,
-           const int w,
-           const int h,
-           SpriteType spritetype);
-    ~Sprite();
-    void draw();
-    void draw_hitbox();
-    void move(const float x, const float y);
-    void move_rect(Rectangle& r);
-    void mark_for_deletion();
-    void incr_frame();
-    void incr_ax(const float ax);
-    void incr_ay(const float ay);
-    void incr_vx(const float vx);
-    void incr_vy(const float vy);
-    void set_scale(const float s);
-    void set_current_frame(const unsigned int frame);
-    void set_x(const float x);
-    void set_y(const float y);
-    void set_vx(const float vx);
-    void set_vy(const float vy);
-    void set_velocity(const Vector2 v);
-    void set_acceleration(const Vector2 a);
-    void set_is_animating(const bool is_animating);
-    void set_is_flipped(const bool is_flipped);
-    void set_type(const SpriteType t);
-    void set_ax(const float ax);
-    void set_ay(const float ay);
-    void set_context(const int n);
-    void flip();
-    void update(const Vector2 dungeon_position);
-    void set_rotation_angle(const float angle);
-    void set_is_spinning(const bool is_spinning);
-    void set_rotation_speed(const float speed);
-    void set_movement_type(const MovementType m);
-    void set_alpha(const unsigned int alpha);
-    const Rectangle get_dest() const;
-    const Rectangle get_hitbox() const;
-    const unsigned int get_alpha() const;
-    const int get_width() const;
-    const int get_height() const;
-    const int get_anim_frames() const;
-    const int get_current_frame() const;
-    const int get_context() const;
-    const int get_contexts() const;
-    const float get_vx() const;
-    const float get_vy() const;
-    const float get_ax() const;
-    const float get_ay() const;
-    const float get_x() const;
-    const float get_y() const;
-    const float get_scale() const;
-    const float get_rotation_angle() const;
-    const float get_rotation_speed() const;
-    const Vector2 get_velocity() const;
-    const Vector2 get_acceleration() const;
-    const bool get_is_marked_for_deletion() const;
-    const bool get_is_animating() const;
-    const bool get_is_flipped() const;
-    const SpriteType get_type() const;
-    const bool get_is_spinning() const;
-    void init_rects();
-    void init_rects(const float w, const float h);
-};
+} Sprite;
+
+void Sprite_create(Sprite& sprite,
+                   Texture2D& t,
+                   const unsigned int frames,
+                   const unsigned int c,
+                   const float x,
+                   const float y,
+                   const int w,
+                   const int h,
+                   SpriteType spritetype);
+void Sprite_destroy(Sprite& sprite);
+void Sprite_draw(Sprite& sprite);
+void Sprite_draw_hitbox(Sprite& sprite);
+void Sprite_move(Sprite& sprite, const float x, const float y);
+void Sprite_move_rect(Sprite& sprite, Rectangle& r);
+void Sprite_mark_for_deletion(Sprite& sprite);
+void Sprite_incr_frame(Sprite& sprite);
+void Sprite_incr_ax(Sprite& sprite, const float ax);
+void Sprite_incr_ay(Sprite& sprite, const float ay);
+void Sprite_incr_vx(Sprite& sprite, const float vx);
+void Sprite_incr_vy(Sprite& sprite, const float vy);
+void Sprite_set_scale(Sprite& sprite, const float s);
+void Sprite_set_current_frame(Sprite& sprite, const unsigned int frame);
+void Sprite_set_x(Sprite& sprite, const float x);
+void Sprite_set_y(Sprite& sprite, const float y);
+void Sprite_set_vx(Sprite& sprite, const float vx);
+void Sprite_set_vy(Sprite& sprite, const float vy);
+void Sprite_set_velocity(Sprite& sprite, const Vector2 v);
+void Sprite_set_acceleration(Sprite& sprite, const Vector2 a);
+void Sprite_set_is_animating(Sprite& sprite, const bool is_animating);
+void Sprite_set_is_flipped(Sprite& sprite, const bool is_flipped);
+void Sprite_set_type(Sprite& sprite, const SpriteType t);
+void Sprite_set_ax(Sprite& sprite, const float ax);
+void Sprite_set_ay(Sprite& sprite, const float ay);
+void Sprite_set_context(Sprite& sprite, const int n);
+void Sprite_flip(Sprite& sprite);
+void Sprite_update(Sprite& sprite, const Vector2 dungeon_position);
+void Sprite_set_rotation_angle(Sprite& sprite, const float angle);
+void Sprite_set_is_spinning(Sprite& sprite, const bool is_spinning);
+void Sprite_set_rotation_speed(Sprite& sprite, const float speed);
+void Sprite_set_movement_type(Sprite& sprite, const MovementType m);
+void Sprite_set_alpha(Sprite& sprite, const unsigned int alpha);
+const Rectangle Sprite_get_dest(Sprite& sprite);
+const Rectangle Sprite_get_hitbox(Sprite& sprite);
+const unsigned int Sprite_get_alpha(Sprite& sprite);
+const int Sprite_get_width(Sprite& sprite);
+const int Sprite_get_height(Sprite& sprite);
+const int Sprite_get_anim_frames(Sprite& sprite);
+const int Sprite_get_current_frame(Sprite& sprite);
+const int Sprite_get_context(Sprite& sprite);
+const int Sprite_get_contexts(Sprite& sprite);
+const float Sprite_get_vx(Sprite& sprite);
+const float Sprite_get_vy(Sprite& sprite);
+const float Sprite_get_ax(Sprite& sprite);
+const float Sprite_get_ay(Sprite& sprite);
+const float Sprite_get_x(Sprite& sprite);
+const float Sprite_get_y(Sprite& sprite);
+const float Sprite_get_scale(Sprite& sprite);
+const float Sprite_get_rotation_angle(Sprite& sprite);
+const float Sprite_get_rotation_speed(Sprite& sprite);
+const Vector2 Sprite_get_velocity(Sprite& sprite);
+const Vector2 Sprite_get_acceleration(Sprite& sprite);
+const bool Sprite_get_is_marked_for_deletion(Sprite& sprite);
+const bool Sprite_get_is_animating(Sprite& sprite);
+const bool Sprite_get_is_flipped(Sprite& sprite);
+const SpriteType Sprite_get_type(Sprite& sprite);
+const bool Sprite_get_is_spinning(Sprite& sprite);
+void Sprite_init_rects(Sprite& sprite, const int w, const int h);
+void Sprite_init_rects(Sprite& sprite, const float w, const float h);
