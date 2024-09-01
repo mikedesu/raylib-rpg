@@ -9,13 +9,13 @@ DungeonFloor::DungeonFloor() {
     set_tile_type(0, 0, TILE_FLOOR_UPSTAIRS);
     set_tile_type(7, 7, TILE_FLOOR_DOWNSTAIRS);
 }
+
 DungeonFloor::~DungeonFloor() { }
 
 void DungeonFloor::set_tile_type(const int col, const int row, const TileType value) {
     if(row < 0 || row >= gridsize || col < 0 || col >= gridsize) {
         return;
     }
-    //grid[col][row].set_type(value);
     Tile_set_type(grid[col][row], value);
 }
 
@@ -30,13 +30,14 @@ void DungeonFloor::set_tile_type_all(const TileType value) {
 const int DungeonFloor::get_gridsize() const {
     return gridsize;
 }
+
 const TileType DungeonFloor::get_tile_type(const int col, const int row) const {
     if(row < 0 || row >= gridsize || col < 0 || col >= gridsize) {
         return TILE_NONE;
     }
-    //  return grid[col][row].get_type();
     return grid[col][row].type;
 }
+
 const Vector2 DungeonFloor::get_entity_position(const EntityId id) {
     if(entity_positions.find(id) == entity_positions.end()) {
         return Vector2{-1, -1};
@@ -47,12 +48,12 @@ const Vector2 DungeonFloor::get_entity_position(const EntityId id) {
 Tile& DungeonFloor::get_tile_by_col_row(const int col, const int row) {
     return grid[col][row];
 }
+
 Tile& DungeonFloor::get_tile_by_vec(const Vector2 position) {
     return grid[(int)position.x][(int)position.y];
 }
 
 const vector<EntityId>& DungeonFloor::get_entities(const int col, const int row) const {
-    //return grid[col][row].get_entities();
     return grid[col][row].entities;
 }
 
@@ -61,7 +62,6 @@ void DungeonFloor::remove_entity(const EntityId id) {
 }
 
 void DungeonFloor::remove_entity_from_tile(const EntityId id, const Vector2 position) {
-    //grid[(int)position.x][(int)position.y].remove_entity(id);
     Tile_remove_entity(grid[(int)position.x][(int)position.y], id);
     entity_positions.erase(id);
     entities.erase(id);
@@ -109,9 +109,7 @@ const bool DungeonFloor::move_entity_to_tile(EntityId id, const Vector2 t_pos) {
     Vector2 position = get_entity_position(id);
     Tile& tile_src = grid[(int)position.x][(int)position.y];
     Tile& tile_dst = grid[(int)t_pos.x][(int)t_pos.y];
-    //tile_src.remove_entity(id);
     Tile_remove_entity(tile_src, id);
-    //tile_dst.add_entity(id);
     Tile_add_entity(tile_dst, id);
     // update the entity's position
     entity_positions[id] = t_pos;
