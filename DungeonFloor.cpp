@@ -15,7 +15,8 @@ void DungeonFloor::set_tile_type(const int col, const int row, const TileType va
     if(row < 0 || row >= gridsize || col < 0 || col >= gridsize) {
         return;
     }
-    grid[col][row].set_type(value);
+    //grid[col][row].set_type(value);
+    Tile_set_type(grid[col][row], value);
 }
 
 void DungeonFloor::set_tile_type_all(const TileType value) {
@@ -33,7 +34,8 @@ const TileType DungeonFloor::get_tile_type(const int col, const int row) const {
     if(row < 0 || row >= gridsize || col < 0 || col >= gridsize) {
         return TILE_NONE;
     }
-    return grid[col][row].get_type();
+    //  return grid[col][row].get_type();
+    return grid[col][row].type;
 }
 const Vector2 DungeonFloor::get_entity_position(const EntityId id) {
     if(entity_positions.find(id) == entity_positions.end()) {
@@ -50,7 +52,8 @@ Tile& DungeonFloor::get_tile_by_vec(const Vector2 position) {
 }
 
 const vector<EntityId>& DungeonFloor::get_entities(const int col, const int row) const {
-    return grid[col][row].get_entities();
+    //return grid[col][row].get_entities();
+    return grid[col][row].entities;
 }
 
 void DungeonFloor::remove_entity(const EntityId id) {
@@ -58,7 +61,8 @@ void DungeonFloor::remove_entity(const EntityId id) {
 }
 
 void DungeonFloor::remove_entity_from_tile(const EntityId id, const Vector2 position) {
-    grid[(int)position.x][(int)position.y].remove_entity(id);
+    //grid[(int)position.x][(int)position.y].remove_entity(id);
+    Tile_remove_entity(grid[(int)position.x][(int)position.y], id);
     entity_positions.erase(id);
     entities.erase(id);
 }
@@ -88,7 +92,8 @@ void DungeonFloor::add_entity_at(shared_ptr<Entity> entity, const Vector2 positi
     if(entity_positions.find(id) == entity_positions.end()) {
         entity_positions[id] = position;
         entities[id] = entity;
-        grid[x][y].add_entity(id);
+        //grid[x][y].add_entity(id);
+        Tile_add_entity(grid[x][y], id);
     } else {
         move_entity_to_tile(id, position);
     }
@@ -104,8 +109,10 @@ const bool DungeonFloor::move_entity_to_tile(EntityId id, const Vector2 t_pos) {
     Vector2 position = get_entity_position(id);
     Tile& tile_src = grid[(int)position.x][(int)position.y];
     Tile& tile_dst = grid[(int)t_pos.x][(int)t_pos.y];
-    tile_src.remove_entity(id);
-    tile_dst.add_entity(id);
+    //tile_src.remove_entity(id);
+    Tile_remove_entity(tile_src, id);
+    //tile_dst.add_entity(id);
+    Tile_add_entity(tile_dst, id);
     // update the entity's position
     entity_positions[id] = t_pos;
     return true;

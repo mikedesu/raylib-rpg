@@ -1,28 +1,28 @@
 #include "Tile.h"
 
-Tile::Tile() {
-    type = TILE_VOID;
-    set_light_level(TILE_DEFAULT_LIGHT_LEVEL);
+void Tile_create(Tile& t) {
+    t.type = TILE_VOID;
+    Tile_set_light_level(t, TILE_DEFAULT_LIGHT_LEVEL);
 }
 
-Tile::Tile(const TileType t) {
-    type = t;
-    set_light_level(TILE_DEFAULT_LIGHT_LEVEL);
+void Tile_create(Tile& t, const TileType type) {
+    t.type = type;
+    Tile_set_light_level(t, TILE_DEFAULT_LIGHT_LEVEL);
 }
 
-Tile::~Tile() { }
+void Tile_destroy(Tile& t) { }
 
-const TileType Tile::get_type() const {
-    return type;
+const TileType Tile_get_type(Tile& t) {
+    return t.type;
 }
 
-const vector<EntityId>& Tile::get_entities() const {
-    return entities;
+const vector<EntityId>& Tile_get_entities(Tile& t) {
+    return t.entities;
 }
 
-const string Tile::get_type_str() const {
+const string Tile_get_type_str(Tile& t) {
     string s = "TILE_NONE";
-    switch(type) {
+    switch(t.type) {
     case TILE_NONE:
         s = "TILE_NONE";
         break;
@@ -54,60 +54,60 @@ const string Tile::get_type_str() const {
     return s;
 }
 
-const int Tile::get_light_level() const {
-    return light_level;
+const int Tile_get_light_level(Tile& t) {
+    return t.light_level;
 }
 
-const int Tile::get_max_light_level() const {
-    return max_light_level;
+const int Tile_get_max_light_level(Tile& t) {
+    return t.max_light_level;
 }
 
-void Tile::set_type(const TileType t) {
-    type = t;
+void Tile_set_type(Tile& t, const TileType type) {
+    t.type = type;
 }
 
-void Tile::add_entity(const EntityId id) {
-    entities.push_back(id);
+void Tile_add_entity(Tile& t, const EntityId id) {
+    t.entities.push_back(id);
 }
 
-void Tile::increase_light_level() {
-    increase_light_level_by(1);
+void Tile_increase_light_level(Tile& t) {
+    Tile_increase_light_level_by(t, 1);
 }
 
-void Tile::decrease_light_level() {
-    decrease_light_level_by(1);
+void Tile_decrease_light_level(Tile& t) {
+    Tile_decrease_light_level_by(t, 1);
 }
 
-void Tile::remove_entity(const EntityId id) {
-    for(auto it = entities.begin(); it != entities.end(); it++) {
+void Tile_remove_entity(Tile& t, const EntityId id) {
+    for(auto it = t.entities.begin(); it != t.entities.end(); it++) {
         if(*it == id) {
-            entities.erase(it);
+            t.entities.erase(it);
             break;
         }
     }
 }
 
-void Tile::set_light_level(const int level) {
+void Tile_set_light_level(Tile& t, const int level) {
     if(level < TILE_DEFAULT_MIN_LIGHT_LEVEL) {
-        light_level = TILE_DEFAULT_MIN_LIGHT_LEVEL;
+        t.light_level = TILE_DEFAULT_MIN_LIGHT_LEVEL;
     } else if(level > TILE_DEFAULT_MAX_LIGHT_LEVEL) {
-        light_level = TILE_DEFAULT_MAX_LIGHT_LEVEL;
+        t.light_level = TILE_DEFAULT_MAX_LIGHT_LEVEL;
     } else {
-        light_level = level;
+        t.light_level = level;
     }
     //mPrint("Light level set to: " + to_string(light_level));
 }
 
-void Tile::increase_light_level_by(const int level) {
-    light_level += level;
-    if(light_level > max_light_level) {
-        light_level = max_light_level;
+void Tile_increase_light_level_by(Tile& t, const int level) {
+    t.light_level += level;
+    if(t.light_level > t.max_light_level) {
+        t.light_level = t.max_light_level;
     }
 }
 
-void Tile::decrease_light_level_by(const int level) {
-    light_level -= level;
-    if(light_level < min_light_level) {
-        light_level = min_light_level;
+void Tile_decrease_light_level_by(Tile& t, const int level) {
+    t.light_level -= level;
+    if(t.light_level < t.min_light_level) {
+        t.light_level = t.min_light_level;
     }
 }
