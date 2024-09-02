@@ -1,3 +1,4 @@
+#include "DungeonFloor.h"
 #include "Entity.h"
 #include "EntityType.h"
 #include "GameplayScene.h"
@@ -33,7 +34,8 @@ void GameplayScene_update(GameplayScene& g) {
     // 1. position in the dungeon
     // 2. global scale
     for(auto& s : g.sprites) {
-        Vector2 dungeon_pos = g.dungeon_floor.get_entity_position(s.first);
+        //Vector2 dungeon_pos = g.dungeon_floor.get_entity_position(s.first);
+        Vector2 dungeon_pos = DungeonFloor_get_entity_position(g.dungeon_floor, s.first);
         //s.second->update(dungeon_pos);
         Sprite_update(s.second, dungeon_pos);
     }
@@ -127,7 +129,8 @@ inline void GameplayScene_handle_tile_selection_input(GameplayScene& g) {
     }
 
     if(IsKeyPressed(KEY_DOWN)) {
-        if(g.last_tile_click_pos.y < g.dungeon_floor.get_gridsize() - 1) {
+        //if(g.last_tile_click_pos.y < g.dungeon_floor.get_gridsize() - 1) {
+        if(g.last_tile_click_pos.y < DungeonFloor_get_gridsize(g.dungeon_floor) - 1) {
             g.last_tile_click_pos.y++;
             g.tile_is_selected = true;
         }
@@ -141,7 +144,8 @@ inline void GameplayScene_handle_tile_selection_input(GameplayScene& g) {
     }
 
     if(IsKeyPressed(KEY_RIGHT)) {
-        if(g.last_tile_click_pos.x < g.dungeon_floor.get_gridsize() - 1) {
+        //if(g.last_tile_click_pos.x < g.dungeon_floor.get_gridsize() - 1) {
+        if(g.last_tile_click_pos.x < DungeonFloor_get_gridsize(g.dungeon_floor) - 1) {
             g.last_tile_click_pos.x++;
             g.tile_is_selected = true;
         }
@@ -163,7 +167,8 @@ bool GameplayScene_handle_dungeon_move_pos(GameplayScene& g,
     bool retval = false;
     //  if they are different tiles...
     if(!Vector2Equals(c_pos, t_pos)) {
-        TileType t = g.dungeon_floor.get_tile_type(t_pos.x, t_pos.y);
+        //TileType t = g.dungeon_floor.get_tile_type(t_pos.x, t_pos.y);
+        TileType t = DungeonFloor_get_tile_type(g.dungeon_floor, t_pos.x, t_pos.y);
         switch(t) {
         case TILE_FLOOR_BASIC:
         case TILE_FLOOR_STONE:
@@ -171,7 +176,8 @@ bool GameplayScene_handle_dungeon_move_pos(GameplayScene& g,
         case TILE_FLOOR_DIRT:
         case TILE_FLOOR_UPSTAIRS:
         case TILE_FLOOR_DOWNSTAIRS: {
-            bool r = g.dungeon_floor.move_entity_to_tile(id, t_pos);
+            //bool r = g.dungeon_floor.move_entity_to_tile(id, t_pos);
+            bool r = DungeonFloor_move_entity_to_tile(g.dungeon_floor, id, t_pos);
             if(r) {
                 g.dungeon_events.push_back(DungeonEvent(id, EVENT_ENTITY_MOVE_SUCCESS, t_pos));
 
@@ -211,7 +217,8 @@ Vector2 GameplayScene_handle_dungeon_move_dir(GameplayScene& g,
     // if the target tile is a location we cant move to, like none, void, or wall,
     // then we don't move
     // get the current dungeon position of the sprite
-    Vector2 cur_pos = g.dungeon_floor.get_entity_position(id);
+    //Vector2 cur_pos = g.dungeon_floor.get_entity_position(id);
+    Vector2 cur_pos = DungeonFloor_get_entity_position(g.dungeon_floor, id);
     Vector2 t_pos = Vector2Add(cur_pos, direction);
     // if the locations are equal, no move is executed
     // this way be interpeted as a "wait" action in the future
@@ -262,10 +269,13 @@ inline void GameplayScene_handle_player_move_direction(GameplayScene& g) {
 void GameplayScene_remove_torch(GameplayScene& g, const Vector2 pos) {
     if(Vector2Equals(pos, (Vector2){-1, -1}))
         return;
-    const vector<EntityId>& entities = g.dungeon_floor.get_entities(pos.x, pos.y);
+    //const vector<EntityId>& entities = g.dungeon_floor.get_entities(pos.x, pos.y);
+    const vector<EntityId>& entities = DungeonFloor_get_entities(g.dungeon_floor, pos.x, pos.y);
     for(auto entity_id : entities) {
-        if(g.dungeon_floor.get_entity_type(entity_id) == ENTITY_TORCH) {
-            g.dungeon_floor.remove_entity(entity_id);
+        //if(g.dungeon_floor.get_entity_type(entity_id) == ENTITY_TORCH) {
+        if(DungeonFloor_get_entity_type(g.dungeon_floor, entity_id) == ENTITY_TORCH) {
+            //g.dungeon_floor.remove_entity(entity_id);
+            DungeonFloor_remove_entity(g.dungeon_floor, entity_id);
             GameplayScene_decrease_lighting_at(g, pos, 3, 3);
             // decrease_lighting_at(pos, 2);
             break;
@@ -276,11 +286,15 @@ void GameplayScene_remove_torch(GameplayScene& g, const Vector2 pos) {
 inline void GameplayScene_handle_player_input(GameplayScene& g) {
     //handle_player_mouse_click();
     if(IsKeyPressed(KEY_R)) {
-        GameplayScene_spawn_torch(g, g.dungeon_floor.get_entity_position(g.player_id));
+        //GameplayScene_spawn_torch(g, g.dungeon_floor.get_entity_position(g.player_id));
+        GameplayScene_spawn_torch(g,
+                                  DungeonFloor_get_entity_position(g.dungeon_floor, g.player_id));
     }
 
     if(IsKeyPressed(KEY_T)) {
-        GameplayScene_remove_torch(g, g.dungeon_floor.get_entity_position(g.player_id));
+        //GameplayScene_remove_torch(g, g.dungeon_floor.get_entity_position(g.player_id));
+        GameplayScene_remove_torch(g,
+                                   DungeonFloor_get_entity_position(g.dungeon_floor, g.player_id));
     }
 
     GameplayScene_handle_player_move_direction(g);
@@ -291,8 +305,9 @@ void GameplayScene_increase_lighting_at(GameplayScene& g,
                                         const Vector2 loc,
                                         const int light_level,
                                         const int dist) {
-    if(loc.x < 0 || loc.y < 0 || loc.x >= g.dungeon_floor.get_gridsize() ||
-       loc.y >= g.dungeon_floor.get_gridsize()) {
+    //if(loc.x < 0 || loc.y < 0 || loc.x >= g.dungeon_floor.get_gridsize() ||
+    if(loc.x < 0 || loc.y < 0 || loc.x >= DungeonFloor_get_gridsize(g.dungeon_floor) ||
+       loc.y >= DungeonFloor_get_gridsize(g.dungeon_floor)) {
         return;
     }
 
@@ -308,7 +323,8 @@ void GameplayScene_increase_lighting_at(GameplayScene& g,
         return;
     }
 
-    const int gridsize = g.dungeon_floor.get_gridsize();
+    //const int gridsize = g.dungeon_floor.get_gridsize();
+    const int gridsize = DungeonFloor_get_gridsize(g.dungeon_floor);
     for(int j = 0; j < dist; j++) {
         const int x0 = loc.x - j;
         const int x1 = loc.x + j;
@@ -319,30 +335,34 @@ void GameplayScene_increase_lighting_at(GameplayScene& g,
             if(x0 >= 0 && x0 < gridsize && y0 >= 0 && y0 < gridsize) {
                 //g.dungeon_floor.get_tile_by_col_row(x0, y0).increase_light_level_by(light_incr);
 
-                Tile_increase_light_level_by(g.dungeon_floor.get_tile_by_col_row(x0, y0),
-                                             light_incr);
+                //Tile_increase_light_level_by(g.dungeon_floor.get_tile_by_col_row(x0, y0),
+                Tile_increase_light_level_by(
+                    DungeonFloor_get_tile_by_col_row(g.dungeon_floor, x0, y0), light_incr);
             }
 
             if(y0 != y1) {
                 if(x0 >= 0 && x0 < gridsize && y1 >= 0 && y1 < gridsize) {
                     //g.dungeon_floor.get_tile_by_col_row(x0, y1).increase_light_level_by(light_incr);
-                    Tile_increase_light_level_by(g.dungeon_floor.get_tile_by_col_row(x0, y1),
-                                                 light_incr);
+                    //Tile_increase_light_level_by(g.dungeon_floor.get_tile_by_col_row(x0, y1),
+                    Tile_increase_light_level_by(
+                        DungeonFloor_get_tile_by_col_row(g.dungeon_floor, x0, y1), light_incr);
                 }
             }
             if(x0 != x1) {
                 if(x1 >= 0 && x1 < gridsize && y0 >= 0 && y0 < gridsize) {
                     //g.dungeon_floor.get_tile_by_col_row(x1, y0).increase_light_level_by(light_incr);
 
-                    Tile_increase_light_level_by(g.dungeon_floor.get_tile_by_col_row(x1, y0),
-                                                 light_incr);
+                    //Tile_increase_light_level_by(g.dungeon_floor.get_tile_by_col_row(x1, y0),
+                    Tile_increase_light_level_by(
+                        DungeonFloor_get_tile_by_col_row(g.dungeon_floor, x1, y0), light_incr);
                 }
                 if(y0 != y1) {
                     if(x1 >= 0 && x1 < gridsize && y1 >= 0 && y1 < gridsize) {
                         //g.dungeon_floor.get_tile_by_col_row(x1, y1).increase_light_level_by(light_incr);
 
-                        Tile_increase_light_level_by(g.dungeon_floor.get_tile_by_col_row(x1, y1),
-                                                     light_incr);
+                        //Tile_increase_light_level_by(g.dungeon_floor.get_tile_by_col_row(x1, y1),
+                        Tile_increase_light_level_by(
+                            DungeonFloor_get_tile_by_col_row(g.dungeon_floor, x1, y1), light_incr);
                     }
                 }
             }
@@ -354,8 +374,10 @@ void GameplayScene_decrease_lighting_at(GameplayScene& g,
                                         const Vector2 loc,
                                         const int light_level,
                                         const int dist) {
-    if(loc.x < 0 || loc.y < 0 || loc.x >= g.dungeon_floor.get_gridsize() ||
-       loc.y >= g.dungeon_floor.get_gridsize()) {
+    //if(loc.x < 0 || loc.y < 0 || loc.x >= g.dungeon_floor.get_gridsize() ||
+    if(loc.x < 0 || loc.y < 0 || DungeonFloor_get_gridsize(g.dungeon_floor) ||
+       //loc.y >= g.dungeon_floor.get_gridsize()) {
+       loc.y >= DungeonFloor_get_gridsize(g.dungeon_floor)) {
         return;
     }
 
@@ -371,7 +393,8 @@ void GameplayScene_decrease_lighting_at(GameplayScene& g,
         return;
     }
 
-    const int gridsize = g.dungeon_floor.get_gridsize();
+    //const int gridsize = g.dungeon_floor.get_gridsize();
+    const int gridsize = DungeonFloor_get_gridsize(g.dungeon_floor);
     for(int j = 0; j < dist; j++) {
         const int x0 = loc.x - j;
         const int x1 = loc.x + j;
@@ -382,32 +405,36 @@ void GameplayScene_decrease_lighting_at(GameplayScene& g,
             if(x0 >= 0 && x0 < gridsize && y0 >= 0 && y0 < gridsize) {
                 //g.dungeon_floor.get_tile_by_col_row(x0, y0).decrease_light_level_by(light_incr);
 
-                Tile_decrease_light_level_by(g.dungeon_floor.get_tile_by_col_row(x0, y0),
-                                             light_incr);
+                //Tile_decrease_light_level_by(g.dungeon_floor.get_tile_by_col_row(x0, y0),
+                Tile_decrease_light_level_by(
+                    DungeonFloor_get_tile_by_col_row(g.dungeon_floor, x0, y0), light_incr);
             }
 
             if(y0 != y1) {
                 if(x0 >= 0 && x0 < gridsize && y1 >= 0 && y1 < gridsize) {
                     //g.dungeon_floor.get_tile_by_col_row(x0, y1).decrease_light_level_by(light_incr);
 
-                    Tile_decrease_light_level_by(g.dungeon_floor.get_tile_by_col_row(x0, y1),
-                                                 light_incr);
+                    //Tile_decrease_light_level_by(g.dungeon_floor.get_tile_by_col_row(x0, y1),
+                    Tile_decrease_light_level_by(
+                        DungeonFloor_get_tile_by_col_row(g.dungeon_floor, x0, y1), light_incr);
                 }
             }
             if(x0 != x1) {
                 if(x1 >= 0 && x1 < gridsize && y0 >= 0 && y0 < gridsize) {
                     //g.dungeon_floor.get_tile_by_col_row(x1, y0).decrease_light_level_by(light_incr);
 
-                    Tile_decrease_light_level_by(g.dungeon_floor.get_tile_by_col_row(x1, y0),
-                                                 light_incr);
+                    //Tile_decrease_light_level_by(g.dungeon_floor.get_tile_by_col_row(x1, y0),
+                    Tile_decrease_light_level_by(
+                        DungeonFloor_get_tile_by_col_row(g.dungeon_floor, x1, y0), light_incr);
                 }
                 if(y0 != y1) {
                     if(x1 >= 0 && x1 < gridsize && y1 >= 0 && y1 < gridsize) {
                         //g.dungeon_floor.get_tile_by_col_row(x1, y1).decrease_light_level_by(
                         //    light_incr);
 
-                        Tile_decrease_light_level_by(g.dungeon_floor.get_tile_by_col_row(x1, y1),
-                                                     light_incr);
+                        //Tile_decrease_light_level_by(g.dungeon_floor.get_tile_by_col_row(x1, y1),
+                        Tile_decrease_light_level_by(
+                            DungeonFloor_get_tile_by_col_row(g.dungeon_floor, x1, y1), light_incr);
                     }
                 }
             }
@@ -554,22 +581,30 @@ const EntityId GameplayScene_spawn_player(GameplayScene& g, const Vector2 pos) {
         GameplayScene_spawn_entity(g, "player", 0, 0, SPRITETYPE_PLAYER, true, g.global_scale);
     g.player_id = id;
 
-    shared_ptr<Entity> player = make_shared<Entity>(id, ENTITY_PLAYER, "player");
-    g.dungeon_floor.add_entity_at(player, pos);
+    //shared_ptr<Entity> player = make_shared<Entity>(id, ENTITY_PLAYER, "player");
+    Entity player;
+    Entity_create(player, id, ENTITY_PLAYER, "player");
+
+    //g.dungeon_floor.add_entity_at(player, pos);
+    DungeonFloor_add_entity_at(g.dungeon_floor, player, pos);
     return id;
 }
 
 const EntityId GameplayScene_spawn_column(GameplayScene& g, const Vector2 pos) {
     if(Vector2Equals(pos, (Vector2){-1, -1}))
         return -1;
-    if(g.dungeon_floor.loc_contains_entity_type(pos, ENTITY_WALL))
+    //if(g.dungeon_floor.loc_contains_entity_type(pos, ENTITY_WALL))
+    if(DungeonFloor_loc_contains_entity_type(g.dungeon_floor, pos, ENTITY_WALL))
         return -1;
 
     EntityId id =
         GameplayScene_spawn_entity(g, "column", 0, 0, SPRITETYPE_WALL, true, g.global_scale);
 
-    shared_ptr<Entity> column = make_shared<Entity>(id, ENTITY_WALL, "wall");
-    g.dungeon_floor.add_entity_at(column, pos);
+    //shared_ptr<Entity> column = make_shared<Entity>(id, ENTITY_WALL, "wall");
+    Entity column;
+    Entity_create(column, id, ENTITY_WALL, "wall");
+    //g.dungeon_floor.add_entity_at(column, pos);
+    DungeonFloor_add_entity_at(g.dungeon_floor, column, pos);
 
     return id;
 }
@@ -585,7 +620,8 @@ const EntityId GameplayScene_spawn_torch(GameplayScene& g, const Vector2 pos) {
     if(Vector2Equals(pos, (Vector2){-1, -1}))
         return -1;
     // get the tile at the last clicked tile and get its entities
-    vector<EntityId> entities = g.dungeon_floor.get_entities(pos.x, pos.y);
+    //vector<EntityId> entities = g.dungeon_floor.get_entities(pos.x, pos.y);
+    const vector<EntityId>& entities = DungeonFloor_get_entities(g.dungeon_floor, pos.x, pos.y);
     bool can_place = true;
     for(auto entity_id : entities) {
         //if(g.sprites[entity_id]->get_type() == SPRITETYPE_WALL) {
@@ -593,7 +629,6 @@ const EntityId GameplayScene_spawn_torch(GameplayScene& g, const Vector2 pos) {
             can_place = false;
         }
     }
-
     if(!can_place) {
         return -1;
     }
@@ -601,12 +636,11 @@ const EntityId GameplayScene_spawn_torch(GameplayScene& g, const Vector2 pos) {
     EntityId id =
         GameplayScene_spawn_entity(g, "torch", 0, 0, SPRITETYPE_ITEM, true, g.global_scale);
     // dungeon_floor.set_entity_on_tile_with_type(id, ENTITY_TORCH, pos);
-    shared_ptr<Entity> torch = make_shared<Entity>(id, ENTITY_TORCH, "torch");
-
-    g.dungeon_floor.add_entity_at(torch, pos);
-
+    //shared_ptr<Entity> torch = make_shared<Entity>(id, ENTITY_TORCH, "torch");
+    Entity torch;
+    Entity_create(torch, id, ENTITY_TORCH, "torch");
+    DungeonFloor_add_entity_at(g.dungeon_floor, torch, pos);
     GameplayScene_increase_lighting_at(g, pos, 3, 3);
-
     return id;
 }
 
@@ -679,14 +713,16 @@ inline void GameplayScene_draw_hud(GameplayScene& g) {
             //g.dungeon_floor.get_tile_by_col_row(g.last_tile_click_pos.x, g.last_tile_click_pos.y)
             //    .get_type_str();
 
-            Tile_get_type_str(g.dungeon_floor.get_tile_by_col_row(g.last_tile_click_pos.x,
-                                                                  g.last_tile_click_pos.y));
+            //Tile_get_type_str(g.dungeon_floor.get_tile_by_col_row(g.last_tile_click_pos.x, g.last_tile_click_pos.y));
+            Tile_get_type_str(DungeonFloor_get_tile_by_col_row(
+                g.dungeon_floor, g.last_tile_click_pos.x, g.last_tile_click_pos.y));
 
         tile_light_level_str = to_string(
             //g.dungeon_floor.get_tile_by_col_row(g.last_tile_click_pos.x, g.last_tile_click_pos.y)
             //    .get_light_level());
-            Tile_get_light_level(g.dungeon_floor.get_tile_by_col_row(g.last_tile_click_pos.x,
-                                                                     g.last_tile_click_pos.y)));
+            //Tile_get_light_level(g.dungeon_floor.get_tile_by_col_row(g.last_tile_click_pos.x,
+            Tile_get_light_level(DungeonFloor_get_tile_by_col_row(
+                g.dungeon_floor, g.last_tile_click_pos.x, g.last_tile_click_pos.y)));
     }
 
     // draw some text
@@ -696,8 +732,11 @@ inline void GameplayScene_draw_hud(GameplayScene& g) {
     s += "Class: wizard\n";
     s += "HP: 1/1\n";
     s += "Stats: [10,10,10,10,10,10]\n";
-    s += "Position: " + to_string((int)g.dungeon_floor.get_entity_position(g.player_id).x) + ", " +
-         to_string((int)g.dungeon_floor.get_entity_position(g.player_id).y) + "\n";
+    //s += "Position: " + to_string((int)g.dungeon_floor.get_entity_position(g.player_id).x) + ", " +
+    s += "Position: " +
+         to_string((int)DungeonFloor_get_entity_position(g.dungeon_floor, g.player_id).x) + ", " +
+         //to_string((int)g.dungeon_floor.get_entity_position(g.player_id).y) + "\n";
+         to_string((int)DungeonFloor_get_entity_position(g.dungeon_floor, g.player_id).y) + "\n";
     s += "Camera: " + to_string((int)g.camera2d.target.x) + ", " +
          to_string((int)g.camera2d.target.y) + "\n";
     s += "Turn: " + to_string(g.turn_count) + "\n";
@@ -730,11 +769,15 @@ void GameplayScene_draw(GameplayScene& g) {
     BeginMode2D(g.camera2d);
     Color clear_color = BLACK;
     ClearBackground(clear_color);
+
+    const unsigned int gridsize = DungeonFloor_get_gridsize(g.dungeon_floor);
+
     //   draw all tiles first
     //   entities existing on tiles will get drawn
-    for(int i = 0; i < g.dungeon_floor.get_gridsize(); i++) {
-        for(int j = 0; j < g.dungeon_floor.get_gridsize(); j++) {
-            const TileType t = g.dungeon_floor.get_tile_type(i, j);
+    for(int i = 0; i < gridsize; i++) {
+        for(int j = 0; j < gridsize; j++) {
+            //const TileType t = g.dungeon_floor.get_tile_type(i, j);
+            const TileType t = DungeonFloor_get_tile_type(g.dungeon_floor, i, j);
             const string s = GameplayScene_tile_key_for_type(g, t);
             GameplayScene_draw_tile(g, s, i, j);
         }
@@ -801,7 +844,9 @@ GameplayScene_draw_tile(GameplayScene& g, const string tile_key, const int i, co
     Vector2 origin = {0, 0};
     Color color = WHITE;
 
-    Tile& tile = g.dungeon_floor.get_tile_by_col_row(i, j);
+    //Tile& tile = g.dungeon_floor.get_tile_by_col_row(i, j);
+    Tile& tile = DungeonFloor_get_tile_by_col_row(g.dungeon_floor, i, j);
+
     //const float light_incr = 1.0f / tile.get_max_light_level();
     const float light_incr = 1.0f / Tile_get_max_light_level(tile);
     //float alpha = 1.0f - tile.get_light_level() * light_incr;
@@ -810,7 +855,8 @@ GameplayScene_draw_tile(GameplayScene& g, const string tile_key, const int i, co
     // now, for an upgrade, we want to draw the entities on the tile before we
     // draw the shade box this way, the entities will be drawn below the shade box
     // draw the entities on the tile
-    const vector<EntityId>& entities = g.dungeon_floor.get_entities(i, j);
+    //const vector<EntityId>& entities = g.dungeon_floor.get_entities(i, j);
+    const vector<EntityId>& entities = DungeonFloor_get_entities(g.dungeon_floor, i, j);
     for(auto& e : entities) {
         //g.sprites[e]->draw();
         Sprite_draw(g.sprites[e]);

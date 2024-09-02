@@ -1,6 +1,6 @@
 CC=g++
 #OBJ_FILES=Game.o TitleScene.o GameplayScene.o DungeonFloor.o PopupManager.o Tile.o Sprite.o
-OBJ_FILES=Game.so TitleScene.so GameplayScene.so DungeonFloor.o PopupManager.so Tile.so Sprite.so
+OBJ_FILES=Game.so TitleScene.so GameplayScene.so DungeonFloor.o PopupManager.so Tile.so Sprite.so Entity.so 
 OBJ_FILES_WITH_MAIN=main.o $(OBJ_FILES)
 FLAGS=-Wall 
 SHARED_LIB_FLAGS=-Wall -g -fPIC 
@@ -22,6 +22,8 @@ PopupManager.so: PopupManager.cpp
 Tile.so: Tile.cpp
 	$(CC) $^ $(SHARED_LIB_FLAGS) -c -o $@
 Sprite.so: Sprite.cpp
+	$(CC) $^ $(SHARED_LIB_FLAGS) -c -o $@
+Entity.so: Entity.cpp
 	$(CC) $^ $(SHARED_LIB_FLAGS) -c -o $@
 main.o: main.cpp
 	$(CC) $^ $(SHARED_LIB_FLAGS) -c -o $@
