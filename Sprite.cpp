@@ -111,9 +111,11 @@ void Sprite_set_current_frame(Sprite& sprite, const unsigned int frame) {
 }
 void Sprite_set_x(Sprite& sprite, const float x) {
     sprite.dest.x = x;
+    sprite.hitbox.x = x;
 }
 void Sprite_set_y(Sprite& sprite, const float y) {
     sprite.dest.y = y;
+    sprite.hitbox.y = y;
 }
 void Sprite_set_vx(Sprite& sprite, const float vx) {
     sprite.velocity.x = vx;

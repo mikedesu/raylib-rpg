@@ -866,6 +866,11 @@ GameplayScene_draw_tile(GameplayScene& g, const string tile_key, const int i, co
     for(auto& e : entities) {
         //g.sprites[e]->draw();
         Sprite_draw(g.sprites[e]);
+
+        if(g.debug_panel_on) {
+            //g.sprites[e]->draw_debug();
+            Sprite_draw_hitbox(g.sprites[e]);
+        }
     }
 
     // shading for lighting
