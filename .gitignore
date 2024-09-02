@@ -1,5 +1,6 @@
 tests.cpp
 *.o
+*.so
 *_textures.txt
 compile_commands.json
 audio

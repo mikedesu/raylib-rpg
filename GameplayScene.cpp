@@ -18,6 +18,10 @@ void GameplayScene_create(GameplayScene& g) {
     g.global_scale = 3.0f;
     g.transition = SCENE_TRANSITION_IN;
     g.scenetype = SCENE_TYPE_GAMEPLAY;
+
+    // initialize the dungeonfloor
+    //DungeonFloor_create(g.dungeon_floor, 20, 20);
+    DungeonFloor_create(g.dungeon_floor);
 }
 
 void GameplayScene_destroy(GameplayScene& g) {
@@ -770,7 +774,7 @@ void GameplayScene_draw(GameplayScene& g) {
     Color clear_color = BLACK;
     ClearBackground(clear_color);
 
-    const unsigned int gridsize = DungeonFloor_get_gridsize(g.dungeon_floor);
+    const int gridsize = DungeonFloor_get_gridsize(g.dungeon_floor);
 
     //   draw all tiles first
     //   entities existing on tiles will get drawn

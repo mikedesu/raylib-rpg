@@ -1,6 +1,6 @@
 #include "DungeonFloor.h"
 
-void DungeonFloor_DungeonFloor(DungeonFloor& d) {
+void DungeonFloor_create(DungeonFloor& d) {
     DungeonFloor_set_tile_type_all(d, TILE_FLOOR_BASIC);
     for(int i = 0; i < d.gridsize; i++) {
         DungeonFloor_set_tile_type(d, i, 0, TILE_FLOOR_WOOD);

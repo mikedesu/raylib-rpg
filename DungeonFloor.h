@@ -18,7 +18,7 @@ typedef struct {
     //unordered_map<EntityId, shared_ptr<Entity>> entities;
 } DungeonFloor;
 
-void DungeonFloor_DungeonFloor(DungeonFloor& d);
+void DungeonFloor_create(DungeonFloor& d);
 void DungeonFloor_destroy(DungeonFloor& d);
 void DungeonFloor_set_tile_type(DungeonFloor& d,
                                 const int col,
