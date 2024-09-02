@@ -70,29 +70,27 @@ inline void GameplayScene_handle_camera_input_zoom(GameplayScene& g) {
     if(IsKeyDown(KEY_RIGHT_SHIFT) && IsKeyPressed(KEY_Z)) {
         GameplayScene_set_scale(g, g.global_scale - zoom_incr);
         GameplayScene_center_camera_on_player(g);
-        g.prev_tile_click_zoom_level = g.tile_click_zoom_level;
-        g.tile_click_zoom_level = g.global_scale;
-        g.last_mouse_click_pos = (Vector2){-1, -1};
+        GameplayScene_update_tile_click(g);
     } else if(IsKeyDown(KEY_LEFT_SHIFT) && IsKeyPressed(KEY_Z)) {
         GameplayScene_set_scale(g, g.global_scale - zoom_incr);
         GameplayScene_center_camera_on_player(g);
-        g.prev_tile_click_zoom_level = g.tile_click_zoom_level;
-        g.tile_click_zoom_level = g.global_scale;
-        g.last_mouse_click_pos = (Vector2){-1, -1};
+        GameplayScene_update_tile_click(g);
     } else if(IsKeyPressed(KEY_Z)) {
         GameplayScene_set_scale(g, g.global_scale + zoom_incr);
         GameplayScene_center_camera_on_player(g);
-
-        g.prev_tile_click_zoom_level = g.tile_click_zoom_level;
-        g.tile_click_zoom_level = g.global_scale;
-        g.last_mouse_click_pos = (Vector2){-1, -1};
+        GameplayScene_update_tile_click(g);
     }
+}
+
+void GameplayScene_update_tile_click(GameplayScene& g) {
+    g.prev_tile_click_zoom_level = g.tile_click_zoom_level;
+    g.tile_click_zoom_level = g.global_scale;
+    g.last_mouse_click_pos = (Vector2){-1, -1};
 }
 
 void GameplayScene_center_camera_on_player(GameplayScene& g) {
     //Rectangle pos = g.sprites[g.player_id]->get_dest();
     Rectangle pos = Sprite_get_dest(g.sprites[g.player_id]);
-
     // the update isnt smooth
     // we need to try and smooth it out
     const int targetx = pos.x - (GetScreenWidth() / 2.0f);
@@ -101,10 +99,8 @@ void GameplayScene_center_camera_on_player(GameplayScene& g) {
     const int cy = g.camera2d.target.y;
     const int dx = targetx - cx;
     const int dy = targety - cy;
-
     g.camera2d.target.x += dx;
     g.camera2d.target.y += dy;
-
     //g.camera2d.target.x = pos.x - (GetScreenWidth() / 2.0f);
     //g.camera2d.target.y = pos.y - (GetScreenHeight() / 2.0f);
 }
@@ -491,10 +487,16 @@ void GameplayScene_set_scale(GameplayScene& g, const float f) {
 
         //set_global_scale(f);
         g.global_scale = f;
-        for(auto& s : g.sprites) {
-            //s.second->set_scale(f);
-            Sprite_set_scale(s.second, f);
+
+        for(size_t i = 0; i < g.sprites.size(); i++) {
+            //g.sprites[i]->set_scale(f);
+            Sprite_set_scale(g.sprites[i], f);
         }
+
+        //for(Sprite& s : g.sprites) {
+        //s.second->set_scale(f);
+        //    Sprite_set_scale(s.second, f);
+        //}
     }
 }
 
