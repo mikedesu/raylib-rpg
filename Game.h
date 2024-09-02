@@ -52,7 +52,7 @@ inline void Game_update(Game& g);
 inline void Game_handle_input(Game& g);
 inline void Game_cleanup(Game& g);
 inline void Game_draw(Game& g);
-void Game_run(Game& g);
+int Game_run(Game& g);
 void Game_handle_transition_in(Game& g);
 void Game_handle_transition_out(Game& g);
 void Game_draw_debug_panel(Game& g);

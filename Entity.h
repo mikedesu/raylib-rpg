@@ -6,43 +6,19 @@
 
 using std::string;
 
-class Entity {
-
-private:
-    const EntityId id;
-    const EntityType type;
+typedef struct {
+    EntityId id;
+    EntityType type;
     string name = "Unnamed";
     int light_lvl = 0;
+} Entity;
 
-public:
-    Entity(const EntityId e_id, const EntityType t, string n)
-        : id(e_id)
-        , type(t)
-        , name(n) { }
-    Entity(const EntityId e_id, const EntityType t, string n, const int light)
-        : id(e_id)
-        , type(t)
-        , name(n)
-        , light_lvl(light) { }
-    ~Entity() { }
-
-    const EntityId get_id() const {
-        return id;
-    }
-    const EntityType get_type() const {
-        return type;
-    }
-    const string get_name() const {
-        return name;
-    }
-    const int get_light_lvl() const {
-        return light_lvl;
-    }
-
-    void set_name(const string n) {
-        name = n;
-    }
-    void set_light_lvl(const int light) {
-        light_lvl = light;
-    }
-};
+void Entity_create(Entity& e, const EntityId e_id, const EntityType t, string n);
+void Entity_create(Entity& e, const EntityId e_id, const EntityType t, string n, const int light);
+void Entity_destroy(Entity& e);
+const EntityId Entity_get_id(Entity& e);
+const EntityType Entity_get_type(Entity& e);
+const string Entity_get_name(Entity& e);
+const int Entity_get_light_lvl(Entity& e);
+void Entity_set_name(Entity& e, const string n);
+void Entity_set_light_lvl(Entity& e, const int light);

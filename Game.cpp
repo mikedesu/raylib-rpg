@@ -315,18 +315,19 @@ inline void Game_draw(Game& g) {
     g.current_frame++;
 }
 
-void Game_run(Game& g) {
+int Game_run(Game& g) {
     if(!g.has_been_initialized) {
         mPrint("Game has not been initialized. Exiting...");
-    } else {
-        while(!WindowShouldClose()) {
-            Game_handle_input(g);
-            Game_update(g);
-            Game_draw(g);
-            Game_cleanup(g);
-        }
-        mPrint("Window closed.");
+        return EXIT_FAILURE;
     }
+    while(!WindowShouldClose()) {
+        Game_handle_input(g);
+        Game_update(g);
+        Game_draw(g);
+        Game_cleanup(g);
+    }
+    mPrint("Window closed.");
+    return EXIT_SUCCESS;
 }
 
 void Game_close(Game& g) {
